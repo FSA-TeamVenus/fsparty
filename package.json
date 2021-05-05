@@ -1,0 +1,23 @@
+{
+  "name": "phaser-game-template",
+  "version": "1.0.0",
+  "description": "phaser template",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "node server.js",
+    "start-dev": "webpack-dev-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "phaser": "^3.54.0"
+  },
+  "devDependencies": {
+    "raw-loader": "^4.0.2",
+    "webpack": "^5.36.2",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
