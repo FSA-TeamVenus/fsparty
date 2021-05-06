@@ -4,19 +4,27 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: "./src/index.js",
 
   output: {
-    path: path.resolve(__dirname, 'public'),
-    publicPath: '/public/',
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, "public"),
+    publicPath: "/public/",
+    filename: "bundle.js",
   },
 
   module: {
     rules: [
       {
         test: [/\.vert$/, /\.frag$/],
-        use: 'raw-loader',
+        use: "raw-loader",
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        options: {
+          presets: ["@babel/preset-react"],
+        },
       },
     ],
   },
