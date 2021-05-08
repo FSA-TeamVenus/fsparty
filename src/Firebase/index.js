@@ -15,24 +15,26 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-firebase.analytics();
-const database = firebase.database();
+export const database = firebase.database();
+// if (location.hostname === 'localhost') {
+//   // Point to the RTDB emulator running on localhost.
+//   database.useEmulator('localhost', 9000);
+// }
 
 // ------- test functions --------
 
 // read from database once
-function getReference() {
-  let database = firebase.database();
-  let usersRef = database.ref();
-  const data = usersRef
-    .child('users')
-    .get()
-    .then((snapshot) => {
-      console.log(snapshot.val());
-    });
+// export function getReference() {
+//   let db = database.ref();
+//   const data = usersRef
+//     .child('players')
+//     .get()
+//     .then((snapshot) => {
+//       console.log(snapshot.val());
+//     });
 
-  return data;
-}
+//   return data;
+// }
 
 // update database - not working perfectly
 
@@ -45,11 +47,10 @@ function setData(name) {
 setData('david');
 setData('reid');
 
-const userData = [];
-let users = firebase.database().ref('users');
+export const players = database.ref('players');
 
 // set up listener for changes to 'users' scope of database
-users.on('value', (snapshot) => {
-  userData.push(snapshot.val());
-  console.log(userData);
-});
+// users.on('value', (snapshot) => {
+//   userData.push(snapshot.val());
+//   console.log(userData);
+// });
