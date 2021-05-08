@@ -1,18 +1,14 @@
 import Phaser from 'phaser';
 import config from './config/config';
-import GameScreen from './scenes/GameScreen';
+import RacingGame from './scenes/RacingGame';
 
 export class Game extends Phaser.Game {
   constructor() {
     super(config);
 
     // add scenes here
-    this.scene.add('game', GameScreen);
+    this.scene.add('racingGame', RacingGame);
 
-    this.scene.start('game');
+    this.scene.start('racingGame');
   }
 }
-
-// window.onload = function () {
-//   window.game = new Game();
-// };
