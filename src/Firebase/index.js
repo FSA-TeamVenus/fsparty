@@ -53,9 +53,18 @@ users.on('value', (snapshot) => {
   //console.log(userData);
 });
 
+//get tailored firebase ref
+const getRef = (gameId, playerId ) => {
+  if (playerId) {
+    return `${gameId}/main/players/${playerId}`
+  } else {
+    return `${gameId}/main`
+  }
+};
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
-  let players = firebase.database().ref(`${gameId}/main/players`);
+  const ref = getRef(gameId);
+  let players = firebase.database().ref(ref + '/players');
   players.on("value", (snapshot) => {
     const data = snapshot.val();
     cb(data, 'playerList')
@@ -69,7 +78,7 @@ export function getTurn(gameId, cb) {
     cb(data, 'turn')
   });
 }
-
+//increment turn
 export function updateTurn(gameId) {
   let updates = {};
   getTurn(gameId, function(data) {
@@ -77,15 +86,17 @@ export function updateTurn(gameId) {
   });
   return firebase.database().ref().update(updates);
 }
-
+//get user position
 export function getPos(gameId, userId, cb) {
-  let pos = firebase.database().ref(`${gameId}/main/players/${userId}/position`);
+  let ref = getRef(gameId, userId)
+  let pos = firebase.database().ref(ref + `/position`);
   pos.on("value", (snapshot) => {
     const data = snapshot.val();
     cb(data, 'pos')
   });
+  return pos.off();
 }
-
+//increment position by newPos
 export function updatePos(gameId, userId, newPos) {
   let updates = {};
   getPos(gameId, userId, function(data) {

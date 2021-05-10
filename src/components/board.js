@@ -23,17 +23,24 @@ export class Board extends React.Component {
     getTurn(1, this.stateCb);
     getPos(1, this.props.user.id, this.stateCb);
   }
-  stateCb(value, state) {
-    this.setState({ [state]: value });
+  componentWillUnmount() {
+  }
+
+  stateCb(value, key) {
+    this.setState({ [key]: value });
   }
   componentDidUpdate() {
     //run function corresponding to tiles array full of objects
     const { pos } = this.state;
     const tempTiles = [
-      { action: () => console.log("tile1") },
+      { action: () => console.log("tile 1") },
       { action: () => console.log("tile 2") },
       { action: () => console.log("tile 3") },
       { action: () => console.log("tile 4") },
+      { action: () => console.log("tile 5") },
+      { action: () => console.log("tile 6") },
+      { action: () => console.log("tile 7") },
+      { action: () => console.log("tile 8") },
     ];
     if (pos > 0) {
       tempTiles[pos - 1].action();
@@ -60,7 +67,7 @@ export class Board extends React.Component {
         <h2>Game Board</h2>
         <h3>Welcome, {user.name}</h3>
         <h4>
-          Lobby:{" "}
+          Lobby:
           {playerList.map((player) => (
             <div key={player.name}>
               <h5>{player.name}</h5>
