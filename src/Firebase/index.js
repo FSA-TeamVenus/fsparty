@@ -20,18 +20,17 @@ const database = firebase.database();
 // ------- test functions --------
 
 // read from database once
-function getReference() {
-  let database = firebase.database();
-  let usersRef = database.ref();
-  const data = usersRef
-    .child('users')
-    .get()
-    .then((snapshot) => {
-      console.log(snapshot.val());
-    });
+// export function getReference() {
+//   let db = database.ref();
+//   const data = usersRef
+//     .child('players')
+//     .get()
+//     .then((snapshot) => {
+//       console.log(snapshot.val());
+//     });
 
-  return data;
-}
+//   return data;
+// }
 
 // update database - not working perfectly
 
@@ -44,14 +43,13 @@ function setData(name) {
 setData('david');
 setData('reid');
 
-const userData = [];
-let users = firebase.database().ref('users');
+export const racingGamePlayers = database.ref('1/racingGame');
 
 // set up listener for changes to 'users' scope of database
-users.on('value', (snapshot) => {
-  userData.push(snapshot.val());
-  //console.log(userData);
-});
+// users.on('value', (snapshot) => {
+//   userData.push(snapshot.val());
+//   //console.log(userData);
+// });
 
 //get tailored firebase ref
 const getRef = (gameId, playerId ) => {
@@ -63,25 +61,30 @@ const getRef = (gameId, playerId ) => {
 };
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
+<<<<<<< HEAD
   const ref = getRef(gameId);
   let players = firebase.database().ref(ref + '/players');
   players.on("value", (snapshot) => {
+=======
+  let players = firebase.database().ref(`${gameId}/main/players`);
+  players.on('value', (snapshot) => {
+>>>>>>> 8c62a8c2fe463a6391db8900f9ad4dcc76e96857
     const data = snapshot.val();
-    cb(data, 'playerList')
+    cb(data, 'playerList');
   });
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
   let turn = firebase.database().ref(`${gameId}/main/turn`);
-  turn.on("value", (snapshot) => {
+  turn.on('value', (snapshot) => {
     const data = snapshot.val();
-    cb(data, 'turn')
+    cb(data, 'turn');
   });
 }
 //increment turn
 export function updateTurn(gameId) {
   let updates = {};
-  getTurn(gameId, function(data) {
+  getTurn(gameId, function (data) {
     updates[`${gameId}/main/turn`] = data + 1;
   });
   return firebase.database().ref().update(updates);
@@ -92,16 +95,15 @@ export function getPos(gameId, userId, cb) {
   let pos = firebase.database().ref(ref + `/position`);
   pos.on("value", (snapshot) => {
     const data = snapshot.val();
-    cb(data, 'pos')
+    cb(data, 'pos');
   });
   return pos.off();
 }
 //increment position by newPos
 export function updatePos(gameId, userId, newPos) {
   let updates = {};
-  getPos(gameId, userId, function(data) {
+  getPos(gameId, userId, function (data) {
     updates[`${gameId}/main/players/${userId}/position`] = data + newPos;
   });
   return firebase.database().ref().update(updates);
 }
-
