@@ -47,7 +47,7 @@ function setData(name) {
 setData('david');
 setData('reid');
 
-export const players = database.ref('players');
+export const racingGamePlayers = database.ref('1/racingGame');
 
 // set up listener for changes to 'users' scope of database
 // users.on('value', (snapshot) => {

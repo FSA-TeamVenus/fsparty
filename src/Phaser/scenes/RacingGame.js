@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { players } from '../../Firebase/index';
+import { racingGamePlayers } from '../../Firebase/index';
 import Player from '../entities/Player';
 
 // setting playerId here temporarily until the main game can set it
@@ -25,7 +25,7 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   create() {
-    this.serverPlayers = players;
+    this.serverPlayers = racingGamePlayers;
 
     // get players from the database - this could maybe get replaced with a one time call // basically a get request
     this.serverPlayers.on('value', (snapshot) => {
@@ -39,8 +39,8 @@ export default class RacingGame extends Phaser.Scene {
     // listen for player movement udpdates
     this.serverPlayers.on('child_changed', (snapshot) => {
       const player = snapshot.val();
-      if (player.id !== myId) {
-        const player2update = this.otherPlayers[player.id];
+      if (player.playerId !== myId) {
+        const player2update = this.otherPlayers[player.playerId];
         player2update.x = player.x;
       }
     });
@@ -75,7 +75,7 @@ export default class RacingGame extends Phaser.Scene {
 
   addPlayers(data) {
     data.forEach((player) => {
-      if (player.id === myId) {
+      if (player.playerId === myId) {
         this.spawnMyCharacter(player);
       } else this.spawnOtherCharacters(player);
     });
@@ -85,8 +85,8 @@ export default class RacingGame extends Phaser.Scene {
     const newPlayer = new Player(this, player.x, player.y, 'car')
       .setScale(2)
       .play(`${player.color}`);
-    newPlayer.playerId = player.id;
-    this.otherPlayers[player.id] = newPlayer;
+    newPlayer.playerId = player.playerId;
+    this.otherPlayers[player.playerId] = newPlayer;
   }
 
   spawnMyCharacter(player) {
