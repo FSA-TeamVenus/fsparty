@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+import GameCanvas from './GameCanvas';
 
 import {
   getPlayersfromGame,
@@ -6,7 +7,7 @@ import {
   updateTurn,
   updatePos,
   getPos,
-} from "../Firebase/index";
+} from '../Firebase/index';
 
 export class Board extends React.Component {
   constructor(props) {
@@ -30,13 +31,13 @@ export class Board extends React.Component {
     //run function corresponding to tiles array full of objects
     const { pos } = this.state;
     const tempTiles = [
-      { action: () => console.log("tile1") },
-      { action: () => console.log("tile 2") },
-      { action: () => console.log("tile 3") },
-      { action: () => console.log("tile 4") },
+      { action: () => console.log('tile1') },
+      { action: () => console.log('tile 2') },
+      { action: () => console.log('tile 3') },
+      { action: () => console.log('tile 4') },
     ];
     if (pos > 0) {
-      tempTiles[pos - 1].action();
+      // tempTiles[pos - 1].action();
     }
   }
 
@@ -54,13 +55,13 @@ export class Board extends React.Component {
     const { user } = this.props;
     const { turn, playerList } = this.state;
     const nextPlayer = playerList[user.id + 1];
-    console.log(nextPlayer)
+    console.log(nextPlayer);
     return (
       <div>
         <h2>Game Board</h2>
         <h3>Welcome, {user.name}</h3>
         <h4>
-          Lobby:{" "}
+          Lobby:{' '}
           {playerList.map((player) => (
             <div key={player.name}>
               <h5>{player.name}</h5>
@@ -72,13 +73,13 @@ export class Board extends React.Component {
         ) : (
           <div>Display Board</div>
         )}
-        {user.id == turn && playerList? (
+        {user.id == turn && playerList ? (
           <button onClick={() => this.rollDice()}>Roll {user.name}</button>
         ) : (
           <div>...waiting on next player</div>
         )}
         {this.state.turn === this.state.playerList.length ? (
-          <div>Launch Phaser!</div>
+          <GameCanvas />
         ) : (
           <div />
         )}
