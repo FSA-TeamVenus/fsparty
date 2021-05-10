@@ -14,12 +14,4 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.playerId;
     this.oldPosition = {};
   }
-
-  // update(cursors) {
-  // const duration = cursors.space.getDuration();
-  // if (cursors.space.isDown && duration < 50) {
-  //   this.x += 5;
-  //   console.log(this.x);
-  // }
-  // }
 }

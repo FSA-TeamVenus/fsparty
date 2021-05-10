@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { players } from '../../Firebase/index';
 import Player from '../entities/Player';
 
-// const myId = 1;
+// setting playerId here temporarily until the main game can set it
 window.localStorage.setItem('playerId', '1');
 const myId = Number(window.localStorage.getItem('playerId'));
 // or token
@@ -11,6 +11,8 @@ export default class RacingGame extends Phaser.Scene {
   constructor() {
     super('racingGame');
 
+    // using an object to store players instead of a phaser group
+    // so we can look up by id instead of iterating through an array
     this.otherPlayers = {};
     this.spawned = false;
   }
@@ -25,6 +27,7 @@ export default class RacingGame extends Phaser.Scene {
   create() {
     this.serverPlayers = players;
 
+    // get players from the database - this could maybe get replaced with a one time call // basically a get request
     this.serverPlayers.on('value', (snapshot) => {
       const list = snapshot.val();
       if (!this.spawned) {
@@ -33,6 +36,7 @@ export default class RacingGame extends Phaser.Scene {
       }
     });
 
+    // listen for player movement udpdates
     this.serverPlayers.on('child_changed', (snapshot) => {
       const player = snapshot.val();
       if (player.id !== myId) {
@@ -43,6 +47,8 @@ export default class RacingGame extends Phaser.Scene {
 
     this.createAnimations();
 
+    // setting player movement here instead of update so that the player only moves once on each key press - i.e. they can't just hold down the space bar
+
     this.spaceBar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
@@ -50,13 +56,10 @@ export default class RacingGame extends Phaser.Scene {
     this.spaceBar.on('down', () => {
       this.myCharacter.setVelocityX(100);
     });
-
-    // this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   update() {
     if (this.myCharacter) {
-      // this.myCharacter.update(this.cursors);
       let position = this.myCharacter.x;
       if (
         this.myCharacter.oldPosition &&
