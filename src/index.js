@@ -11,17 +11,3 @@ ReactDOM.render(
   // </Provider>,
   document.getElementById('app')
 );
-
-// import GameCanvas from './React/GameCanvas';
-
-// class App extends React.Component {
-//   render() {
-//     return (
-//       <div>
-//         <GameCanvas />
-//       </div>
-//     );
-//   }
-// }
-
-// ReactDOM.render(<App />, document.getElementById('app'));
