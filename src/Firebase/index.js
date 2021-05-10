@@ -15,11 +15,7 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-export const database = firebase.database();
-// if (location.hostname === 'localhost') {
-//   // Point to the RTDB emulator running on localhost.
-//   database.useEmulator('localhost', 9000);
-// }
+const database = firebase.database();
 
 // ------- test functions --------
 
@@ -50,7 +46,50 @@ setData('reid');
 export const racingGamePlayers = database.ref('1/racingGame');
 
 // set up listener for changes to 'users' scope of database
-// users.on('value', (snapshot) => {
-//   userData.push(snapshot.val());
-//   console.log(userData);
-// });
+users.on('value', (snapshot) => {
+  userData.push(snapshot.val());
+  //console.log(userData);
+});
+
+//get players array in a game instance
+export function getPlayersfromGame(gameId, cb) {
+  let players = firebase.database().ref(`${gameId}/main/players`);
+  players.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'playerList');
+  });
+}
+//get turn in a game instance
+export function getTurn(gameId, cb) {
+  let turn = firebase.database().ref(`${gameId}/main/turn`);
+  turn.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'turn');
+  });
+}
+
+export function updateTurn(gameId) {
+  let updates = {};
+  getTurn(gameId, function (data) {
+    updates[`${gameId}/main/turn`] = data + 1;
+  });
+  return firebase.database().ref().update(updates);
+}
+
+export function getPos(gameId, userId, cb) {
+  let pos = firebase
+    .database()
+    .ref(`${gameId}/main/players/${userId}/position`);
+  pos.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'pos');
+  });
+}
+
+export function updatePos(gameId, userId, newPos) {
+  let updates = {};
+  getPos(gameId, userId, function (data) {
+    updates[`${gameId}/main/players/${userId}/position`] = data + newPos;
+  });
+  return firebase.database().ref().update(updates);
+}

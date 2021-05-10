@@ -1,21 +1,27 @@
-// App here?
 import React from 'react';
 import ReactDOM from 'react-dom';
-import GameCanvas from './React/GameCanvas';
-// import { Game } from './Phaser/index';
+// import {Router} from 'react-router-dom'
+import App from './app';
 
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-        <GameCanvas />
-      </div>
-    );
-  }
-}
+ReactDOM.render(
+  // <Provider store={store}>
+  // <Router history={history}>
+  <App />,
+  //  </Router>,
+  // </Provider>,
+  document.getElementById('app')
+);
 
-ReactDOM.render(<App />, document.getElementById('app'));
+// import GameCanvas from './React/GameCanvas';
 
-// window.onload = function () {
-//   window.game = new Game();
-// };
+// class App extends React.Component {
+//   render() {
+//     return (
+//       <div>
+//         <GameCanvas />
+//       </div>
+//     );
+//   }
+// }
+
+// ReactDOM.render(<App />, document.getElementById('app'));
