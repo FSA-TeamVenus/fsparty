@@ -46,10 +46,10 @@ setData('reid');
 export const racingGamePlayers = database.ref('1/racingGame');
 
 // set up listener for changes to 'users' scope of database
-users.on('value', (snapshot) => {
-  userData.push(snapshot.val());
-  //console.log(userData);
-});
+// users.on('value', (snapshot) => {
+//   userData.push(snapshot.val());
+//   //console.log(userData);
+// });
 
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {

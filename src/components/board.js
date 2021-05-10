@@ -1,5 +1,5 @@
 import React from 'react';
-import GameCanvas from './React/GameCanvas';
+import GameCanvas from './GameCanvas';
 
 import {
   getPlayersfromGame,
@@ -37,7 +37,7 @@ export class Board extends React.Component {
       { action: () => console.log('tile 4') },
     ];
     if (pos > 0) {
-      tempTiles[pos - 1].action();
+      // tempTiles[pos - 1].action();
     }
   }
 
