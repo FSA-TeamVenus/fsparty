@@ -1,5 +1,7 @@
 import React from 'react';
 import GameCanvas from './GameCanvas';
+import TileGrid from './TileGrid';
+import tileList from './tileList';
 
 import {
   getPlayersfromGame,
@@ -55,23 +57,21 @@ export class Board extends React.Component {
     const { user } = this.props;
     const { turn, playerList } = this.state;
     const nextPlayer = playerList[user.id + 1];
-    console.log(nextPlayer);
+    // console.log(nextPlayer);
     return (
       <div>
-        <h2>Game Board</h2>
+        {/* <h2>Game Board</h2> */}
         <h3>Welcome, {user.name}</h3>
-        <h4>
+        <span>
           Lobby:{' '}
           {playerList.map((player) => (
-            <div key={player.name}>
-              <h5>{player.name}</h5>
-            </div>
+            <span key={player.name}>{`${player.name}, `}</span>
           ))}
-        </h4>
+        </span>
         {turn < 0 ? (
           <button onClick={() => this.startGame()}>Start Game</button>
         ) : (
-          <div>Display Board</div>
+          <TileGrid tileList={tileList} />
         )}
         {user.id == turn && playerList ? (
           <button onClick={() => this.rollDice()}>Roll {user.name}</button>
