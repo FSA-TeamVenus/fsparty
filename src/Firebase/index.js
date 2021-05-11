@@ -17,39 +17,55 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// ------- test functions --------
+//  ----------------- Racing game functions ----------------
+export const racingGamePlayers = database.ref('1/racingGame/players');
 
-// read from database once
-// export function getReference() {
-//   let db = database.ref();
-//   const data = usersRef
-//     .child('players')
-//     .get()
-//     .then((snapshot) => {
-//       console.log(snapshot.val());
-//     });
-
-//   return data;
-// }
-
-// update database - not working perfectly
-
-function setData(name) {
-  database.ref('users').update({
-    name,
+export const getRacingGamePlayers = (gameId, spawned, cb) => {
+  const players = database.ref(`${gameId}/racingGame/players`);
+  players.on('value', (snapshot) => {
+    const list = snapshot.val();
+    if (!spawned) {
+      cb(list);
+      spawned = true;
+    }
   });
+};
+
+export const updateRacingGamePlayers = (gameId, playerId, cb) => {
+  const players = database.ref(`${gameId}/racingGame/players`);
+  players.on('child_changed', (snapshot) => {
+    const player = snapshot.val();
+    if (player.playerId !== playerId) {
+      cb(player);
+    }
+  });
+};
+
+export const finishRacingGame = (gameId) => {
+  const game = database.ref(`${gameId}/racingGame`);
+  game.update({ completed: true });
+};
+
+function getPlayerInfo(player) {
+  const playerData = player.once('value').then((snapshot) => {
+    snapshot.val();
+  });
+
+  return playerData;
 }
 
-setData('david');
-setData('reid');
+export const addPoints = (gameId, playerId, newPoints) => {
+  const player = database.ref(`${gameId}/main/players/${playerId}`);
+  const playerInfo = getPlayerInfo(player);
+  // player.once('value').then((snapshot) => {
+  //   snapshot.val();
+  // });
+  console.log(playerInfo);
+  // const newScore = playerInfo.score + newPoints;
+  player.update({ score: newPoints });
+};
 
-export const racingGamePlayers = database.ref('1/racingGame');
-
-// set up listener for changes to 'users' scope of database
-// users.on('value', (snapshot) => {
-//   userData.push(snapshot.val());
-//   //console.log(userData);
-// });
+// -------------- main game functions -----------------
 
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {

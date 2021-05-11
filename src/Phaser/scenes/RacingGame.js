@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
-import { racingGamePlayers } from '../../Firebase/index';
+import {
+  racingGamePlayers,
+  getRacingGamePlayers,
+  updateRacingGamePlayers,
+  finishRacingGame,
+} from '../../Firebase/index';
 import Player from '../entities/Player';
 
 // setting playerId here temporarily until the main game can set it
@@ -11,43 +16,39 @@ export default class RacingGame extends Phaser.Scene {
   constructor() {
     super('racingGame');
 
-    // using an object to store players instead of a phaser group
-    // so we can look up by id instead of iterating through an array
-    this.otherPlayers = {};
+    this.allPlayers = {};
     this.spawned = false;
+    this.gameId = 1;
+    this.finishers = [];
+
+    this.addPlayers = this.addPlayers.bind(this);
+    this.spawnMyCharacter = this.spawnMyCharacter.bind(this);
+    this.spawnOtherCharacters = this.spawnOtherCharacters.bind(this);
+    this.managePlayers = this.managePlayers.bind(this);
+    this.updateOtherPlayers = this.updateOtherPlayers.bind(this);
   }
 
   preload() {
-    this.load.spritesheet('car', '../../public/assets/images/race_car.png', {
+    this.load.spritesheet('car', '/public/assets/images/race_car.png', {
       frameWidth: 32,
       frameHeight: 16,
     });
+    this.load.image('finish_line', '/public/assets/images/finish_line.png');
+    this.load.image('track', '/public/assets/images/track.png');
+    this.load.image('bg', '/public/assets/images/racing_bg.png');
   }
 
   create() {
-    this.serverPlayers = racingGamePlayers;
+    this.managePlayers();
 
-    // get players from the database - this could maybe get replaced with a one time call // basically a get request
-    this.serverPlayers.on('value', (snapshot) => {
-      const list = snapshot.val();
-      if (!this.spawned) {
-        this.addPlayers(list);
-        this.spawned = true;
-      }
-    });
+    this.createSprites();
 
-    // listen for player movement udpdates
-    this.serverPlayers.on('child_changed', (snapshot) => {
-      const player = snapshot.val();
-      if (player.playerId !== myId) {
-        const player2update = this.otherPlayers[player.playerId];
-        player2update.x = player.x;
-      }
-    });
+    // this.background = this.add.image(400, 300, 'bg');
+    // this.track = this.add.image(400, 450, 'track');
+    // this.track2 = this.add.image(400, 150, 'track');
+    this.players = this.add.group();
 
-    this.createAnimations();
-
-    // setting player movement here instead of update so that the player only moves once on each key press - i.e. they can't just hold down the space bar
+    this.finishLine = this.physics.add.image(750, 400, 'finish_line');
 
     this.spaceBar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
@@ -56,6 +57,14 @@ export default class RacingGame extends Phaser.Scene {
     this.spaceBar.on('down', () => {
       this.myCharacter.setVelocityX(100);
     });
+
+    this.physics.add.overlap(
+      this.finishLine,
+      this.players,
+      this.addToFinishers,
+      null,
+      this
+    );
   }
 
   update() {
@@ -65,11 +74,19 @@ export default class RacingGame extends Phaser.Scene {
         this.myCharacter.oldPosition &&
         this.myCharacter.oldPosition.x !== position
       ) {
-        this.serverPlayers.child(`${myId}`).update({ x: this.myCharacter.x });
+        racingGamePlayers.child(`${myId}`).update({ x: this.myCharacter.x });
       }
       this.myCharacter.oldPositon = {
         x: this.myCharacter.x,
       };
+      if (this.finishers.length === this.players.getChildren().length) {
+        finishRacingGame(this.gameId);
+        this.scene.start('endScreen', {
+          gameId: this.gameId,
+          allPlayers: this.allPlayers,
+          finishers: this.finishers,
+        });
+      }
     }
   }
 
@@ -86,7 +103,9 @@ export default class RacingGame extends Phaser.Scene {
       .setScale(2)
       .play(`${player.color}`);
     newPlayer.playerId = player.playerId;
-    this.otherPlayers[player.playerId] = newPlayer;
+    newPlayer.name = player.name;
+    this.allPlayers[player.playerId] = newPlayer;
+    this.players.add(newPlayer);
   }
 
   spawnMyCharacter(player) {
@@ -94,9 +113,30 @@ export default class RacingGame extends Phaser.Scene {
       .setScale(2)
       .play(`${player.color}`);
     this.myCharacter.playerId = myId;
+    this.myCharacter.name = player.name;
+    this.allPlayers[this.myCharacter.playerId] = this.myCharacter;
+    this.players.add(this.myCharacter);
   }
 
-  createAnimations() {
+  managePlayers() {
+    getRacingGamePlayers(this.gameId, this.spawned, this.addPlayers);
+
+    updateRacingGamePlayers(this.gameId, myId, this.updateOtherPlayers);
+  }
+
+  updateOtherPlayers(player) {
+    const playerToUpdate = this.allPlayers[player.playerId];
+
+    playerToUpdate.x = player.x;
+  }
+
+  addToFinishers(finish, player) {
+    if (!this.finishers.includes(player.playerId)) {
+      this.finishers.push(player.playerId);
+    }
+  }
+
+  createSprites() {
     this.anims.create({
       key: 'red',
       frames: [{ key: 'car', frame: 0 }],
