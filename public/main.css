@@ -1,13 +1,13 @@
 .tile-grid {
   display: grid;
-  grid-template-columns: repeat(15, 75px);
+  grid-template-columns: repeat(15, 70px);
   width: 90%;
   margin: 0 auto;
 }
 
 .tile {
-  width: 75px;
-  height: 75px;
+  width: 70px;
+  height: 60px;
 }
 
 .background {
@@ -25,8 +25,10 @@
 
 .good {
   background-color: rgba(0, 128, 0, 0.5);
+  border: 1px solid rgba(0, 128, 0, 1);
 }
 
 .bad {
   background-color: rgba(255, 0, 0, 0.5);
+  border: 1px solid rgba(255, 0, 0, 1);
 }

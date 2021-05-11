@@ -3,9 +3,6 @@ import Phaser from 'phaser';
 const tileCount = 105;
 const tileArray = [];
 const pathTiles = {};
-const goodTiles = {};
-const badTiles = {};
-const neutralTiles = {};
 
 //populate pathTiles
 for (let i = 0; i < tileCount; i++) {
@@ -26,15 +23,15 @@ for (let i = 0; i < tileCount; i++) {
   const tile = {};
   const index = i + 1;
   tile.id = index;
-  const randomizer = Phaser.Math.Between(0, 6);
+  const randomizer = Phaser.Math.Between(1, 6);
   if (pathTiles[index]) {
     tile.tileType = 'path';
-    if (randomizer === 2 || randomizer == 4) {
-      tile.actionType = 'good';
-    } else if (randomizer === 3 || randomizer === 5) {
-      tile.actionType = 'bad';
-    } else {
+    if (index === 1) {
       tile.actionType = 'neutral';
+    } else if (randomizer % 2) {
+      tile.actionType = 'good';
+    } else {
+      tile.actionType = 'bad';
     }
   } else {
     tile.tileType = 'background';
