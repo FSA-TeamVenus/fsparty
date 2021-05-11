@@ -5,7 +5,8 @@ const user = { name: 'Robert', id: 0 }
 const App = () => {
   return (
     <div>
-      <Board user={user} />
+      {/* <Board user={user} /> */}
+      <Lobby />
     </div>
   );
 };
