@@ -34,16 +34,7 @@ const database = firebase.database();
 
 // update database - not working perfectly
 
-function setData(name) {
-  database.ref('users').update({
-    name,
-  });
-}
-
-setData('david');
-setData('reid');
-
-export const racingGamePlayers = database.ref('1/racingGame');
+export const racingGamePlayers = database.ref('1/racingGame/players');
 
 // set up listener for changes to 'users' scope of database
 // users.on('value', (snapshot) => {
@@ -61,14 +52,9 @@ const getRef = (gameId, playerId ) => {
 };
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
-<<<<<<< HEAD
   const ref = getRef(gameId);
   let players = firebase.database().ref(ref + '/players');
   players.on("value", (snapshot) => {
-=======
-  let players = firebase.database().ref(`${gameId}/main/players`);
-  players.on('value', (snapshot) => {
->>>>>>> 8c62a8c2fe463a6391db8900f9ad4dcc76e96857
     const data = snapshot.val();
     cb(data, 'playerList');
   });
@@ -81,13 +67,33 @@ export function getTurn(gameId, cb) {
     cb(data, 'turn');
   });
 }
-//increment turn
-export function updateTurn(gameId) {
-  let updates = {};
-  getTurn(gameId, function (data) {
-    updates[`${gameId}/main/turn`] = data + 1;
+//get round in a game instance
+export function getRound(gameId, cb) {
+  let turn = firebase.database().ref(`${gameId}/main/round`);
+  turn.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'round');
   });
-  return firebase.database().ref().update(updates);
+}
+//increment turn
+export function updateTurn(gameId, restartTurns) {
+  let turnUpdate = {};
+  if (restartTurns === true) turnUpdate[`${gameId}/main/turn`] = 0;
+  else {
+    getTurn(gameId, (data) => {
+    turnUpdate[`${gameId}/main/turn`] = data + 1;
+  })
+};
+  return firebase.database().ref().update(turnUpdate);
+}
+
+//increment round
+export function updateRound(gameId) {
+  let roundUpdate = {};
+  getRound(gameId, (data) => {
+    roundUpdate[`${gameId}/main/round`] = data + 1;
+  });
+  return firebase.database().ref().update(roundUpdate);
 }
 //get user position
 export function getPos(gameId, userId, cb) {
