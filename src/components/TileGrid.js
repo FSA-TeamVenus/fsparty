@@ -6,11 +6,12 @@ export default class TileGrid extends React.Component {
     super(props);
   }
   render() {
-    const { tileList } = this.props;
+    const { tileList, playerList } = this.props;
+
     return (
       <div className="tile-grid">
         {tileList.map((tile) => (
-          <Tile tileProps={tile} key={tile.id} />
+          <Tile tileProps={tile} players={playerList} key={tile.id} />
         ))}
       </div>
     );

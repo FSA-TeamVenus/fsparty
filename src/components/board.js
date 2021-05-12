@@ -86,7 +86,7 @@ export class Board extends React.Component {
         {turn < 0 ? (
           <button onClick={() => this.startGame()}>Start Game</button>
         ) : (
-          <TileGrid tileList={tileList} />
+          <TileGrid tileList={tileList} playerList={playerList} />
         )}
         {player.id == turn && playerList ? (
           <button onClick={() => this.rollDice()}>Roll {player.name}</button>
