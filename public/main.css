@@ -1,8 +1,18 @@
+#welcome {
+  width: 75%;
+  margin: 0 auto;
+}
+
+/* board styles */
+
 .tile-grid {
   display: grid;
   grid-template-columns: repeat(15, 70px);
-  width: 90%;
-  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  margin-left: -525px;
+  top: 50%;
+  margin-top: -210px;
 }
 
 .tile {
@@ -13,11 +23,6 @@
 .background {
   background-color: white;
 }
-
-/* .path {
-  background-color: rgba(0, 0, 255, 0.5);
-  border: 1px solid blue;
-} */
 
 .neutral {
   background-color: beige;
@@ -31,4 +36,37 @@
 .bad {
   background-color: rgba(255, 0, 0, 0.5);
   border: 1px solid rgba(255, 0, 0, 1);
+}
+
+/* player card styles */
+
+.card {
+  width: 100px;
+  height: 75px;
+  border: 1px solid blue;
+  background-color: white;
+}
+
+#card0 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#card1 {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#card2 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+#card3 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

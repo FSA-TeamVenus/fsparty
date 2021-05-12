@@ -2,6 +2,7 @@ import React from 'react';
 import GameCanvas from './GameCanvas';
 import TileGrid from './TileGrid';
 import tileList from './tileList';
+import PlayerCard from './PlayerCard';
 
 import {
   getPlayersfromGame,
@@ -60,14 +61,10 @@ export class Board extends React.Component {
     // console.log(nextPlayer);
     return (
       <div>
-        {/* <h2>Game Board</h2> */}
-        <h3>Welcome, {user.name}</h3>
-        <span>
-          Lobby:{' '}
-          {playerList.map((player) => (
-            <span key={player.name}>{`${player.name}, `}</span>
-          ))}
-        </span>
+        {/* <h3 id="welcome">Welcome, {user.name}</h3> */}
+        {playerList.map((player) => (
+          <PlayerCard key={player.name} player={player} />
+        ))}
         {turn < 0 ? (
           <button onClick={() => this.startGame()}>Start Game</button>
         ) : (
