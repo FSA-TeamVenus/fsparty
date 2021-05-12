@@ -55,7 +55,6 @@ export class Board extends React.Component {
     const { user } = this.props;
     const { turn, playerList } = this.state;
     const nextPlayer = playerList[user.id + 1];
-    console.log(nextPlayer);
     return (
       <div>
         <h2>Game Board</h2>
