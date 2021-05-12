@@ -23,12 +23,13 @@ export class Board extends React.Component {
     this.stateCb = this.stateCb.bind(this);
   }
   componentDidMount() {
-    getPlayersfromGame(1, this.stateCb);
+    this.rmPlayersListener = getPlayersfromGame(1, this.stateCb);
     getTurn(1, this.stateCb);
     getPos(1, this.props.user.id, this.stateCb);
     getRound(1, this.stateCb)
   }
   componentWillUnmount() {
+    this.rmPlayersListener();
   }
 
   stateCb(value, key) {
@@ -58,9 +59,15 @@ export class Board extends React.Component {
 
   rollDice() {
     const { turn,} = this.state
+    const { user,} = this.props
     const number = Math.ceil(Math.random() * 4);
-    updatePos(1, this.props.user.id, number);
-    updateTurn(1, this.stateCb);
+    setTimeout(function(){
+      updatePos(1, user.id, number)
+      setTimeout(function(){
+        updateTurn(1, this.stateCb);
+      }, 4000)
+    } , 2000)
+    setTimeout(()=> updateTurn(1, this.stateCb), 2500);
   }
 
   render() {
@@ -89,8 +96,8 @@ export class Board extends React.Component {
         ) : (
           <div>Round: {round}. Next Player: {nextPlayer ? (nextPlayer.name) : ('...')}</div>
         )}
-        {this.state.turn === this.state.playerList.length ? (
-          <GameCanvas />
+        {turn === playerList.length ? (
+        <GameCanvas />
         ) : (
           <div />
         )}

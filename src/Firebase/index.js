@@ -58,6 +58,8 @@ export function getPlayersfromGame(gameId, cb) {
     const data = snapshot.val();
     cb(data, 'playerList');
   });
+  // return players.off
+  return firebase.database().ref(ref).off
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
