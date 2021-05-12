@@ -31,7 +31,6 @@ export const getRacingGamePlayers = (gameId, spawned, cb) => {
   });
 };
 
-<<<<<<< HEAD
 export const updateRacingGamePlayers = (gameId, playerId, cb) => {
   const players = database.ref(`${gameId}/racingGame/players`);
   players.on('child_changed', (snapshot) => {
@@ -55,30 +54,27 @@ export const addPoints = (gameId, playerId, newPoints) => {
     player.update({ score: newScore });
   });
 };
-=======
-export const racingGamePlayers = database.ref('1/racingGame/players');
->>>>>>> main
 
 // -------------- main game functions -----------------
 
 //get tailored firebase ref
-const getRef = (gameId, playerId ) => {
+const getRef = (gameId, playerId) => {
   if (playerId) {
-    return `${gameId}/main/players/${playerId}`
+    return `${gameId}/main/players/${playerId}`;
   } else {
-    return `${gameId}/main`
+    return `${gameId}/main`;
   }
 };
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
   const ref = getRef(gameId);
   let players = firebase.database().ref(ref + '/players');
-  players.on("value", (snapshot) => {
+  players.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'playerList');
   });
   // return players.off
-  return firebase.database().ref(ref).off
+  return firebase.database().ref(ref).off;
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
@@ -102,9 +98,9 @@ export function updateTurn(gameId, restartTurns) {
   if (restartTurns === true) turnUpdate[`${gameId}/main/turn`] = 0;
   else {
     getTurn(gameId, (data) => {
-    turnUpdate[`${gameId}/main/turn`] = data + 1;
-  })
-};
+      turnUpdate[`${gameId}/main/turn`] = data + 1;
+    });
+  }
   return firebase.database().ref().update(turnUpdate);
 }
 
@@ -118,9 +114,9 @@ export function updateRound(gameId) {
 }
 //get user position
 export function getPos(gameId, playerId, cb) {
-  let ref = getRef(gameId, playerId)
+  let ref = getRef(gameId, playerId);
   let pos = firebase.database().ref(ref + `/position`);
-  pos.on("value", (snapshot) => {
+  pos.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'pos');
   });
