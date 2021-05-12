@@ -20,8 +20,8 @@ body {
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 125px;
+  height: 125px;
   border: solid 1px white;
 }
 
@@ -51,6 +51,27 @@ body {
   width: 97%;
   height: 15px;
 }
+
+.blue {
+  background-color: Blue
+}
+
+.red {
+  background-color: Red
+}
+.green {
+  background-color: Green
+}
+
+.yellow {
+  background-color: Yellow
+}
+
+.black {
+  background-color: Black
+}
+
+
 
 
 /* End Lobby Section */
