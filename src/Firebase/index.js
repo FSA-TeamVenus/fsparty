@@ -46,23 +46,13 @@ export const finishRacingGame = (gameId) => {
   game.update({ completed: true });
 };
 
-function getPlayerInfo(player) {
-  const playerData = player.once('value').then((snapshot) => {
-    snapshot.val();
-  });
-
-  return playerData;
-}
-
 export const addPoints = (gameId, playerId, newPoints) => {
   const player = database.ref(`${gameId}/main/players/${playerId}`);
-  const playerInfo = getPlayerInfo(player);
-  // player.once('value').then((snapshot) => {
-  //   snapshot.val();
-  // });
-  console.log(playerInfo);
-  // const newScore = playerInfo.score + newPoints;
-  player.update({ score: newPoints });
+  player.once('value').then((snapshot) => {
+    const score = snapshot.val().score;
+    const newScore = score + newPoints;
+    player.update({ score: newScore });
+  });
 };
 
 // -------------- main game functions -----------------
