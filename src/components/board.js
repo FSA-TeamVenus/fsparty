@@ -22,7 +22,7 @@ export class Board extends React.Component {
   componentDidMount() {
     getPlayersfromGame(1, this.stateCb);
     getTurn(1, this.stateCb);
-    getPos(1, this.props.user.id, this.stateCb);
+    getPos(1, this.props.player.id, this.stateCb);
   }
   stateCb(value, state) {
     this.setState({ [state]: value });
@@ -47,19 +47,19 @@ export class Board extends React.Component {
 
   rollDice() {
     const number = Math.ceil(Math.random() * 4);
-    updatePos(1, this.props.user.id, number);
+    updatePos(1, this.props.player.id, number);
     updateTurn(1, this.stateCb);
   }
 
   render() {
-    const { user } = this.props;
+    const { player } = this.props;
     const { turn, playerList } = this.state;
-    const nextPlayer = playerList[user.id + 1];
+    const nextPlayer = playerList[player.id + 1];
     console.log(nextPlayer);
     return (
       <div>
         <h2>Game Board</h2>
-        <h3>Welcome, {user.name}</h3>
+        <h3>Welcome, {player.name}</h3>
         <h4>
           Lobby:{' '}
           {playerList.map((player) => (
@@ -73,8 +73,8 @@ export class Board extends React.Component {
         ) : (
           <div>Display Board</div>
         )}
-        {user.id == turn && playerList ? (
-          <button onClick={() => this.rollDice()}>Roll {user.name}</button>
+        {player.id == turn && playerList ? (
+          <button onClick={() => this.rollDice()}>Roll {player.name}</button>
         ) : (
           <div>...waiting on next player</div>
         )}

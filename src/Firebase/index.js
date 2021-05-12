@@ -76,20 +76,20 @@ export function updateTurn(gameId) {
   return firebase.database().ref().update(updates);
 }
 
-export function getPos(gameId, userId, cb) {
+export function getPos(gameId, playerId, cb) {
   let pos = firebase
     .database()
-    .ref(`${gameId}/main/players/${userId}/position`);
+    .ref(`${gameId}/main/players/${playerId}/position`);
   pos.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'pos');
   });
 }
 
-export function updatePos(gameId, userId, newPos) {
+export function updatePos(gameId, playerId, newPos) {
   let updates = {};
-  getPos(gameId, userId, function (data) {
-    updates[`${gameId}/main/players/${userId}/position`] = data + newPos;
+  getPos(gameId, playerId, function (data) {
+    updates[`${gameId}/main/players/${playerId}/position`] = data + newPos;
   });
   return firebase.database().ref().update(updates);
 }
