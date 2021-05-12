@@ -13,6 +13,7 @@ import {
   getRound,
   updateRound,
 } from '../Firebase/index';
+import Leaderboard from './Leaderboard';
 
 export class Board extends React.Component {
   constructor(props) {
@@ -83,17 +84,21 @@ export class Board extends React.Component {
         {playerList.map((player) => (
           <PlayerCard key={player.name} player={player} />
         ))}
+        <Leaderboard players={playerList} />
         {turn < 0 ? (
           <button onClick={() => this.startGame()}>Start Game</button>
         ) : (
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
         {player.id == turn && playerList ? (
-          <button onClick={() => this.rollDice()}>Roll {player.name}</button>
+          <button id="dice-roll" onClick={() => this.rollDice()}>
+            Roll {player.name}
+          </button>
         ) : (
-          <div>
-            Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
-          </div>
+          ''
+          // <div>
+          //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
+          // </div>
         )}
         {turn === playerList.length ? <GameCanvas /> : <div />}
       </div>
