@@ -20,77 +20,98 @@ const database = firebase.database();
 // ------- test functions --------
 
 // read from database once
-function getReference() {
-  let database = firebase.database();
-  let usersRef = database.ref();
-  const data = usersRef
-    .child('users')
-    .get()
-    .then((snapshot) => {
-      console.log(snapshot.val());
-    });
+// export function getReference() {
+//   let db = database.ref();
+//   const data = usersRef
+//     .child('players')
+//     .get()
+//     .then((snapshot) => {
+//       console.log(snapshot.val());
+//     });
 
-  return data;
-}
+//   return data;
+// }
 
 // update database - not working perfectly
 
-function setData(name) {
-  database.ref('users').update({
-    name,
-  });
-}
-
-setData('david');
-setData('reid');
-
-const userData = [];
-let users = firebase.database().ref('users');
+export const racingGamePlayers = database.ref('1/racingGame/players');
 
 // set up listener for changes to 'users' scope of database
-users.on('value', (snapshot) => {
-  userData.push(snapshot.val());
-  //console.log(userData);
-});
+// users.on('value', (snapshot) => {
+//   userData.push(snapshot.val());
+//   //console.log(userData);
+// });
 
+//get tailored firebase ref
+const getRef = (gameId, playerId ) => {
+  if (playerId) {
+    return `${gameId}/main/players/${playerId}`
+  } else {
+    return `${gameId}/main`
+  }
+};
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
-  let players = firebase.database().ref(`${gameId}/main/players`);
+  const ref = getRef(gameId);
+  let players = firebase.database().ref(ref + '/players');
   players.on("value", (snapshot) => {
     const data = snapshot.val();
-    cb(data, 'playerList')
+    cb(data, 'playerList');
   });
+  // return players.off
+  return firebase.database().ref(ref).off
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
   let turn = firebase.database().ref(`${gameId}/main/turn`);
-  turn.on("value", (snapshot) => {
+  turn.on('value', (snapshot) => {
     const data = snapshot.val();
-    cb(data, 'turn')
+    cb(data, 'turn');
   });
 }
-
-export function updateTurn(gameId) {
-  let updates = {};
-  getTurn(gameId, function(data) {
-    updates[`${gameId}/main/turn`] = data + 1;
+//get round in a game instance
+export function getRound(gameId, cb) {
+  let turn = firebase.database().ref(`${gameId}/main/round`);
+  turn.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'round');
   });
-  return firebase.database().ref().update(updates);
+}
+//increment turn
+export function updateTurn(gameId, restartTurns) {
+  let turnUpdate = {};
+  if (restartTurns === true) turnUpdate[`${gameId}/main/turn`] = 0;
+  else {
+    getTurn(gameId, (data) => {
+    turnUpdate[`${gameId}/main/turn`] = data + 1;
+  })
+};
+  return firebase.database().ref().update(turnUpdate);
 }
 
-export function getPos(gameId, userId, cb) {
-  let pos = firebase.database().ref(`${gameId}/main/players/${userId}/position`);
+//increment round
+export function updateRound(gameId) {
+  let roundUpdate = {};
+  getRound(gameId, (data) => {
+    roundUpdate[`${gameId}/main/round`] = data + 1;
+  });
+  return firebase.database().ref().update(roundUpdate);
+}
+//get user position
+export function getPos(gameId, playerId, cb) {
+  let ref = getRef(gameId, playerId)
+  let pos = firebase.database().ref(ref + `/position`);
   pos.on("value", (snapshot) => {
     const data = snapshot.val();
-    cb(data, 'pos')
+    cb(data, 'pos');
   });
+  return pos.off();
 }
-
-export function updatePos(gameId, userId, newPos) {
+//increment position by newPos
+export function updatePos(gameId, playerId, newPos) {
   let updates = {};
-  getPos(gameId, userId, function(data) {
-    updates[`${gameId}/main/players/${userId}/position`] = data + newPos;
+  getPos(gameId, playerId, function (data) {
+    updates[`${gameId}/main/players/${playerId}/position`] = data + newPos;
   });
   return firebase.database().ref().update(updates);
 }
-
