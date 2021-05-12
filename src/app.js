@@ -1,11 +1,11 @@
 import React from 'react';
 import Board from './components/board';
 
-const user = { name: 'David', id: 3 }
+const player = { name: 'David', id: 3 }
 const App = () => {
   return (
     <div>
-      <Board user={user} />
+      <Board player={player} />
     </div>
   );
 };

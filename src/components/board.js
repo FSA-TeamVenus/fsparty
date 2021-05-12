@@ -25,7 +25,7 @@ export class Board extends React.Component {
   componentDidMount() {
     this.rmPlayersListener = getPlayersfromGame(1, this.stateCb);
     getTurn(1, this.stateCb);
-    getPos(1, this.props.user.id, this.stateCb);
+    getPos(1, this.props.player.id, this.stateCb);
     getRound(1, this.stateCb)
   }
   componentWillUnmount() {
@@ -59,10 +59,10 @@ export class Board extends React.Component {
 
   rollDice() {
     const { turn,} = this.state
-    const { user,} = this.props
+    const { player,} = this.props
     const number = Math.ceil(Math.random() * 4);
     setTimeout(function(){
-      updatePos(1, user.id, number)
+      updatePos(1, player.id, number)
       setTimeout(function(){
         updateTurn(1, this.stateCb);
       }, 4000)
@@ -71,13 +71,13 @@ export class Board extends React.Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { player } = this.props;
     const { turn, playerList, round } = this.state;
     const nextPlayer = playerList[turn];
     return (
       <div>
         <h2>Game Board</h2>
-        <h3>Welcome, {user.name}</h3>
+        <h3>Welcome, {player.name}</h3>
         <h4>
           Lobby:
           {playerList.map((player) => (
@@ -91,8 +91,8 @@ export class Board extends React.Component {
         ) : (
           <div>Display Board</div>
         )}
-        {user.id == turn && playerList ? (
-          <button onClick={() => this.rollDice()}>Roll {user.name}</button>
+        {player.id == turn && playerList ? (
+          <button onClick={() => this.rollDice()}>Roll {player.name}</button>
         ) : (
           <div>Round: {round}. Next Player: {nextPlayer ? (nextPlayer.name) : ('...')}</div>
         )}
