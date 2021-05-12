@@ -1,7 +1,7 @@
 import React from 'react';
 import GameCanvas from './GameCanvas';
 import TileGrid from './TileGrid';
-import tileList from './tileList';
+import { tileList, tileDictionary } from './tileList';
 import PlayerCard from './PlayerCard';
 
 import {

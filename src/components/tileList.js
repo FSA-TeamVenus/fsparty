@@ -1,43 +1,77 @@
-import Phaser from 'phaser';
+const layout = [
+  [1, 2, 2, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 2],
+  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+  [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3],
+  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+  [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+  [2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3],
+];
 
-const tileCount = 105;
-const tileArray = [];
-const pathTiles = {};
+const actionTypes = {
+  1: 'start',
+  2: 'add',
+  3: 'remove',
+  4: 'chance',
+  5: 'store',
+};
 
-//populate pathTiles
-for (let i = 0; i < tileCount; i++) {
-  let index = i + 1;
-  if (index >= 2 && index <= 14) {
-    pathTiles[index] = true;
-  } else if (index <= 104 && index >= 92) {
-    pathTiles[index] = true;
-  } else if (!((index - 1) % 15)) {
-    pathTiles[index] = true;
-  } else if (!(index % 15)) {
-    pathTiles[index] = true;
+class Tile {
+  constructor(id, actionType) {
+    (this.id = id), (this.actionType = actionType);
   }
-}
-
-//populate tileArray
-for (let i = 0; i < tileCount; i++) {
-  const tile = {};
-  const index = i + 1;
-  tile.id = index;
-  const randomizer = Phaser.Math.Between(1, 6);
-  if (pathTiles[index]) {
-    tile.tileType = 'path';
-    if (index === 1) {
-      tile.actionType = 'neutral';
-    } else if (randomizer % 2) {
-      tile.actionType = 'good';
+  action(player) {
+    if (this.actionType === 'add') {
+      player.score += 5;
     } else {
-      tile.actionType = 'bad';
+      player.score -= 5;
     }
-  } else {
-    tile.tileType = 'background';
-    tile.actionType = null;
   }
-  tileArray.push(tile);
 }
 
-export default tileArray;
+function populateTileList(map) {
+  const list = [];
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[i].length; j++) {
+      const currentTileValue = map[i][j];
+
+      const id = i * 15 + j;
+      const actionType = actionTypes[currentTileValue];
+
+      const tile = new Tile(id, actionType);
+
+      list.push(tile);
+    }
+  }
+  return list;
+}
+
+function populateDictionary(list) {
+  const dictionary = {};
+  const pathTiles = list.filter((tile) => tile.actionType !== 'background');
+  const top = pathTiles.filter((tile) => tile.id < 15);
+  const bottom = pathTiles
+    .filter((tile) => tile.id > 89)
+    .sort((a, b) => b.id - a.id);
+  const leftSide = [];
+  const rightSide = [];
+  for (let i = 15; i < 25; i++) {
+    let currentTile = pathTiles[i];
+    if (!(currentTile.id % 15)) {
+      leftSide.unshift(currentTile);
+    } else if (!((currentTile.id + 1) % 15)) {
+      rightSide.push(currentTile);
+    }
+  }
+  const fullPath = top.concat(rightSide).concat(bottom).concat(leftSide);
+
+  for (let i = 0; i < fullPath.length; i++) {
+    dictionary[i] = fullPath[i];
+  }
+
+  return dictionary;
+}
+
+export const tileList = populateTileList(layout);
+
+export const tileDictionary = populateDictionary(tileList);

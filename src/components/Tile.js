@@ -5,7 +5,7 @@ export default class Tile extends React.Component {
     super(props);
   }
   render() {
-    const { tileType, id, actionType } = this.props.tileProps;
-    return <div className={`tile ${tileType} ${actionType}`}>{id}</div>;
+    const { id, actionType } = this.props.tileProps;
+    return <div className={`tile ${actionType}`}>{id}</div>;
   }
 }
