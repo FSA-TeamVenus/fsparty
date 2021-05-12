@@ -7,32 +7,49 @@ export class Lobby extends React.Component {
     this.state = {
       playerList: [],
       gameReady: false,
-      roomId: null,
+      gameId: null,
+      sprites: [
+        { name: "Kratos", imgUrl: '/pubic/kratos-avatar-1.jpg'},
+        { name: "Donkey Kong", imgUrl: '/pubic/donkey-kong-avatar-2.jpg'},
+        { name: "Link", imgUrl: '/pubic/link-avatar-1.jpg'},
+        { name: "Sonic", imgUrl: '/pubic/sonic-avatar-2.jpg'},
+      ]
     };
+    this.handleColorSelect.bind = this.handleColorSelect;
+    this.handleAvatarNav.bind = this.handleAvatarNav;
   }
-
-  sprites = [
-    { name: "Kratos", imgUrl: '/pubic/kratos-avata-1.jpg'},
-    { name: "Donkey Kong", imgUrl: '/pubic/donkey-kong-avatar-3.jpg'},
-    { name: "Link", imgUrl: '/pubic/link-avatar-1.jpg'},
-    { name: "Sonic", imgUrl: '/pubic/sonic-avatar-2.jpg'},
-  ]
 
   componentDidMount() {
 
   }
 
   handleSubmit(evt) {
-    evt.preventDefault();
-
+    // evt.preventDefault();
+    // const playerName = evt.target.playername;
+    // this.state.setState(
+    //   { playerList: [...playerList, playerName] }
+    // )
   }
 
-  handlePrev(evt){
-
+  handleColorSelect(evt) {
+    const color = evt.target.value === ''? 'Black' : evt.target.value;
+    const box = document.getElementById('selected-color');
+    box.style.backgroundColor = `${color}`;
   }
 
-  handleNext(evt){
-
+  handleAvatarNav(evt) {
+    currAvatar = document.getElementById('avatar-name').value;
+    let elementPos = sprites.map(function(x) {return x.name; }).indexOf(currAvatar);
+    if(elementPos === 0 || elementPos === 3) { //at either boundary, do nothing
+      return
+    } else {
+      const direction = evt.target.value;
+      const avatarFound = sprites[elementPos - direction];
+      const img = document.getElementById('avatar-thumb');
+      img.src = avatarFound.imgUrl;
+      const textbox = document.getElementById('avatar-name');
+      textbox.value = avatarFound.name;
+    }
   }
 
 
@@ -40,40 +57,54 @@ export class Lobby extends React.Component {
 
     return (
       <div id="lobby-window">
-        <h2>FS Party</h2>
-          <form onSubmit={handleSubmit} name={name} id="lobby-form">
-            {error && error.response && <p> {error.response.data} </p>}
+        <h2 className="title">FS Party</h2>
+          <form name={name} id="lobby-form">
+        <div className="form-row">
+            <div className="form-col">
             <div className="input-div">
               <label htmlFor="playername">
-                <small>Player Name</small>
+                <small>Enter Name</small>
               </label>
               <input name="playername" type="text" className="lobby-input" />
             </div>
             <div className="input-div">
               <label htmlFor="playercolor">
-                <small>Player Color</small>
+                <small>Select Color</small>
               </label>
-              <select name="playercolor" className="lobby-input">
-                <option value="Blue">Blue</option>
-                <option value="Red">Blue</option>
-                <option value="Green">Blue</option>
-                <option value="Yelow">Blue</option>
+              <select name="playercolor" className="lobby-input" onchange={this.handleColorSelect}>
+              <option value=""></option>
+              <option value="Blue">Blue</option>
+              <option value="Red">Red</option>
+              <option value="Green">Green</option>
+              <option value="Yellow">Yellow</option>
               </select>
+              <div id="selected-color" className="selected-color"></div>
             </div>
+          </div>
+          <div className="form-col">
             <div className="input-div">
               <div name="sprite-image"></div>
               <label htmlFor="playersprite">
-                <small>Select Character</small>
+              <small>Select Character</small>
               </label>
-              <button type="button" id="prev-sprite" onclick={handlePrev}></button>
-              <input name="playersprite" type="text" className="lobby-input" />
-              <button type="button" id="next-sprite" onclick={handleNext}></button>
+              <div className="form-row">
+                <button type="button" id="prev-sprite" onclick={this.handleAvatarNav} value="1">prev</button>
+                <img id="avatar-thumb" src="kratos-avatar-1.jpg" className="avatar"/>
+                <button type="button" id="next-sprite" onclick={this.handleAvatarNav} value="-1">next</button>
+              </div>
             </div>
+            <div id="sel-color-div" className="input-div">
+              <input id="avatar-name" name="playersprite" type="hidden" className="lobby-input" value="Kratos" />
+            </div>
+          </div>
+          </div>
+          <div className="input-div">
             <button type="submit" id="form-submit">
-              {displayName}
+              JOIN!
             </button>
+          </div>
           </form>
-      </div>
+        </div>
     );
   }
 }
