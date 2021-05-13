@@ -1,7 +1,7 @@
 import React from 'react';
 import Board from './components/board';
 
-const player = { name: 'David', id: 3 }
+const player = { name: 'Gabe', id: 1 };
 const App = () => {
   return (
     <div>
