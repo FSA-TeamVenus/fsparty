@@ -1,5 +1,8 @@
 import React from 'react';
 import GameCanvas from './GameCanvas';
+import TileGrid from './TileGrid';
+import { tileList, tileDictionary } from './tileList';
+import PlayerCard from './PlayerCard';
 
 import {
   getPlayersfromGame,
@@ -27,14 +30,11 @@ export class Board extends React.Component {
     this.rmPlayersListener = getPlayersfromGame(1, this.stateCb);
     getTurn(1, this.stateCb);
     getPos(1, this.props.player.id, this.stateCb);
-    getRound(1, this.stateCb)
+    getRound(1, this.stateCb);
   }
-<<<<<<< HEAD
-=======
   componentWillUnmount() {
     this.rmPlayersListener();
   }
->>>>>>> a2e3d3b5b1fb9eb2d6438a224f7bb1acec929a8c
 
   stateCb(value, key) {
     this.setState({ [key]: value });
@@ -44,24 +44,17 @@ export class Board extends React.Component {
     //run function corresponding to tiles array full of objects
     const { pos } = this.state;
 
-    console.log("compDidMount pos===>", pos)
+    console.log('compDidMount pos===>', pos);
 
     const tempTiles = [
-<<<<<<< HEAD
-      { action: () => console.log("tile 1")  },
-      { action: () =>  console.log("tile 2")  },
-      { action: () =>  console.log("tile 3")  },
-      { action: () =>  console.log("tile 4")  },
-=======
-      { action: () => console.log("tile 1") },
-      { action: () => console.log("tile 2") },
-      { action: () => console.log("tile 3") },
-      { action: () => console.log("tile 4") },
-      { action: () => console.log("tile 5") },
-      { action: () => console.log("tile 6") },
-      { action: () => console.log("tile 7") },
-      { action: () => console.log("tile 8") },
->>>>>>> a2e3d3b5b1fb9eb2d6438a224f7bb1acec929a8c
+      { action: () => console.log('tile 1') },
+      { action: () => console.log('tile 2') },
+      { action: () => console.log('tile 3') },
+      { action: () => console.log('tile 4') },
+      { action: () => console.log('tile 5') },
+      { action: () => console.log('tile 6') },
+      { action: () => console.log('tile 7') },
+      { action: () => console.log('tile 8') },
     ];
 
     if (pos > 0) {
@@ -74,58 +67,41 @@ export class Board extends React.Component {
   }
 
   rollDice() {
-    const { turn,} = this.state
-    const { player,} = this.props
+    const { turn } = this.state;
+    const { player } = this.props;
     const number = Math.ceil(Math.random() * 4);
-    setTimeout(function(){
-      updatePos(1, player.id, number)
-      setTimeout(function(){
+    setTimeout(function () {
+      updatePos(1, player.id, number);
+      setTimeout(function () {
         updateTurn(1, this.stateCb);
-      }, 4000)
-    } , 2000)
-    setTimeout(()=> updateTurn(1, this.stateCb), 2500);
+      }, 4000);
+    }, 2000);
+    setTimeout(() => updateTurn(1, this.stateCb), 2500);
   }
 
   render() {
-<<<<<<< HEAD
-    const { user } = this.props;
-    const { turn, playerList } = this.state;
-    const nextPlayer = playerList[user.id + 1];
-
-    console.log(user)
-
-=======
     const { player } = this.props;
     const { turn, playerList, round } = this.state;
     const nextPlayer = playerList[turn];
->>>>>>> a2e3d3b5b1fb9eb2d6438a224f7bb1acec929a8c
     return (
       <div>
-        <h2>Game Board</h2>
-        <h3>Welcome, {player.name}</h3>
-        <h4>
-          Lobby:
-          {playerList.map((player) => (
-            <div key={player.name}>
-              <h5>{player.name}</h5>
-            </div>
-          ))}
-        </h4>
+        {/* <h3 id="welcome">Welcome, {user.name}</h3> */}
+        {playerList.map((player) => (
+          <PlayerCard key={player.name} player={player} />
+        ))}
         {turn < 0 ? (
           <button onClick={() => this.startGame()}>Start Game</button>
         ) : (
-          <div>Display Board</div>
+          <TileGrid tileList={tileList} playerList={playerList} />
         )}
         {player.id == turn && playerList ? (
           <button onClick={() => this.rollDice()}>Roll {player.name}</button>
         ) : (
-          <div>Round: {round}. Next Player: {nextPlayer ? (nextPlayer.name) : ('...')}</div>
+          <div>
+            Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
+          </div>
         )}
-        {turn === playerList.length ? (
-        <GameCanvas />
-        ) : (
-          <div />
-        )}
+        {turn === playerList.length ? <GameCanvas /> : <div />}
       </div>
     );
   }

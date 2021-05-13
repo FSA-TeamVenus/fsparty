@@ -1,3 +1,75 @@
+#welcome {
+  width: 75%;
+  margin: 0 auto;
+}
+
+/* board styles */
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(15, 70px);
+  position: absolute;
+  left: 50%;
+  margin-left: -525px;
+  top: 50%;
+  margin-top: -210px;
+}
+
+.tile {
+  width: 70px;
+  height: 60px;
+}
+
+.background {
+  background-color: white;
+}
+
+.start {
+  background-color: beige;
+}
+
+.add {
+  background-color: rgba(0, 128, 0, 0.5);
+  border: 1px solid rgba(0, 128, 0, 1);
+}
+
+.remove {
+  background-color: rgba(255, 0, 0, 0.5);
+  border: 1px solid rgba(255, 0, 0, 1);
+}
+
+/* player card styles */
+
+.card {
+  width: 100px;
+  height: 75px;
+  border: 1px solid blue;
+  background-color: white;
+}
+
+#card0 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#card1 {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#card2 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+#card3 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
 /* Lobby Section */
 body {
   background-color: black;
@@ -37,7 +109,7 @@ body {
 }
 
 .title {
-  font-family: Arial, "Mario Party Hudson";
+  font-family: Arial, 'Mario Party Hudson';
 }
 
 .lobby-input {
@@ -46,32 +118,29 @@ body {
 }
 
 .selected-color {
-  margin-top: .2em;
-  border:solid 1px white;
+  margin-top: 0.2em;
+  border: solid 1px white;
   width: 97%;
   height: 15px;
 }
 
 .blue {
-  background-color: Blue
+  background-color: Blue;
 }
 
 .red {
-  background-color: Red
+  background-color: Red;
 }
 .green {
-  background-color: Green
+  background-color: Green;
 }
 
 .yellow {
-  background-color: Yellow
+  background-color: Yellow;
 }
 
 .black {
-  background-color: Black
+  background-color: Black;
 }
-
-
-
 
 /* End Lobby Section */
