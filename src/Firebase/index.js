@@ -35,6 +35,7 @@ const database = firebase.database();
 // update database - not working perfectly
 
 export const racingGamePlayers = database.ref('1/racingGame/players');
+export const shootingGamePlayers = database.ref('2/shootingGame/players');
 
 // set up listener for changes to 'users' scope of database
 // users.on('value', (snapshot) => {
@@ -113,5 +114,28 @@ export function updatePos(gameId, playerId, newPos) {
   getPos(gameId, playerId, function (data) {
     updates[`${gameId}/main/players/${playerId}/position`] = data + newPos;
   });
+  return firebase.database().ref().update(updates);
+}
+//get shootingGame players
+export function getShootingPlayers(gameId, cb) {
+  let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
+  playerList.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data);
+  })
+
+}
+//get other reticle positions (for shooting game)
+export function getOtherReticles(gameId, cb) {
+  let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
+  playerList.on('child_changed', (snapshot) => {
+    const data = snapshot.val();
+    cb(data);
+  })
+}
+//update reticle position
+export function updateReticlePos(gameId, playerId, data) {
+  let updates = {};
+  updates[`${gameId}/shootingGame/players/${playerId}`] = data;
   return firebase.database().ref().update(updates);
 }
