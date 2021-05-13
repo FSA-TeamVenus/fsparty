@@ -7,7 +7,7 @@ const App = () => {
   return (
     <div>
       <Lobby />
-      <Board player={player} />
+      {/* <Board player={player} /> */}
     </div>
   );
 };

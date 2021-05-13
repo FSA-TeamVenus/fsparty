@@ -115,3 +115,27 @@ export function updatePos(gameId, playerId, newPos) {
   });
   return firebase.database().ref().update(updates);
 }
+
+//add player to game
+export function addPlayer(gameId, playerId, playerInfo) {
+  let updates = {};
+  updates[`${gameId}/main/players/${playerId}`] = playerInfo;
+  return firebase.database().ref().update(updates);
+}
+
+export function getNewId(gameId, callback) {
+  getPlayersfromGame(gameId, data => {
+   callback(data);
+  })
+}
+
+export function deleteBranch() {
+  const adaRef = database.ref('1/main/players');
+  adaRef.remove()
+  .then(function() {
+    console.log("Remove succeeded.")
+  })
+  .catch(function(error) {
+    console.log("Remove failed: " + error.message)
+  });
+}

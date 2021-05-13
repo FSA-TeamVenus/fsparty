@@ -1,11 +1,12 @@
 import React from 'react';
 import { withRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { addPlayer, getNewId, deleteBranch } from '../Firebase';
 
 export class Lobby extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      playerList: [],
+      player: {},
       gameReady: false,
       gameId: null,
       sprites: [
@@ -20,18 +21,66 @@ export class Lobby extends React.Component {
     };
     this.handleColorSelect = this.handleColorSelect.bind(this);
     this.handleAvatarNav = this.handleAvatarNav.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
 
+    //DO NOT UNCOMMENT!!!
+    //THIS WILL DELETE ENTIRE `main/players` BRANCH
+    //ONLY USED IN EMERGENCY WHEN ENDLESS LOOP ADDED 600 RECORDS TO DB!
+    //deleteBranch();
+
   }
 
+  genNewPlayerId(data) {
+    console.log(Object.keys(data).length)
+    //use data returned from call firebase to get next avail playerId
+    const playerId = Object.keys(data).length;
+    const playerName = document.getElementById('playername').value;
+    const color = document.getElementById('playercolor').value;
+    const sprite = document.getElementById('avatarname').value;
+
+    console.log(playerName)
+    console.log(color)
+    console.log(sprite)
+
+    //call firebase.addPlayer(gameId, player)
+    if(playerId < 8) {
+      addPlayer(1, playerId,
+        {
+          name: playerName,
+          position: 0,
+          score: 0,
+          color: color,
+          sprite: sprite
+        });
+
+        //set state or local storage?
+        this.state.setState(
+        {
+          player: {
+            name: playerName,
+            playerId: playerId,
+            position: 0,
+            score: 0,
+            color: color,
+            sprite: sprite
+          }
+        })
+    }
+  }
+
+
   handleSubmit(evt) {
-    // evt.preventDefault();
-    // const playerName = evt.target.playername;
-    // this.state.setState(
-    //   { playerList: [...playerList, playerName] }
-    // )
+    evt.preventDefault();
+
+    //TODO: generate new gameId or grab existing if joining a game
+    const gameId = 1;
+
+    //This function performs all the work
+    getNewId(gameId, this.genNewPlayerId);
+
   }
 
   handleColorSelect(evt) {
@@ -65,25 +114,25 @@ export class Lobby extends React.Component {
 
   render() {
 
-    const { avatarThumb, avatarName, selectedColor } = this.state;
+    const { avatarThumb, avatarName, selectedColor, gameId } = this.state;
 
     return (
       <div id="lobby-window">
         <h2 className="title">FS Party</h2>
-          <form name={name} id="lobby-form">
+          <form name={name} id="lobby-form" onSubmit={this.handleSubmit}>
           <div className="form-row">
             <div className="form-col">
             <div className="input-div">
               <label htmlFor="playername">
                 Enter Name
               </label>
-              <input name="playername" type="text" className="lobby-input" />
+              <input id="playername" name="playername" type="text" className="lobby-input" />
             </div>
             <div className="input-div">
               <label htmlFor="playercolor">
                 Select Color
               </label>
-              <select name="playercolor" className="lobby-input" onChange={this.handleColorSelect}>
+              <select id="playercolor" name="playercolor" className="lobby-input" onChange={this.handleColorSelect}>
               <option value=""></option>
               <option value="blue">Blue</option>
               <option value="red">Red</option>
@@ -106,9 +155,15 @@ export class Lobby extends React.Component {
               </div>
             </div>
             <div id="sel-color-div" className="input-div">
-              <input id="avatar-name" name="playersprite" type="text" className="lobby-input" value={avatarName} />
+              <input id="avatarname" name="playersprite" type="text" className="lobby-input" value={avatarName} />
             </div>
           </div>
+          </div>
+          <div className="input-div">
+              Create new game or join existing game?
+              <input id="new-game" name="choose-game" type="radio" className="lobby-input" value="new" />
+              <input id="existing-game" name="choose-game" type="radio" className="lobby-input" value="existing" />
+              <input id="game-id" name="playersprite" type="text" className="lobby-input" value={gameId} />
           </div>
           <div className="input-div">
             <button type="submit" id="form-submit">
