@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import PlatformPlayer from '../entities/PlatformPlayer';
 import Platform from '../entities/Platform';
 import Coin from '../entities/Coin';
+import { platformPlayers, serverCoins } from '../../Firebase/index';
 
 window.localStorage.setItem('playerId', '1');
 const myId = Number(window.localStorage.getItem('playerId'));
@@ -12,7 +13,8 @@ export default class PlatformGame extends Phaser.Scene {
 
     this.getCoins = this.getCoins.bind(this);
     this.spawned = false;
-    this.otherPlayers = {};
+    this.allPlayers = {};
+    this.coinPouch = {};
   }
 
   preload() {
@@ -32,61 +34,43 @@ export default class PlatformGame extends Phaser.Scene {
     // this.player = new PlatformPlayer(this, 200, 400, 'player')
     //   .setScale(3)
     //   .setSize(15, 32, true);
+    this.players = this.add.group();
+    this.serverPlayers = platformPlayers;
+
+    // get players from the database - this could maybe get replaced with a one time call // basically a get request
+    this.serverPlayers.on('value', (snapshot) => {
+      const list = snapshot.val();
+      if (!this.spawned) {
+        this.addPlayers(list);
+        this.spawned = true;
+      }
+    });
+
+    // listen for player movement udpdates
+    this.serverPlayers.on('child_changed', (snapshot) => {
+      const player = snapshot.val();
+      if (player.playerId !== myId) {
+        const player2update = this.allPlayers[player.playerId];
+        player2update.x = player.x;
+        player2update.y = player.y;
+      }
+    });
+
+    //listen for coin updates
+    serverCoins.on('child_changed', (snapshot) => {
+      const coin = snapshot.val();
+      if (this.coinPouch[coin.id]) {
+        this.coinPouch[coin.id].disableBody(true, true);
+      }
+    });
     //PLATFORMS
     this.platformGroup = this.physics.add.staticGroup({
       class: Platform,
     });
     //GAME OBJECTS
     //COINS
-    this.coinGroupOne = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 5,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: 200, stepX: 200 },
-    });
-    this.coinGroupTwo = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 3,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: -50, stepX: 200 },
-    });
-    this.coinGroupThree = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 5,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: -300, stepX: 200 },
-    });
-    this.coinGroupFour = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 3,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: -550, stepX: 200 },
-    });
-    this.coinGroupFive = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 3,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: -800, stepX: 200 },
-    });
-    this.coinGroupSix = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 3,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: -1050, stepX: 200 },
-    });
-    this.coinGroupSeven = this.physics.add.staticGroup({
-      class: Coin,
-      key: 'coin',
-      repeat: 3,
-      setScale: { x: 1.75, y: 1.75 },
-      setXY: { x: 0, y: -1300, stepX: 200 },
-    });
+    this.coins = this.add.group();
+    this.generateCoins();
 
     //CURSORS
 
@@ -120,61 +104,19 @@ export default class PlatformGame extends Phaser.Scene {
 
     //CAMERA SETTINGS
     // this.cameras.main.startFollow(this.player, true, 0.5, 0.5);
-    for (let i = 0; i < 10000; i++) {
-      this.cameras.main.y += 1;
-    }
+    // for (let i = 0; i < 10000; i++) {
+    //   this.cameras.main.y += 1;
+    // }
 
     //COLLIDERS
 
-    this.physics.add.collider(this.player, this.platformGroup);
+    this.physics.add.collider(this.players, this.platformGroup);
 
     //OVERLAPS
 
     this.physics.add.overlap(
-      this.player,
-      this.coinGroupOne,
-      this.getCoins,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroupTwo,
-      this.getCoins,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroupThree,
-      this.getCoins,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroupFour,
-      this.getCoins,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroupFive,
-      this.getCoins,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroupSix,
-      this.getCoins,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.player,
-      this.coinGroupSeven,
+      this.players,
+      this.coins,
       this.getCoins,
       null,
       this
@@ -183,17 +125,36 @@ export default class PlatformGame extends Phaser.Scene {
     //SCOREBOARD
     this.score = 0;
     this.scoreText;
-    this.scoreText = this.add.text(80, 18, 'Points: 0', {
-      fontSize: '32px',
+    this.scoreText = this.add.text(0, 18, 'Points: 0', {
+      fontSize: '20px',
       fill: 'white',
     });
     this.scoreText.setScrollFactor(0, 0);
+  }
+
+  generateCoins() {
+    let initX = 0;
+    let initY = 200;
+
+    for (let i = 0; i < 35; i++) {
+      let first = i + 1;
+      let coin = new Coin(this, initX, initY, 'coin');
+      coin.id = i;
+      if (first % 5 === 0) {
+        initY -= 250;
+        initX = 0;
+      }
+      initX += 200;
+      this.coins.add(coin);
+      this.coinPouch[coin.id] = coin;
+    }
   }
 
   getCoins(player, coin) {
     coin.disableBody(true, true);
     this.score += 10;
     this.scoreText.setText('Points: ' + this.score);
+    serverCoins.child(`${coin.id}`).update({ collected: true });
   }
 
   createAnimations() {
@@ -209,7 +170,39 @@ export default class PlatformGame extends Phaser.Scene {
   }
 
   update(time, delta) {
-    this.player.update(this.cursors);
+    if (this.player) {
+      this.player.update(this.cursors);
+      this.isPlayerDead();
+      const y = Math.floor(this.player.y);
+      let position = {
+        x: this.player.x,
+        y: y,
+      };
+      if (
+        (this.player.oldPosition && this.player.oldPosition.x !== position.x) ||
+        this.player.oldPosition.y !== position.y
+      ) {
+        this.serverPlayers.child(`${myId}`).update({ x: this.player.x, y: y });
+      }
+      this.player.oldPositon = {
+        x: this.player.x,
+        y: y,
+      };
+    }
+  }
+
+  isPlayerDead() {
+    if (this.player.isDead === true) {
+      this.player.isDead = false;
+      this.time.addEvent({
+        delay: 3000,
+        callback: () => {
+          this.player.reset(200, 400);
+        },
+        callbackScope: this,
+        loop: false,
+      });
+    }
   }
 
   createPlatform(x, y) {
@@ -228,9 +221,20 @@ export default class PlatformGame extends Phaser.Scene {
   }
 
   spawnMyCharacter(player) {
-    this.myCharacter = new PlatformPlayer(this, player.x, player.y, 'player')
+    this.player = new PlatformPlayer(this, player.x, player.y, 'player')
       .setScale(3)
       .setSize(15, 32, true);
-    this.myCharacter.playerId = myId;
+    this.player.playerId = myId;
+    this.allPlayers[player.playerId] = this.player;
+    this.players.add(this.player);
+  }
+
+  spawnOtherCharacters(player) {
+    const newPlayer = new PlatformPlayer(this, player.x, player.y, 'player')
+      .setScale(3)
+      .setSize(15, 32, true);
+    newPlayer.playerId = player.playerId;
+    this.allPlayers[player.playerId] = newPlayer;
+    this.players.add(newPlayer);
   }
 }

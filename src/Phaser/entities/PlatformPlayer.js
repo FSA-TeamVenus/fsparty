@@ -9,13 +9,19 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
     this.body.allowGravity = true;
     this.scene.add.existing(this);
     //this.setCollideWorldBounds(true);
-
-    // this.oldPosition = {};
+    this.isDead = false;
+    this.reset(x, y);
+    this.oldPosition = {};
   }
 
   update(cursors) {
     this.updateMovement(cursors);
     this.updateJump(cursors);
+    if (this.y > 650) {
+      this.isDead = true;
+      this.setActive(false);
+      this.setVisible(false);
+    }
   }
 
   updateMovement(cursors) {
@@ -26,6 +32,12 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
     } else {
       this.setVelocityX(0);
     }
+  }
+
+  reset(x, y) {
+    this.setActive(true);
+    this.setVisible(true);
+    this.setPosition(x, y);
   }
 
   updateJump(cursors) {
