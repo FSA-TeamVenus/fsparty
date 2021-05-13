@@ -31,9 +31,6 @@ export default class PlatformGame extends Phaser.Scene {
 
   create() {
     //PLAYERS
-    // this.player = new PlatformPlayer(this, 200, 400, 'player')
-    //   .setScale(3)
-    //   .setSize(15, 32, true);
     this.players = this.add.group();
     this.serverPlayers = platformPlayers;
 
@@ -103,10 +100,15 @@ export default class PlatformGame extends Phaser.Scene {
     this.createPlatform(450, -1450);
 
     //CAMERA SETTINGS
-    // this.cameras.main.startFollow(this.player, true, 0.5, 0.5);
-    // for (let i = 0; i < 10000; i++) {
-    //   this.cameras.main.y += 1;
-    // }
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.cameras.main.startFollow(this.player, true, 0.5, 0.5);
+      },
+      callbackScope: this,
+      loop: false,
+    });
 
     //COLLIDERS
 
@@ -126,7 +128,7 @@ export default class PlatformGame extends Phaser.Scene {
     this.score = 0;
     this.scoreText;
     this.scoreText = this.add.text(0, 18, 'Points: 0', {
-      fontSize: '20px',
+      fontSize: '25px',
       fill: 'white',
     });
     this.scoreText.setScrollFactor(0, 0);
@@ -138,7 +140,7 @@ export default class PlatformGame extends Phaser.Scene {
 
     for (let i = 0; i < 35; i++) {
       let first = i + 1;
-      let coin = new Coin(this, initX, initY, 'coin');
+      let coin = new Coin(this, initX, initY, 'coin').setScale(1.5);
       coin.id = i;
       if (first % 5 === 0) {
         initY -= 250;
@@ -151,10 +153,13 @@ export default class PlatformGame extends Phaser.Scene {
   }
 
   getCoins(player, coin) {
-    coin.disableBody(true, true);
-    this.score += 10;
-    this.scoreText.setText('Points: ' + this.score);
-    serverCoins.child(`${coin.id}`).update({ collected: true });
+    if (player.playerId === myId) {
+      coin.disableBody(true, true);
+      this.score += 10;
+      this.scoreText.setText('Points: ' + this.score);
+      serverCoins.child(`${coin.id}`).update({ collected: true });
+      this.serverPlayers.child(`${myId}`).update({ score: this.score });
+    }
   }
 
   createAnimations() {
@@ -195,7 +200,7 @@ export default class PlatformGame extends Phaser.Scene {
     if (this.player.isDead === true) {
       this.player.isDead = false;
       this.time.addEvent({
-        delay: 3000,
+        delay: 2000,
         callback: () => {
           this.player.reset(200, 400);
         },

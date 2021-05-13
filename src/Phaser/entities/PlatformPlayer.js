@@ -8,7 +8,7 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.world.enable(this);
     this.body.allowGravity = true;
     this.scene.add.existing(this);
-    //this.setCollideWorldBounds(true);
+    this.body.setBounce(0.3);
     this.isDead = false;
     this.reset(x, y);
     this.oldPosition = {};
