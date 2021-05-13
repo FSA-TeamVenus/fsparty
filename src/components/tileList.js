@@ -1,14 +1,4 @@
-const layout = [
-  [1, 2, 2, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 2],
-  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3],
-];
-
-const layout2 = [
+const map = [
   [0, 2, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 0],
   [1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2],
   [3, 0, 0, 0, 2, 2, 3, 2, 2, 3, 2, 0, 0, 0, 2],
@@ -99,6 +89,6 @@ function populateDictionary(map, list) {
   return dictionary;
 }
 
-export const tileList = populateTileList(layout2);
+export const tileList = populateTileList(map);
 
-export const tileDictionary = populateDictionary(layout2, tileList);
+export const tileDictionary = populateDictionary(map, tileList);
