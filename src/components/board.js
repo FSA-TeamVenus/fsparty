@@ -1,7 +1,7 @@
 import React from 'react';
 import GameCanvas from './GameCanvas';
 import TileGrid from './TileGrid';
-import { tileList, tileDictionary } from './tileList';
+import { tileList, pathDictionary } from './tileList';
 import PlayerCard from './PlayerCard';
 
 import {
@@ -16,6 +16,7 @@ import {
 import Leaderboard from './Leaderboard';
 
 const gameId = 2;
+console.log(pathDictionary);
 
 export class Board extends React.Component {
   constructor(props) {
@@ -46,8 +47,6 @@ export class Board extends React.Component {
   componentDidUpdate() {
     //run function corresponding to tiles array full of objects
     const { pos } = this.state;
-
-    console.log('compDidMount pos===>', pos);
 
     const tempTiles = [
       { action: () => console.log('tile 1') },

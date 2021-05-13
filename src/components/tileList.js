@@ -1,6 +1,6 @@
 const map = [
-  [0, 2, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 0],
-  [1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2],
+  [0, 1, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 0],
+  [2, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2],
   [3, 0, 0, 0, 2, 2, 3, 2, 2, 3, 2, 0, 0, 0, 2],
   [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3],
   [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
@@ -49,6 +49,7 @@ function populateTileList(map) {
 
 function populateDictionary(map, list) {
   const pathTiles = list.filter((tile) => tile.actionType !== 'background');
+
   const dictionary = {};
   let dictionaryIndex = 0;
   let i = 0;
@@ -58,7 +59,7 @@ function populateDictionary(map, list) {
   while (dictionaryIndex < pathTiles.length) {
     let mapIndex = i * 15 + j;
 
-    dictionary[dictionaryIndex] = mapIndex;
+    dictionary[dictionaryIndex] = list[mapIndex];
 
     updateIndexes();
     dictionaryIndex++;
@@ -91,4 +92,4 @@ function populateDictionary(map, list) {
 
 export const tileList = populateTileList(map);
 
-export const tileDictionary = populateDictionary(map, tileList);
+export const pathDictionary = populateDictionary(map, tileList);
