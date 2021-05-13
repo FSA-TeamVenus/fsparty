@@ -120,3 +120,77 @@ body {
   margin-left: -50px;
   top: 50%;
 }
+/* Lobby Section */
+body {
+  background-color: black;
+}
+
+#lobby-window {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #000;
+  color: #fff;
+}
+
+.input-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: solid 0px red;
+  margin: 1em;
+}
+
+.avatar {
+  width: 125px;
+  height: 125px;
+  border: solid 1px white;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.form-col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-family: Arial, 'Mario Party Hudson';
+}
+
+.lobby-input {
+  width: 150px;
+  text-align: center;
+}
+
+.selected-color {
+  margin-top: 0.2em;
+  border: solid 1px white;
+  width: 97%;
+  height: 15px;
+}
+
+.blue {
+  background-color: Blue;
+}
+
+.red {
+  background-color: Red;
+}
+.green {
+  background-color: Green;
+}
+
+.yellow {
+  background-color: Yellow;
+}
+
+.black {
+  background-color: Black;
+}
+
+/* End Lobby Section */

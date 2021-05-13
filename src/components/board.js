@@ -28,6 +28,7 @@ export class Board extends React.Component {
     };
     this.stateCb = this.stateCb.bind(this);
   }
+
   componentDidMount() {
     this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
     getTurn(gameId, this.stateCb);
@@ -41,9 +42,13 @@ export class Board extends React.Component {
   stateCb(value, key) {
     this.setState({ [key]: value });
   }
+
   componentDidUpdate() {
     //run function corresponding to tiles array full of objects
     const { pos } = this.state;
+
+    console.log('compDidMount pos===>', pos);
+
     const tempTiles = [
       { action: () => console.log('tile 1') },
       { action: () => console.log('tile 2') },
@@ -54,6 +59,7 @@ export class Board extends React.Component {
       { action: () => console.log('tile 7') },
       { action: () => console.log('tile 8') },
     ];
+
     if (pos > 0) {
       tempTiles[pos - 1].action();
     }
