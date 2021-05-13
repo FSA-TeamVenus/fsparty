@@ -6,7 +6,7 @@ const player = { name: 'Gabe', id: 1 };
 const App = () => {
   return (
     <div>
-      <Lobby />
+      {/* <Lobby /> */}
       <Board player={player} />
     </div>
   );
