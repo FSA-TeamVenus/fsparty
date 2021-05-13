@@ -1,14 +1,15 @@
-const layout = [
-  [1, 2, 2, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 2],
-  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+const map = [
+  [0, 2, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 0],
+  [1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2],
+  [3, 0, 0, 0, 2, 2, 3, 2, 2, 3, 2, 0, 0, 0, 2],
   [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3],
   [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3],
+  [3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2],
+  [0, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 0],
 ];
 
 const actionTypes = {
+  0: 'background',
   1: 'start',
   2: 'add',
   3: 'remove',
@@ -46,32 +47,48 @@ function populateTileList(map) {
   return list;
 }
 
-function populateDictionary(list) {
-  const dictionary = {};
+function populateDictionary(map, list) {
   const pathTiles = list.filter((tile) => tile.actionType !== 'background');
-  const top = pathTiles.filter((tile) => tile.id < 15);
-  const bottom = pathTiles
-    .filter((tile) => tile.id > 89)
-    .sort((a, b) => b.id - a.id);
-  const leftSide = [];
-  const rightSide = [];
-  for (let i = 15; i < 25; i++) {
-    let currentTile = pathTiles[i];
-    if (!(currentTile.id % 15)) {
-      leftSide.unshift(currentTile);
-    } else if (!((currentTile.id + 1) % 15)) {
-      rightSide.push(currentTile);
-    }
-  }
-  const fullPath = top.concat(rightSide).concat(bottom).concat(leftSide);
+  const dictionary = {};
+  let dictionaryIndex = 0;
+  let i = 0;
+  let j = 1;
+  let lastMove = '';
 
-  for (let i = 0; i < fullPath.length; i++) {
-    dictionary[i] = fullPath[i];
+  while (dictionaryIndex < pathTiles.length) {
+    let mapIndex = i * 15 + j;
+
+    dictionary[dictionaryIndex] = mapIndex;
+
+    updateIndexes();
+    dictionaryIndex++;
+  }
+
+  function updateIndexes() {
+    const right = map[i][j + 1];
+    const down = i < 6 ? map[i + 1][j] : 0;
+    const up = i > 0 ? map[i - 1][j] : 0;
+    const left = map[i][j - 1];
+
+    if (j < 14 && right !== 0 && lastMove !== 'left') {
+      lastMove = 'right';
+      j += 1;
+    } else if (i < 6 && down !== 0 && lastMove !== 'up') {
+      i += 1;
+      lastMove = 'down';
+    } else if (i > 0 && up !== 0 && lastMove !== 'down') {
+      i -= 1;
+      lastMove = 'up';
+    } else if (j > 0 && left !== 0 && lastMove !== 'right') {
+      j -= 1;
+      lastMove = 'left';
+    }
+    return;
   }
 
   return dictionary;
 }
 
-export const tileList = populateTileList(layout);
+export const tileList = populateTileList(map);
 
-export const tileDictionary = populateDictionary(tileList);
+export const tileDictionary = populateDictionary(map, tileList);
