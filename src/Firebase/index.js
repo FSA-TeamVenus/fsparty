@@ -46,9 +46,6 @@ export const finishRacingGame = (gameId) => {
   game.update({ completed: true });
 };
 
-export const racingGamePlayers = database.ref('1/racingGame/players');
-export const shootingGamePlayers = database.ref('2/shootingGame/players');
-
 export const addPoints = (gameId, playerId, newPoints) => {
   const player = database.ref(`${gameId}/main/players/${playerId}`);
   player.once('value').then((snapshot) => {

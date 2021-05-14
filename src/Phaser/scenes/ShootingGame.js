@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { getShootingPlayers, updateReticlePos } from "../../Firebase/index";
-import Player from "../entities/Player";
+import PlayerReticle from "../entities/PlayerReticle";
 
 // setting playerId here temporarily until the main game can set it
-window.localStorage.setItem("playerId", "1");
+window.localStorage.setItem("playerId", "3");
 const myId = Number(window.localStorage.getItem("playerId"));
 // or token
 
@@ -18,49 +18,42 @@ export default class ShootingGame extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet(
-      "reticle",
-      "../../public/assets/images/test-reticle.png",
-      {
-        frameWidth: 32,
-        frameHeight: 16,
-      }
-    );
+    // this.load.spritesheet(
+    //   "reticle",
+    //   "../../public/assets/images/test-reticle.png",
+    //   {
+    //     frameWidth: 190,
+    //     frameHeight: 190,
+    //   }
+    // );
+    this.load.image('reticle', '../../public/assets/images/test-reticle.png');
   }
 
   create() {
    getShootingPlayers(1, (playerList) => {
      //list of players
      console.log('player list --->', playerList);
-    //  this.addPlayers(playerList);
+     this.addPlayers(playerList);
    })
   }
 
   update() {
-    //console.log(this.input.activePointer.position)
-    if (this.myPlayer) {
-      let position = this.myPlayer.x;
-      console.log(position)
-      if (
-        this.myPlayer.oldPosition &&
-        this.myPlayer.oldPosition.x !== position
-      ) {
-        updateReticlePos(1, myId, { x: this.myPlayer.x, y:this.myPlayer.y });
-      }
-      this.myPlayer.oldPositon = {
-        x: this.myPlayer.x,
-      };
-    }
+    updateReticlePos(1, myId, {
+      x: this.input.mousePointer.worldX,
+      y: this.input.mousePointer.worldY,
+    });
+    this.input.mousePointer.
   }
 
   addPlayers(playerList) {
     const myPlayer = playerList.splice(myId, 1)
-    for (let i = 0; i < playerList.length;i++) {
-    const otherPlayer = playerList[i];
-    const newPlayer = new Player(this, otherPlayer.x, otherPlayer.y, "reticle");
-    this.otherPlayers[i] = newPlayer;
-    }
-    this.myPlayer = new Player(this, myPlayer.x, myPlayer.y, 'reticle');
+    console.log(myPlayer)
+    // for (let i = 0; i < playerList.length;i++) {
+    // const otherPlayer = playerList[i];
+    // const newPlayer = new Player(this, otherPlayer.x, otherPlayer.y, "reticle");
+    // this.otherPlayers[i] = newPlayer;
+    // }
+    // this.myPlayer = new PlayerReticle(this, myPlayer.x, myPlayer.y, 'reticle');
   }
 }
 

@@ -15,7 +15,7 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
-const gameId = 2;
+const gameId = 1;
 console.log(pathDictionary);
 
 export class Board extends React.Component {
