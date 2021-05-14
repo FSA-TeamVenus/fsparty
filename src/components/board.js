@@ -17,10 +17,6 @@ import {
 import Leaderboard from './Leaderboard';
 
 const gameId = 1;
-<<<<<<< HEAD
-=======
-console.log(pathDictionary);
->>>>>>> main
 
 export class Board extends React.Component {
   constructor(props) {
@@ -48,25 +44,6 @@ export class Board extends React.Component {
     this.setState({ [key]: value });
   }
 
-  componentDidUpdate() {
-    //run function corresponding to tiles array full of objects
-    const { player } = this.props
-    const { pos, playerList } = this.state;
-
-    // const tempTiles = [
-    //   { action: () => console.log('tile 1') },
-    //   { action: () => console.log('tile 2') },
-    //   { action: () => console.log('tile 3') },
-    //   { action: () => console.log('tile 4') },
-    //   { action: () => console.log('tile 5') },
-    //   { action: () => console.log('tile 6') },
-    //   { action: () => console.log('tile 7') },
-    //   { action: () => console.log('tile 8') },
-    // ];
-
-
-  }
-
   startGame() {
     updateTurn(gameId, this.stateCb);
   }
@@ -78,11 +55,10 @@ export class Board extends React.Component {
     const number = Phaser.Math.Between(0, 6);
     updatePos(gameId, player.id, number);
     pathDictionary[pos + number].action(gameId, player.id, myPlayer);
-    updateTurn(gameId, this.stateCb)
+    updateTurn(gameId, this.stateCb);
   }
 
   // moveGamePiece(tile, player){
-
 
   // }
 
