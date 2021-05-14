@@ -10,6 +10,6 @@ export default class DesertBg extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(-160, 0, 'desert').setOrigin(0);
+    this.add.image(-160, 0, 'desert').setOrigin(0).setScale(1);
   }
 }

@@ -4,7 +4,6 @@ import EndScreen from './scenes/EndScreen';
 import RacingGame from './scenes/RacingGame';
 import PlatformGame from './scenes/PlatformScenes/PlatformGame';
 import platformConfig from './config/platformConfig';
-import DesertBg from './scenes/PlatformScenes/DesertBg';
 
 export class Game extends Phaser.Game {
   constructor() {
@@ -14,8 +13,12 @@ export class Game extends Phaser.Game {
     // this.scene.add('racingGame', RacingGame);
 
     // this.scene.start('racingGame');
-    this.scene.add('DesertBg', DesertBg);
+
     this.scene.add('platformGame', PlatformGame);
     this.scene.start('platformGame');
+  }
+
+  create() {
+    this.scene.launch(DesertBg);
   }
 }

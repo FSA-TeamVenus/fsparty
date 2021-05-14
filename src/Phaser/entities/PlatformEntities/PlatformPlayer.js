@@ -12,6 +12,7 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
     this.isDead = false;
     this.reset(x, y);
     this.oldPosition = {};
+    this.facingLeft = false;
   }
 
   update(cursors, jumpSound) {
@@ -26,11 +27,26 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
 
   updateMovement(cursors) {
     if (cursors.left.isDown) {
+      if (!this.facingLeft) {
+        this.flipX = !this.flipX;
+        this.facingLeft = true;
+      }
       this.setVelocityX(-360);
+      if (this.body.touching.down) {
+        this.play('run', true);
+      }
     } else if (cursors.right.isDown) {
+      if (this.facingLeft) {
+        this.flipX = !this.flipX;
+        this.facingLeft = false;
+      }
       this.setVelocityX(360);
+      if (this.body.touching.down) {
+        this.play('run', true);
+      }
     } else {
       this.setVelocityX(0);
+      this.play('idle');
     }
   }
 

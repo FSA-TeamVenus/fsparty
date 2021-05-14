@@ -18,7 +18,7 @@ export default class PlatformGame extends Phaser.Scene {
   }
 
   preload() {
-    //SPRITES>>>>>>>>>>>>>>
+    //IMAGES>>>>>>>>>>>>>>
     this.load.spritesheet('player', '/public/assets/images/character.png', {
       frameWidth: 30,
       frameHeight: 30,
@@ -28,6 +28,7 @@ export default class PlatformGame extends Phaser.Scene {
       frameHeight: 15,
     });
     this.load.image('platform', '/public/assets/images/2dplatform.png');
+    this.load.image('desertBg', '/public/assets/images/Desert.png');
     //SOUNDS>>>>>>>>>>>>>>>>>>
     this.load.audio('coin', '/public/assets/images/sounds/coin.wav');
     this.load.audio('jump', '/public/assets/images/sounds/jump.wav');
@@ -69,6 +70,8 @@ export default class PlatformGame extends Phaser.Scene {
       class: Platform,
     });
     //GAME OBJECTS
+    //BACKGROUND
+    this.background = this.add.image(400, 300, 'desertBg').setScale(8);
     //COINS
     this.coins = this.add.group();
     this.generateCoins();
@@ -117,6 +120,9 @@ export default class PlatformGame extends Phaser.Scene {
     //CURSORS
 
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    //ANIMATIONS
+    this.createAnimations();
 
     //COLLIDERS
 
@@ -175,6 +181,16 @@ export default class PlatformGame extends Phaser.Scene {
     this.anims.create({
       key: 'idle',
       frames: this.anims.generateFrameNumbers('player', { frame: 0 }),
+      frameRate: 10,
+    });
+    this.anims.create({
+      key: 'run',
+      frames: this.anims.generateFrameNumbers('player', { start: 15, end: 20 }),
+      frameRate: 10,
+    });
+    this.anims.create({
+      key: 'jump',
+      frames: this.anims.generateFrameNumbers('player', { start: 52, end: 57 }),
       frameRate: 10,
     });
     this.anims.create({
