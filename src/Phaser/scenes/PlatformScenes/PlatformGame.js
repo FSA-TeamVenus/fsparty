@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
-import PlatformPlayer from '../entities/PlatformPlayer';
-import Platform from '../entities/Platform';
-import Coin from '../entities/Coin';
-import { platformPlayers, serverCoins } from '../../Firebase/index';
+import PlatformPlayer from '../../entities/PlatformEntities/PlatformPlayer';
+import Platform from '../../entities/PlatformEntities/Platform';
+import Coin from '../../entities/PlatformEntities/Coin';
+import { platformPlayers, serverCoins } from '../../../Firebase/index';
 
 window.localStorage.setItem('playerId', '1');
 const myId = Number(window.localStorage.getItem('playerId'));
@@ -18,6 +18,7 @@ export default class PlatformGame extends Phaser.Scene {
   }
 
   preload() {
+    //SPRITES>>>>>>>>>>>>>>
     this.load.spritesheet('player', '/public/assets/images/character.png', {
       frameWidth: 30,
       frameHeight: 30,
@@ -27,6 +28,9 @@ export default class PlatformGame extends Phaser.Scene {
       frameHeight: 15,
     });
     this.load.image('platform', '/public/assets/images/2dplatform.png');
+    //SOUNDS>>>>>>>>>>>>>>>>>>
+    this.load.audio('coin', '/public/assets/images/sounds/coin.wav');
+    this.load.audio('jump', '/public/assets/images/sounds/jump.wav');
   }
 
   create() {
@@ -69,10 +73,6 @@ export default class PlatformGame extends Phaser.Scene {
     this.coins = this.add.group();
     this.generateCoins();
 
-    //CURSORS
-
-    this.cursors = this.input.keyboard.createCursorKeys();
-
     ///BASE LEVEL OF PLATFORMS
 
     this.createPlatform(150, 550);
@@ -109,6 +109,14 @@ export default class PlatformGame extends Phaser.Scene {
       callbackScope: this,
       loop: false,
     });
+
+    //SOUNDS>>>>>>>
+    this.collectSound = this.sound.add('coin');
+    this.jumpSound = this.sound.add('jump');
+
+    //CURSORS
+
+    this.cursors = this.input.keyboard.createCursorKeys();
 
     //COLLIDERS
 
@@ -159,6 +167,7 @@ export default class PlatformGame extends Phaser.Scene {
       this.scoreText.setText('Points: ' + this.score);
       serverCoins.child(`${coin.id}`).update({ collected: true });
       this.serverPlayers.child(`${myId}`).update({ score: this.score });
+      this.collectSound.play();
     }
   }
 
@@ -176,7 +185,7 @@ export default class PlatformGame extends Phaser.Scene {
 
   update(time, delta) {
     if (this.player) {
-      this.player.update(this.cursors);
+      this.player.update(this.cursors, this.jumpSound);
       this.isPlayerDead();
       const y = Math.floor(this.player.y);
       let position = {

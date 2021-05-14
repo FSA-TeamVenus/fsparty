@@ -14,9 +14,9 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
     this.oldPosition = {};
   }
 
-  update(cursors) {
+  update(cursors, jumpSound) {
     this.updateMovement(cursors);
-    this.updateJump(cursors);
+    this.updateJump(cursors, jumpSound);
     if (this.y > 650) {
       this.isDead = true;
       this.setActive(false);
@@ -40,9 +40,10 @@ export default class PlatformPlayer extends Phaser.Physics.Arcade.Sprite {
     this.setPosition(x, y);
   }
 
-  updateJump(cursors) {
+  updateJump(cursors, jumpSound) {
     if (cursors.up.isDown && this.body.touching.down) {
       this.setVelocityY(-800);
+      jumpSound.play();
     }
   }
 }
