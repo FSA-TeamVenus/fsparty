@@ -4,15 +4,27 @@ import 'firebase/auth';
 import 'firebase/database';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDYsGreUx-uAHV5sDv6YhiuSEd3k95WkDE',
-  authDomain: 'fsparty-d0c16.firebaseapp.com',
-  databaseUrl: 'https://fsparty-d0c16-default-rtdb.firebaseio.com/',
-  projectId: 'fsparty-d0c16',
-  storageBucket: 'fsparty-d0c16.appspot.com',
-  messagingSenderId: '746505029214',
-  appId: '1:746505029214:web:d7758bf54cf255865596cf',
-  measurementId: 'G-JEVNY56SEG',
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseUrl: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
+
+// const firebaseConfig = {
+//   apiKey: 'AIzaSyDYsGreUx-uAHV5sDv6YhiuSEd3k95WkDE',
+//   authDomain: 'fsparty-d0c16.firebaseapp.com',
+//   databaseUrl: 'https://fsparty-d0c16-default-rtdb.firebaseio.com/',
+//   projectId: 'fsparty-d0c16',
+//   storageBucket: 'fsparty-d0c16.appspot.com',
+//   messagingSenderId: '746505029214',
+//   appId: '1:746505029214:web:d7758bf54cf255865596cf',
+//   measurementId: 'G-JEVNY56SEG',
+// };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
@@ -69,6 +81,7 @@ const getRef = (gameId, playerId) => {
 export function getPlayersfromGame(gameId, cb) {
   const ref = getRef(gameId);
   let players = firebase.database().ref(ref + '/players');
+  console.log(players);
   players.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'playerList');

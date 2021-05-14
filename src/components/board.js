@@ -15,8 +15,7 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
-const gameId = 2;
-console.log(pathDictionary);
+const gameId = 1;
 
 export class Board extends React.Component {
   constructor(props) {
@@ -85,6 +84,7 @@ export class Board extends React.Component {
     const { player } = this.props;
     const { turn, playerList, round } = this.state;
     const nextPlayer = playerList[turn];
+    console.log(playerList);
     return (
       <div>
         {/* <h3 id="welcome">Welcome, {user.name}</h3> */}
