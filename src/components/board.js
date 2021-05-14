@@ -3,6 +3,7 @@ import GameCanvas from './GameCanvas';
 import TileGrid from './TileGrid';
 import { tileList, pathDictionary } from './tileList';
 import PlayerCard from './PlayerCard';
+import Phaser from 'phaser';
 
 import {
   getPlayersfromGame,
@@ -15,7 +16,7 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
-const gameId = 2;
+const gameId = 1;
 console.log(pathDictionary);
 
 export class Board extends React.Component {
@@ -24,7 +25,7 @@ export class Board extends React.Component {
     this.state = {
       playerList: [],
       turn: null,
-      pos: null,
+      pos: 0,
       round: null,
     };
     this.stateCb = this.stateCb.bind(this);
@@ -46,22 +47,21 @@ export class Board extends React.Component {
 
   componentDidUpdate() {
     //run function corresponding to tiles array full of objects
-    const { pos } = this.state;
+    const { player } = this.props
+    const { pos, playerList } = this.state;
 
-    const tempTiles = [
-      { action: () => console.log('tile 1') },
-      { action: () => console.log('tile 2') },
-      { action: () => console.log('tile 3') },
-      { action: () => console.log('tile 4') },
-      { action: () => console.log('tile 5') },
-      { action: () => console.log('tile 6') },
-      { action: () => console.log('tile 7') },
-      { action: () => console.log('tile 8') },
-    ];
+    // const tempTiles = [
+    //   { action: () => console.log('tile 1') },
+    //   { action: () => console.log('tile 2') },
+    //   { action: () => console.log('tile 3') },
+    //   { action: () => console.log('tile 4') },
+    //   { action: () => console.log('tile 5') },
+    //   { action: () => console.log('tile 6') },
+    //   { action: () => console.log('tile 7') },
+    //   { action: () => console.log('tile 8') },
+    // ];
 
-    if (pos > 0) {
-      tempTiles[pos - 1].action();
-    }
+
   }
 
   startGame() {
@@ -69,17 +69,19 @@ export class Board extends React.Component {
   }
 
   rollDice() {
-    const { turn } = this.state;
+    const { turn, pos, playerList } = this.state;
     const { player } = this.props;
-    const number = Math.ceil(Math.random() * 4);
-    setTimeout(function () {
-      updatePos(gameId, player.id, number);
-      setTimeout(function () {
-        updateTurn(gameId, this.stateCb);
-      }, 4000);
-    }, 2000);
-    setTimeout(() => updateTurn(1, this.stateCb), 2500);
+    const myPlayer = playerList[player.id];
+    const number = Phaser.Math.Between(0, 6);
+    updatePos(gameId, player.id, number);
+    pathDictionary[pos + number].action(gameId, player.id, myPlayer);
+    updateTurn(gameId, this.stateCb)
   }
+
+  // moveGamePiece(tile, player){
+
+
+  // }
 
   render() {
     const { player } = this.props;
