@@ -1,3 +1,5 @@
+import { updateScore } from "../Firebase";
+
 const map = [
   [0, 1, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 0],
   [2, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2],
@@ -21,11 +23,14 @@ class Tile {
   constructor(id, actionType) {
     (this.id = id), (this.actionType = actionType);
   }
-  action(player) {
+  action(gameId, playerId, player) {
     if (this.actionType === 'add') {
-      player.score += 5;
-    } else {
-      player.score -= 5;
+     let newScore = player.score + 5;
+     updateScore(gameId, playerId, newScore);
+
+    } else if (this.actionType === 'remove') {
+      let newScore = player.score - 5;
+      updateScore(gameId, playerId, newScore)
     }
   }
 }

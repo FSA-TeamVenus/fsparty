@@ -121,9 +121,9 @@ body {
   top: 50%;
 }
 /* Lobby Section */
-body {
+/* body {
   background-color: black;
-}
+} */
 
 #lobby-window {
   display: flex;
