@@ -29,13 +29,13 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet('car', '/public/assets/images/race_car.png', {
+    this.load.spritesheet('car', '/assets/images/race_car.png', {
       frameWidth: 32,
       frameHeight: 16,
     });
-    this.load.image('finish_line', '/public/assets/images/finish_line.png');
-    this.load.image('track', '/public/assets/images/track.png');
-    this.load.image('bg', '/public/assets/images/racing_bg.png');
+    this.load.image('finish_line', '/assets/images/finish_line.png');
+    this.load.image('track', '/assets/images/track.png');
+    this.load.image('bg', '/assets/images/racing_bg.png');
   }
 
   create() {
