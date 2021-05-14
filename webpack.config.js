@@ -8,11 +8,12 @@ module.exports = {
   entry: './src/index.js',
 
   output: {
-    path: path.resolve(__dirname, 'public'),
-    publicPath: 'http://localhost:8080/public/',
+    path: path.resolve(__dirname, 'docs'),
     filename: 'bundle.js',
   },
-
+  devServer: {
+    contentBase: path.join(__dirname, 'docs'),
+  },
   module: {
     rules: [
       {
