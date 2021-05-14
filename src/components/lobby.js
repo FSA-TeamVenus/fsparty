@@ -22,6 +22,7 @@ export class Lobby extends React.Component {
     this.handleColorSelect = this.handleColorSelect.bind(this);
     this.handleAvatarNav = this.handleAvatarNav.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNewGame = this.handleNewGame.bind(this);
   }
 
   componentDidMount() {
@@ -33,54 +34,68 @@ export class Lobby extends React.Component {
 
   }
 
-  genNewPlayerId(data) {
-    console.log(Object.keys(data).length)
-    //use data returned from call firebase to get next avail playerId
-    const playerId = Object.keys(data).length;
+  createNewPlayer(playerId) {
     const playerName = document.getElementById('playername').value;
     const color = document.getElementById('playercolor').value;
     const sprite = document.getElementById('avatarname').value;
 
-    console.log(playerName)
+    return {
+      playerId: playerId,
+      name: playerName,
+      color: color,
+      sprite: sprite
+    };
+  }
+
+
+  handleSubmit(evt) {
+    evt.preventDefault();
+    this.addNewPlayer();
+  }
+
+  handleNewGame(evt) {
+    //TODO: generate new gameId or grab existing if joining a game
+    const gameId = 1;
+
+    //This function contacts firebase to get new playerId,
+    //then sets that Id in state
+    getNewId(gameId, data => {
+      const playerId = Object.keys(data).length;
+      const newPlayer = this.createNewPlayer(playerId);
+      this.setState(
+        {
+          player: newPlayer
+        }
+      )
+    });
+  }
+
+  addNewPlayer() {
+    const { playerId, name, color, sprite } = this.state.player;
+    console.log(playerId)
+    console.log(name)
     console.log(color)
     console.log(sprite)
 
-    //call firebase.addPlayer(gameId, player)
-    if(playerId < 8) {
+    //call firebase.addPlayer(gameId, playerId, playerObj)
+    if(playerId < 4) {
       addPlayer(1, playerId,
         {
-          name: playerName,
+          name: name,
           position: 0,
           score: 0,
           color: color,
           sprite: sprite
         });
 
-        //set state or local storage?
-        this.state.setState(
+        //TODO: set local storage for gameId, playerid
+      }
+
+      this.setState(
         {
-          player: {
-            name: playerName,
-            playerId: playerId,
-            position: 0,
-            score: 0,
-            color: color,
-            sprite: sprite
-          }
-        })
-    }
-  }
-
-
-  handleSubmit(evt) {
-    evt.preventDefault();
-
-    //TODO: generate new gameId or grab existing if joining a game
-    const gameId = 1;
-
-    //This function performs all the work
-    getNewId(gameId, this.genNewPlayerId);
-
+          gameReady: true
+        }
+      )
   }
 
   handleColorSelect(evt) {
@@ -114,12 +129,19 @@ export class Lobby extends React.Component {
 
   render() {
 
-    const { avatarThumb, avatarName, selectedColor, gameId } = this.state;
+    const { player, avatarThumb, avatarName, selectedColor, gameId, gameReady } = this.state;
 
     return (
       <div id="lobby-window">
         <h2 className="title">FS Party</h2>
-          <form name={name} id="lobby-form" onSubmit={this.handleSubmit}>
+        { gameReady ?
+          (
+            <div id="lobby-waiting">
+                Waiting ....
+            </div>
+          )
+          :
+          (<form name={name} id="lobby-form" onSubmit={this.handleSubmit}>
           <div className="form-row">
             <div className="form-col">
             <div className="input-div">
@@ -161,17 +183,20 @@ export class Lobby extends React.Component {
           </div>
           <div className="input-div">
               Create new game or join existing game?
-              <input id="new-game" name="choose-game" type="radio" className="lobby-input" value="new" />
-              <input id="existing-game" name="choose-game" type="radio" className="lobby-input" value="existing" />
-              <input id="game-id" name="playersprite" type="text" className="lobby-input" value={gameId} />
+              <input id="new-game" name="choose-game" type="radio" onClick={this.handleNewGame} className="lobby-input" value="new" />
+              <input id="existing-game" name="choose-game" type="radio"  className="lobby-input" value="existing" />
+              <input id="game-id" name="playersprite" type="text" onChange={this.handleJoinGame} className="lobby-input" value={gameId} />
           </div>
           <div className="input-div">
             <button type="submit" id="form-submit">
               JOIN!
             </button>
+            <input id="playerId" name="playerId" type="text" className="lobby-input" value={player.playerId} />
           </div>
           </form>
-        </div>
+          )
+        }
+      </div>
     );
   }
 }

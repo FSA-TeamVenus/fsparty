@@ -123,10 +123,15 @@ export function addPlayer(gameId, playerId, playerInfo) {
   return firebase.database().ref().update(updates);
 }
 
-export function getNewId(gameId, callback) {
-  getPlayersfromGame(gameId, data => {
-   callback(data);
-  })
+export function getNewId(gameId, cb) {
+  const ref = getRef(gameId);
+  let players = firebase.database().ref(ref + '/players');
+  players.once("value", (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'playerList');
+  });
+  // return players.off
+  return firebase.database().ref(ref)
 }
 
 export function deleteBranch() {
