@@ -123,12 +123,20 @@ export function getPos(gameId, playerId, cb) {
   return pos.off();
 }
 //increment position by newPos
-export function updatePos(gameId, playerId, newPos) {
-  let updates = {};
-  getPos(gameId, playerId, function (data) {
-    updates[`${gameId}/main/players/${playerId}/position`] = data + newPos;
-  });
-  return firebase.database().ref().update(updates);
+export function updatePos(gameId, playerId, diceRoll, cb) {
+const player = database.ref(`${gameId}/main/players/${playerId}`);
+  player.once('value').then((snapshot) => {
+    const position = snapshot.val().position;
+    let newPosition = position + diceRoll;
+    if (newPosition > 43) newPosition = newPosition - 44;
+    player.update({ position: newPosition });
+})
+  // let updates = {};
+  // getPos(gameId, playerId, function (data) {
+  //   console.log(data)
+  //   updates[`${gameId}/main/players/${playerId}/position`] = data + diceRoll;
+  //   return firebase.database().ref().update(updates);
+  // });
 }
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
@@ -153,3 +161,12 @@ export function updateReticlePos(gameId, playerId, data) {
   updates[`${gameId}/shootingGame/players/${playerId}`] = data;
   return firebase.database().ref().update(updates);
 }
+
+export function updateScore(gameId, playerId, newScore) {
+  let updates ={};
+  updates[`${gameId}/main/players/${playerId}/score`] = newScore
+
+  return firebase.database().ref().update(updates);
+}
+
+

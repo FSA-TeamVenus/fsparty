@@ -8,7 +8,7 @@ export default class Leaderboard extends React.Component {
   render() {
     const { players } = this.props;
     const sortedPlayers = players.sort((a, b) => b.score - a.score);
-    console.log(sortedPlayers);
+    // console.log(sortedPlayers);
     return (
       <div id="leaderboard">
         <h3>LEADERBOARD</h3>
