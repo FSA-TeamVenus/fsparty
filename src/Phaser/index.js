@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import config from './config/config';
+import EndScreen from './scenes/EndScreen';
 import RacingGame from './scenes/RacingGame';
 import PlatformGame from './scenes/PlatformGame';
 import platformConfig from './config/platformConfig';

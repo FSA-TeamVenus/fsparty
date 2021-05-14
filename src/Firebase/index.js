@@ -17,33 +17,43 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// ------- test functions --------
+//  ----------------- Racing game functions ----------------
+export const racingGamePlayers = database.ref('1/racingGame/players');
 
-// read from database once
-// export function getReference() {
-//   let db = database.ref();
-//   const data = usersRef
-//     .child('players')
-//     .get()
-//     .then((snapshot) => {
-//       console.log(snapshot.val());
-//     });
-
-//   return data;
-// }
-
-// update database - not working perfectly
-
-function setData(name) {
-  database.ref('users').update({
-    name,
+export const getRacingGamePlayers = (gameId, spawned, cb) => {
+  const players = database.ref(`${gameId}/racingGame/players`);
+  players.on('value', (snapshot) => {
+    const list = snapshot.val();
+    if (!spawned) {
+      cb(list);
+      spawned = true;
+    }
   });
-}
+};
 
-setData('david');
-setData('reid');
+export const updateRacingGamePlayers = (gameId, playerId, cb) => {
+  const players = database.ref(`${gameId}/racingGame/players`);
+  players.on('child_changed', (snapshot) => {
+    const player = snapshot.val();
+    if (player.playerId !== playerId) {
+      cb(player);
+    }
+  });
+};
 
-export const racingGamePlayers = database.ref('1/racingGame');
+export const finishRacingGame = (gameId) => {
+  const game = database.ref(`${gameId}/racingGame`);
+  game.update({ completed: true });
+};
+
+export const addPoints = (gameId, playerId, newPoints) => {
+  const player = database.ref(`${gameId}/main/players/${playerId}`);
+  player.once('value').then((snapshot) => {
+    const score = snapshot.val().score;
+    const newScore = score + newPoints;
+    player.update({ score: newScore });
+  });
+};
 
 export const platformPlayers = database.ref('1/platformGame/players');
 
@@ -55,13 +65,24 @@ export const serverCoins = database.ref('1/platformGame/coins');
 //   //console.log(userData);
 // });
 
+//get tailored firebase ref
+const getRef = (gameId, playerId) => {
+  if (playerId) {
+    return `${gameId}/main/players/${playerId}`;
+  } else {
+    return `${gameId}/main`;
+  }
+};
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
-  let players = firebase.database().ref(`${gameId}/main/players`);
+  const ref = getRef(gameId);
+  let players = firebase.database().ref(ref + '/players');
   players.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'playerList');
   });
+  // return players.off
+  return firebase.database().ref(ref).off;
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
@@ -71,29 +92,49 @@ export function getTurn(gameId, cb) {
     cb(data, 'turn');
   });
 }
-
-export function updateTurn(gameId) {
-  let updates = {};
-  getTurn(gameId, function (data) {
-    updates[`${gameId}/main/turn`] = data + 1;
+//get round in a game instance
+export function getRound(gameId, cb) {
+  let turn = firebase.database().ref(`${gameId}/main/round`);
+  turn.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'round');
   });
-  return firebase.database().ref().update(updates);
+}
+//increment turn
+export function updateTurn(gameId, restartTurns) {
+  let turnUpdate = {};
+  if (restartTurns === true) turnUpdate[`${gameId}/main/turn`] = 0;
+  else {
+    getTurn(gameId, (data) => {
+      turnUpdate[`${gameId}/main/turn`] = data + 1;
+    });
+  }
+  return firebase.database().ref().update(turnUpdate);
 }
 
-export function getPos(gameId, userId, cb) {
-  let pos = firebase
-    .database()
-    .ref(`${gameId}/main/players/${userId}/position`);
+//increment round
+export function updateRound(gameId) {
+  let roundUpdate = {};
+  getRound(gameId, (data) => {
+    roundUpdate[`${gameId}/main/round`] = data + 1;
+  });
+  return firebase.database().ref().update(roundUpdate);
+}
+//get user position
+export function getPos(gameId, playerId, cb) {
+  let ref = getRef(gameId, playerId);
+  let pos = firebase.database().ref(ref + `/position`);
   pos.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'pos');
   });
+  return pos.off();
 }
-
-export function updatePos(gameId, userId, newPos) {
+//increment position by newPos
+export function updatePos(gameId, playerId, newPos) {
   let updates = {};
-  getPos(gameId, userId, function (data) {
-    updates[`${gameId}/main/players/${userId}/position`] = data + newPos;
+  getPos(gameId, playerId, function (data) {
+    updates[`${gameId}/main/players/${playerId}/position`] = data + newPos;
   });
   return firebase.database().ref().update(updates);
 }
