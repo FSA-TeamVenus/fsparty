@@ -15,8 +15,7 @@ export default class WelcomeScreen extends React.Component {
   }
 
   handleNewGame() {
-    const gameId = createNewGame();
-    window.localStorage.setItem('gameId', gameId);
+    createNewGame();
     window.localStorage.setItem('idKey', '0');
   }
 

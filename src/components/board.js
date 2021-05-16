@@ -16,6 +16,9 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
+const gameId = Number(window.localStorage.getItem('gameId'));
+const playerId = Number(window.localStorage.getItem('idKey'));
+
 export class Board extends React.Component {
   constructor(props) {
     super(props);
@@ -29,9 +32,6 @@ export class Board extends React.Component {
   }
 
   componentDidMount() {
-    const gameId = Number(window.localStorage.getItem('gameId'));
-    const playerId = Number(window.localStorage.getItem('idKey'));
-    console.log('playerId', window.localStorage.getItem('playerId'));
     this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
     getTurn(gameId, this.stateCb);
     getPos(gameId, playerId, this.stateCb);
@@ -66,7 +66,7 @@ export class Board extends React.Component {
   render() {
     const { turn, playerList, round } = this.state;
     const nextPlayer = playerList[turn];
-    console.log('in render', playerList);
+
     return (
       <div>
         {playerList.map((player) => (
@@ -80,7 +80,8 @@ export class Board extends React.Component {
         )}
         {playerId == turn && playerList ? (
           <button id="dice-roll" onClick={() => this.rollDice()}>
-            Roll {playerList[playerId].name}
+            Roll
+            {/* {playerList[playerId].name} */}
           </button>
         ) : (
           ''

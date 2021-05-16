@@ -201,19 +201,17 @@ const gameObj = {
 };
 
 export function createNewGame() {
-  let gameId;
   let updates = {};
   database
     .ref()
     .once('value')
     .then((snapshot) => {
       const games = snapshot.val();
-      gameId = Object.keys(games).length + 1;
+      let gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
+      window.localStorage.setItem('gameId', gameId);
     });
-
-  return gameId;
 }
 
 export function getNewPlayerId(gameId) {
