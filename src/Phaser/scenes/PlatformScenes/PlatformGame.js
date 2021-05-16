@@ -16,22 +16,26 @@ export default class PlatformGame extends Phaser.Scene {
     this.allPlayers = {};
     this.coinPouch = {};
   }
-
+  //h/home/reidvanwagner/fsparty/docs/assets/images/sounds/coin.wav
   preload() {
     //IMAGES>>>>>>>>>>>>>>
-    this.load.spritesheet('player', '/public/assets/images/character.png', {
-      frameWidth: 30,
-      frameHeight: 30,
-    });
-    this.load.spritesheet('coin', '/public/assets/images/coins.png', {
+    this.load.spritesheet(
+      'player',
+      'assets/images/assets/images/character.png',
+      {
+        frameWidth: 32,
+        frameHeight: 33,
+      }
+    );
+    this.load.spritesheet('coin', 'assets/images/assets/images/coins.png', {
       frameWidth: 15,
       frameHeight: 15,
     });
-    this.load.image('platform', '/public/assets/images/2dplatform.png');
-    this.load.image('desertBg', '/public/assets/images/Desert.png');
+    this.load.image('platform', 'assets/images/assets/images/2dplatform.png');
+    this.load.image('desertBg', 'assets/images/assets/images/Desert.png');
     //SOUNDS>>>>>>>>>>>>>>>>>>
-    this.load.audio('coin', '/public/assets/images/sounds/coin.wav');
-    this.load.audio('jump', '/public/assets/images/sounds/jump.wav');
+    this.load.audio('coin', 'assets/images/sounds/coin.wav');
+    this.load.audio('jump', 'assets/images/sounds/jump.wav');
   }
 
   create() {
@@ -154,7 +158,7 @@ export default class PlatformGame extends Phaser.Scene {
 
     for (let i = 0; i < 35; i++) {
       let first = i + 1;
-      let coin = new Coin(this, initX, initY, 'coin').setScale(1.5);
+      let coin = new Coin(this, initX, initY, 'coin').setScale(1.75);
       coin.id = i;
       if (first % 5 === 0) {
         initY -= 250;
@@ -185,12 +189,12 @@ export default class PlatformGame extends Phaser.Scene {
     });
     this.anims.create({
       key: 'run',
-      frames: this.anims.generateFrameNumbers('player', { start: 15, end: 20 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 14, end: 21 }),
       frameRate: 10,
     });
     this.anims.create({
       key: 'jump',
-      frames: this.anims.generateFrameNumbers('player', { start: 52, end: 57 }),
+      frames: this.anims.generateFrameNumbers('player', { frame: 55 }),
       frameRate: 10,
     });
     this.anims.create({
@@ -253,7 +257,7 @@ export default class PlatformGame extends Phaser.Scene {
   spawnMyCharacter(player) {
     this.player = new PlatformPlayer(this, player.x, player.y, 'player')
       .setScale(3)
-      .setSize(15, 32, true);
+      .setSize(20, 27, true);
     this.player.playerId = myId;
     this.allPlayers[player.playerId] = this.player;
     this.players.add(this.player);
@@ -262,7 +266,7 @@ export default class PlatformGame extends Phaser.Scene {
   spawnOtherCharacters(player) {
     const newPlayer = new PlatformPlayer(this, player.x, player.y, 'player')
       .setScale(3)
-      .setSize(15, 32, true);
+      .setSize(20, 27, true);
     newPlayer.playerId = player.playerId;
     this.allPlayers[player.playerId] = newPlayer;
     this.players.add(newPlayer);
