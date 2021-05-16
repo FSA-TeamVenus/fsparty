@@ -8,21 +8,25 @@ export class Lobby extends React.Component {
     this.state = {
       player: {},
       gameReady: false,
+      gameState: null,
       gameId: null,
       sprites: [
-        { name: "Kratos", imgUrl: 'kratos-avatar-1.jpg'},
-        { name: "Donkey Kong", imgUrl: 'donkey-kong-avatar-2.jpg'},
-        { name: "Link", imgUrl: 'link-avatar-1.jpg'},
-        { name: "Sonic", imgUrl: 'sonic-avatar-2.jpg'},
+        { name: "Kratos", imgUrl: 'assets/images/kratos-avatar-1.jpg'},
+        { name: "Donkey Kong", imgUrl: 'assets/images/donkey-kong-avatar-2.jpg'},
+        { name: "Link", imgUrl: 'assets/images/link-avatar-1.jpg'},
+        { name: "Sonic", imgUrl: 'assets/images/sonic-avatar-2.jpg'},
       ],
-      avatarThumb: 'kratos-avatar-1.jpg',
+      avatarThumb: 'assets/images/kratos-avatar-1.jpg',
       avatarName: "Kratos",
       selectedColor: 'black'
     };
     this.handleColorSelect = this.handleColorSelect.bind(this);
     this.handleAvatarNav = this.handleAvatarNav.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleStart = this.handleStart.bind(this);
     this.handleNewGame = this.handleNewGame.bind(this);
+    this.handleSelectNew = this.handleSelectNew.bind(this);
+    this.handleSelectJoin = this.handleSelectJoin.bind(this);
   }
 
   componentDidMount() {
@@ -34,26 +38,12 @@ export class Lobby extends React.Component {
 
   }
 
-  createNewPlayer(playerId) {
-    const playerName = document.getElementById('playername').value;
-    const color = document.getElementById('playercolor').value;
-    const sprite = document.getElementById('avatarname').value;
-
-    return {
-      playerId: playerId,
-      name: playerName,
-      color: color,
-      sprite: sprite
-    };
-  }
-
-
   handleSubmit(evt) {
     evt.preventDefault();
     this.addNewPlayer();
   }
 
-  handleNewGame(evt) {
+  handleNewGame() {
     //TODO: generate new gameId or grab existing if joining a game
     const gameId = 1;
 
@@ -61,18 +51,61 @@ export class Lobby extends React.Component {
     //then sets that Id in state
     getNewId(gameId, data => {
       const playerId = Object.keys(data).length;
-      const newPlayer = this.createNewPlayer(playerId);
       this.setState(
         {
-          player: newPlayer
+          player: { id: playerId },
+          gameState: 'NEW_GAME'
         }
       )
     });
   }
 
-  addNewPlayer() {
-    const { playerId, name, color, sprite } = this.state.player;
-    console.log(playerId)
+  async handleJoinGame() {
+    //get game Id entered by user
+    const gameId = document.getElementById('game-id').value;
+    const exists = true;
+    let STATE = 'ENTER_LOBBY'
+
+    //TODO: validate gameId
+    // checkGameId(gameId, data => {
+    //   const exists = Object.keys(data).find( key => {
+    //       return key === gameId
+    //   });
+
+      if (!exists) STATE = 'JOIN_GAME'
+
+      await this.handleNewGame();
+      this.setState(
+        {
+          gameState: STATE
+        }
+      )
+
+
+    //});
+  }
+
+  createNewPlayer() {
+    const playerName = document.getElementById('playername').value;
+    const color = document.getElementById('playercolor').value;
+    const sprite = document.getElementById('avatarname').value;
+
+    this.setState(
+      {
+        player: 
+        { 
+          name: playerName,
+          color: color,
+          sprite: sprite 
+        }
+      }
+    )
+  }
+
+  async addNewPlayer() {
+    const newPlayer = await this.createNewPlayer(playerId);
+    const { id, name, color, sprite } = this.state.player;
+    console.log(id)
     console.log(name)
     console.log(color)
     console.log(sprite)
@@ -90,13 +123,50 @@ export class Lobby extends React.Component {
 
         //TODO: set local storage for gameId, playerid
       }
+      
+      const STATE = "ENTER_LOBBY"
 
       this.setState(
         {
-          gameReady: true
+          gameState: STATE
         }
       )
   }
+
+  handleStart() {
+    let STATE = this.state.gameState;
+
+    switch (STATE) {
+      case "START_NEW_GAME":
+        this.handleNewGame();
+        break;
+      case "JOIN_GAME":
+        this.handleJoinGame();
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+  handleSelectNew(evt) {
+    let TYPE = 'START_NEW_GAME'
+    this.setState(
+      {
+        gameState: TYPE
+      }
+    )
+  }
+
+  handleSelectJoin(evt) {
+    let TYPE = 'JOIN_GAME'
+    this.setState(
+      {
+        gameState: TYPE
+      }
+    )
+  }
+
 
   handleColorSelect(evt) {
     const color = evt.target.value === ''? 'Black' : evt.target.value;
@@ -129,12 +199,14 @@ export class Lobby extends React.Component {
 
   render() {
 
-    const { player, avatarThumb, avatarName, selectedColor, gameId, gameReady } = this.state;
+    const { player, avatarThumb, avatarName, selectedColor, gameId, gameReady, gameState } = this.state;
+
+    const showDiv = gameState === "JOIN_GAME" ? "show-content" : "hide-content";
 
     return (
       <div id="lobby-window">
         <h2 className="title">FS Party</h2>
-        { gameReady ?
+        { gameState === "ENTER_LOBBY" ?
           (
             <div id="lobby-waiting">
                 Waiting ....
@@ -142,23 +214,7 @@ export class Lobby extends React.Component {
           )
           :
           (
-            player.playerId ?
-            (<div className="input-div">
-                <label htmlFor="new-game">
-                  Create new game?
-                </label>
-                <input id="new-game" name="choose-game" type="radio" onClick={this.handleNewGame} className="lobby-input" value="new" />
-                <label htmlFor="existing-game">
-                  Join existing game?
-                </label>
-                <input id="existing-game" name="choose-game" type="radio" onClick={this.handleJoinGame} className="lobby-input" value="existing" />
-                <label htmlFor="game-id">
-                  Join existing game?
-                </label>
-                <input id="game-id" name="game-id" type="text" className="lobby-input" value={gameId} disabled />
-            </div>
-            )
-            :
+            gameState === "NEW_GAME"  ?
             (<form name={name} id="lobby-form" onSubmit={this.handleSubmit}>
               <div className="form-row">
                 <div className="form-col">
@@ -206,6 +262,29 @@ export class Lobby extends React.Component {
                 <input id="playerId" name="playerId" type="text" className="lobby-input" value={player.playerId} />
               </div>
               </form>
+            )
+            :
+            (<div >
+                <label htmlFor="new-game">
+                  Create new game?
+                </label>
+                <input id="new-game" name="choose-game" type="radio" onClick={this.handleSelectNew} className="lobby-input" value="new" />
+                <label htmlFor="existing-game">
+                  Join existing game?
+                </label>
+                <input id="existing-game" name="choose-game" type="radio" onClick={this.handleSelectJoin} className="lobby-input" />
+                <div className="input-div">
+                  <div id="enter-game-id" className={showDiv}>
+                    <label htmlFor="game-id">
+                      Enter Game ID:
+                    </label>
+                    <input id="game-id" name="game-id" type="text" className="lobby-input" value={gameId} />
+                  </div>
+                  <button type="button" id="game-start" onClick={this.handleStart}>
+                    START
+                  </button>
+                </div>
+             </div>
             )
           )
         }

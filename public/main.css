@@ -71,6 +71,13 @@ body {
   background-color: Black
 }
 
+.show-content {
+  display: block;
+}
+
+.hide-content {
+  display: none;
+}
 
 
 
