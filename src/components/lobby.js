@@ -141,59 +141,72 @@ export class Lobby extends React.Component {
             </div>
           )
           :
-          (<form name={name} id="lobby-form" onSubmit={this.handleSubmit}>
-          <div className="form-row">
-            <div className="form-col">
-            <div className="input-div">
-              <label htmlFor="playername">
-                Enter Name
-              </label>
-              <input id="playername" name="playername" type="text" className="lobby-input" />
+          (
+            player.playerId ?
+            (<div className="input-div">
+                <label htmlFor="new-game">
+                  Create new game?
+                </label>
+                <input id="new-game" name="choose-game" type="radio" onClick={this.handleNewGame} className="lobby-input" value="new" />
+                <label htmlFor="existing-game">
+                  Join existing game?
+                </label>
+                <input id="existing-game" name="choose-game" type="radio" onClick={this.handleJoinGame} className="lobby-input" value="existing" />
+                <label htmlFor="game-id">
+                  Join existing game?
+                </label>
+                <input id="game-id" name="game-id" type="text" className="lobby-input" value={gameId} disabled />
             </div>
-            <div className="input-div">
-              <label htmlFor="playercolor">
-                Select Color
-              </label>
-              <select id="playercolor" name="playercolor" className="lobby-input" onChange={this.handleColorSelect}>
-              <option value=""></option>
-              <option value="blue">Blue</option>
-              <option value="red">Red</option>
-              <option value="green">Green</option>
-              <option value="yellow">Yellow</option>
-              </select>
-              <div id="selected-color" className={`selected-color ${selectedColor}`}></div>
-            </div>
-          </div>
-          <div className="form-col">
-            <div className="input-div">
-              <div name="sprite-image"></div>
-              <label htmlFor="playersprite">
-                Select Character
-              </label>
+            )
+            :
+            (<form name={name} id="lobby-form" onSubmit={this.handleSubmit}>
               <div className="form-row">
-                <button type="button" id="prev-sprite" onClick={this.handleAvatarNav} value="1">prev</button>
-                <img id="avatar-thumb" src={avatarThumb} className="avatar"/>
-                <button type="button" id="next-sprite" onClick={this.handleAvatarNav} value="-1">next</button>
+                <div className="form-col">
+                <div className="input-div">
+                  <label htmlFor="playername">
+                    Enter Name
+                  </label>
+                  <input id="playername" name="playername" type="text" className="lobby-input" />
+                </div>
+                <div className="input-div">
+                  <label htmlFor="playercolor">
+                    Select Color
+                  </label>
+                  <select id="playercolor" name="playercolor" className="lobby-input" onChange={this.handleColorSelect}>
+                  <option value=""></option>
+                  <option value="blue">Blue</option>
+                  <option value="red">Red</option>
+                  <option value="green">Green</option>
+                  <option value="yellow">Yellow</option>
+                  </select>
+                  <div id="selected-color" className={`selected-color ${selectedColor}`}></div>
+                </div>
               </div>
-            </div>
-            <div id="sel-color-div" className="input-div">
-              <input id="avatarname" name="playersprite" type="text" className="lobby-input" value={avatarName} />
-            </div>
-          </div>
-          </div>
-          <div className="input-div">
-              Create new game or join existing game?
-              <input id="new-game" name="choose-game" type="radio" onClick={this.handleNewGame} className="lobby-input" value="new" />
-              <input id="existing-game" name="choose-game" type="radio"  className="lobby-input" value="existing" />
-              <input id="game-id" name="playersprite" type="text" onChange={this.handleJoinGame} className="lobby-input" value={gameId} />
-          </div>
-          <div className="input-div">
-            <button type="submit" id="form-submit">
-              JOIN!
-            </button>
-            <input id="playerId" name="playerId" type="text" className="lobby-input" value={player.playerId} />
-          </div>
-          </form>
+              <div className="form-col">
+                <div className="input-div">
+                  <div name="sprite-image"></div>
+                  <label htmlFor="playersprite">
+                    Select Character
+                  </label>
+                  <div className="form-row">
+                    <button type="button" id="prev-sprite" onClick={this.handleAvatarNav} value="1">prev</button>
+                    <img id="avatar-thumb" src={avatarThumb} className="avatar"/>
+                    <button type="button" id="next-sprite" onClick={this.handleAvatarNav} value="-1">next</button>
+                  </div>
+                </div>
+                <div id="sel-color-div" className="input-div">
+                  <input id="avatarname" name="playersprite" type="text" className="lobby-input" value={avatarName} />
+                </div>
+              </div>
+              </div>
+              <div className="input-div">
+                <button type="submit" id="form-submit">
+                  JOIN!
+                </button>
+                <input id="playerId" name="playerId" type="text" className="lobby-input" value={player.playerId} />
+              </div>
+              </form>
+            )
           )
         }
       </div>
