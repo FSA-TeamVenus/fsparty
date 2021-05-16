@@ -16,8 +16,6 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
-const gameId = 1;
-
 export class Board extends React.Component {
   constructor(props) {
     super(props);
@@ -31,9 +29,12 @@ export class Board extends React.Component {
   }
 
   componentDidMount() {
+    const gameId = Number(window.localStorage.getItem('gameId'));
+    const playerId = Number(window.localStorage.getItem('idKey'));
+    console.log('playerId', window.localStorage.getItem('playerId'));
     this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
     getTurn(gameId, this.stateCb);
-    getPos(gameId, this.props.player.id, this.stateCb);
+    getPos(gameId, playerId, this.stateCb);
     getRound(gameId, this.stateCb);
   }
   componentWillUnmount() {
@@ -50,11 +51,11 @@ export class Board extends React.Component {
 
   rollDice() {
     const { turn, pos, playerList } = this.state;
-    const { player } = this.props;
-    const myPlayer = playerList[player.id];
+
+    const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
-    updatePos(gameId, player.id, number);
-    pathDictionary[pos + number].action(gameId, player.id, myPlayer);
+    updatePos(gameId, playerId, number);
+    pathDictionary[pos + number].action(gameId, playerId, myPlayer);
     updateTurn(gameId, this.stateCb);
   }
 
@@ -63,15 +64,13 @@ export class Board extends React.Component {
   // }
 
   render() {
-    const { player } = this.props;
     const { turn, playerList, round } = this.state;
     const nextPlayer = playerList[turn];
-    console.log(playerList);
+    console.log('in render', playerList);
     return (
       <div>
-        {/* <h3 id="welcome">Welcome, {user.name}</h3> */}
         {playerList.map((player) => (
-          <PlayerCard key={player.name} player={player} />
+          <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
         {turn < 0 ? (
@@ -79,9 +78,9 @@ export class Board extends React.Component {
         ) : (
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
-        {player.id == turn && playerList ? (
+        {playerId == turn && playerList ? (
           <button id="dice-roll" onClick={() => this.rollDice()}>
-            Roll {player.name}
+            Roll {playerList[playerId].name}
           </button>
         ) : (
           ''

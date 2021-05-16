@@ -14,17 +14,6 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-// const firebaseConfig = {
-//   apiKey: 'AIzaSyDYsGreUx-uAHV5sDv6YhiuSEd3k95WkDE',
-//   authDomain: 'fsparty-d0c16.firebaseapp.com',
-//   databaseUrl: 'https://fsparty-d0c16-default-rtdb.firebaseio.com/',
-//   projectId: 'fsparty-d0c16',
-//   storageBucket: 'fsparty-d0c16.appspot.com',
-//   messagingSenderId: '746505029214',
-//   appId: '1:746505029214:web:d7758bf54cf255865596cf',
-//   measurementId: 'G-JEVNY56SEG',
-// };
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
@@ -81,7 +70,6 @@ const getRef = (gameId, playerId) => {
 export function getPlayersfromGame(gameId, cb) {
   const ref = getRef(gameId);
   let players = firebase.database().ref(ref + '/players');
-  console.log(players);
   players.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'playerList');
@@ -137,13 +125,13 @@ export function getPos(gameId, playerId, cb) {
 }
 //increment position by newPos
 export function updatePos(gameId, playerId, diceRoll, cb) {
-const player = database.ref(`${gameId}/main/players/${playerId}`);
+  const player = database.ref(`${gameId}/main/players/${playerId}`);
   player.once('value').then((snapshot) => {
     const position = snapshot.val().position;
     let newPosition = position + diceRoll;
     if (newPosition > 43) newPosition = newPosition - 44;
     player.update({ position: newPosition });
-})
+  });
   // let updates = {};
   // getPos(gameId, playerId, function (data) {
   //   console.log(data)
@@ -157,8 +145,7 @@ export function getShootingPlayers(gameId, cb) {
   playerList.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data);
-  })
-
+  });
 }
 //get other reticle positions (for shooting game)
 export function getOtherReticles(gameId, cb) {
@@ -166,7 +153,7 @@ export function getOtherReticles(gameId, cb) {
   playerList.on('child_changed', (snapshot) => {
     const data = snapshot.val();
     cb(data);
-  })
+  });
 }
 //update reticle position
 export function updateReticlePos(gameId, playerId, data) {
@@ -176,10 +163,75 @@ export function updateReticlePos(gameId, playerId, data) {
 }
 
 export function updateScore(gameId, playerId, newScore) {
-  let updates ={};
-  updates[`${gameId}/main/players/${playerId}/score`] = newScore
+  let updates = {};
+  updates[`${gameId}/main/players/${playerId}/score`] = newScore;
 
   return firebase.database().ref().update(updates);
 }
 
+// ------ create new game
 
+const gameObj = {
+  main: {
+    turn: -1,
+    players: {
+      0: {
+        playerId: 0,
+        score: 0,
+        position: 0,
+      },
+    },
+  },
+  racingGame: {
+    completed: false,
+    players: {
+      0: {
+        playerId: 0,
+        x: 32,
+      },
+    },
+  },
+  platformGame: {
+    players: {
+      0: {
+        playerId: 0,
+      },
+    },
+  },
+};
+
+export function createNewGame() {
+  let gameId;
+  let updates = {};
+  database
+    .ref()
+    .once('value')
+    .then((snapshot) => {
+      const games = snapshot.val();
+      gameId = Object.keys(games).length + 1;
+      updates[gameId] = gameObj;
+      database.ref().update(updates);
+    });
+
+  return gameId;
+}
+
+export function getNewPlayerId(gameId) {
+  let playersRef = database.ref(`${gameId}/main/players`);
+  playersRef.once('value').then((snapshot) => {
+    let players = snapshot.val();
+    const newId = Object.keys(players).length;
+    window.localStorage.setItem('idKey', newId);
+  });
+}
+
+export function addPlayerToGame(gameId, playerId, playerData) {
+  let mainGameRef = `${gameId}/main/players`;
+  let racingGameRef = `${gameId}/racingGame/players`;
+  let platformGameRef = `${gameId}/platformGame/players`;
+  let updates = {};
+  updates[mainGameRef + `/${playerId}`] = { ...playerData, score: 0 };
+  updates[racingGameRef + `/${playerId}`] = { playerId, x: 32 };
+  updates[platformGameRef + `/${playerId}`] = { playerId };
+  database.ref().update(updates);
+}
