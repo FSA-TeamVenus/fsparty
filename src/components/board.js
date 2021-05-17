@@ -70,12 +70,13 @@ export class Board extends React.Component {
 
     return (
       <div>
+        <div id='game-id'>GameId: {gameId}</div>
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
         {turn < 0 ? (
-          <button onClick={() => this.startGame()}>Start Game</button>
+          <button id="start" onClick={() => this.startGame()}>Start Game</button>
         ) : (
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
