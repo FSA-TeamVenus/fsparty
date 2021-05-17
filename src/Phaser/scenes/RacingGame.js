@@ -9,7 +9,6 @@ import Player from '../entities/Player';
 
 // setting playerId here temporarily until the main game can set it
 
-const myId = Number(window.localStorage.getItem('idKey'));
 // or token
 
 export default class RacingGame extends Phaser.Scene {
@@ -18,7 +17,8 @@ export default class RacingGame extends Phaser.Scene {
 
     this.allPlayers = {};
     this.spawned = false;
-    this.gameId = Number(window.localStorage.getItem('gameId'));
+    this.gameId;
+    this.myId;
     this.finishers = [];
 
     this.addPlayers = this.addPlayers.bind(this);
@@ -36,6 +36,8 @@ export default class RacingGame extends Phaser.Scene {
     this.load.image('finish_line', 'assets/images/finish_line.png');
     this.load.image('track', 'assets/images/track.png');
     this.load.image('bg', 'assets/images/racing_bg.png');
+    this.gameId = Number(window.localStorage.getItem('gameId'));
+    this.myId = Number(window.localStorage.getItem('idKey'));
   }
 
   create() {
@@ -74,7 +76,9 @@ export default class RacingGame extends Phaser.Scene {
         this.myCharacter.oldPosition &&
         this.myCharacter.oldPosition.x !== position
       ) {
-        racingGamePlayers.child(`${myId}`).update({ x: this.myCharacter.x });
+        racingGamePlayers
+          .child(`${this.myId}`)
+          .update({ x: this.myCharacter.x });
       }
       this.myCharacter.oldPositon = {
         x: this.myCharacter.x,
@@ -92,7 +96,7 @@ export default class RacingGame extends Phaser.Scene {
 
   addPlayers(data) {
     data.forEach((player) => {
-      if (player.playerId === myId) {
+      if (player.playerId === this.myId) {
         this.spawnMyCharacter(player);
       } else this.spawnOtherCharacters(player);
     });
@@ -112,7 +116,7 @@ export default class RacingGame extends Phaser.Scene {
     this.myCharacter = new Player(this, player.x, player.y, 'car')
       .setScale(2)
       .play(`${player.color}`);
-    this.myCharacter.playerId = myId;
+    this.myCharacter.playerId = this.myId;
     this.myCharacter.name = player.name;
     this.allPlayers[this.myCharacter.playerId] = this.myCharacter;
     this.players.add(this.myCharacter);
@@ -121,7 +125,7 @@ export default class RacingGame extends Phaser.Scene {
   managePlayers() {
     getRacingGamePlayers(this.gameId, this.spawned, this.addPlayers);
 
-    updateRacingGamePlayers(this.gameId, myId, this.updateOtherPlayers);
+    updateRacingGamePlayers(this.gameId, this.myId, this.updateOtherPlayers);
   }
 
   updateOtherPlayers(player) {

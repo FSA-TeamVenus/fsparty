@@ -65,8 +65,8 @@ export class Board extends React.Component {
 
   render() {
     const { turn, playerList, round } = this.state;
-    let gameId = Number(window.localStorage.getItem('gameId'));
-    let playerId = Number(window.localStorage.getItem('idKey'));
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
 
     return (
       <div>
