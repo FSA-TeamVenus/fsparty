@@ -39,22 +39,10 @@ export class Lobby extends React.Component {
     */
   }
 
-  getRadioValue(radio) {
-    let ele = radio;
-    let val;
-    for(let i = 0; i < ele.length; i++) {
-        if(ele[i].checked)
-        val = ele[i].value;
-    }
-    return val;
-  }
-
   async handleSubmit(evt) {
     evt.preventDefault();
-    const isNewGame = this.getRadioValue(document.getElementsByName('choose-game')) === 'new' ? true : false;
-    console.log("radio button===>", isNewGame)
-
-    if(!isNewGame)  
+    const isNewGame = this.state.gameState === 'NEW_GAME' ? true : false;
+    if(isNewGame)  
       await this.addNewGame();
 
     await this.addNewPlayer();
@@ -121,7 +109,6 @@ export class Lobby extends React.Component {
     getNewGameId(gameId, data => {
       let STATE = 'NEW_GAME'
       let newGameId = 0;
-      console.log(!gameId)
       if (!gameId) {
         newGameId = this.findNextNumber(Object.keys(data));
       } else {
