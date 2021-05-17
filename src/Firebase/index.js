@@ -217,8 +217,8 @@ export function createNewGame() {
     .once('value')
     .then((snapshot) => {
       const games = snapshot.val();
-      // let gameId = findNextNumber(Object.keys(games))
-      let gameId = Object.keys(games).length + 1;
+      let gameId = findNextNumber(Object.keys(games));
+      // let gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
       window.localStorage.setItem('gameId', gameId);
@@ -247,28 +247,28 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     score: 0,
     position: 0,
   };
-  updates[racingGameRef + `/${playerId}`] = {
+  updates[racingGameRef] = {
     playerId,
     color: playerData.color,
     name: playerData.name,
     x: 32,
     y: racingGameInitY[playerId],
   };
-  updates[platformGameRef + `/${playerId}`] = { playerId };
+  updates[platformGameRef] = { playerId };
   database.ref().update(updates);
 }
 
-// findNextNumber(sequence) {
-//     const length = sequence.length;
-//     for (let i=0; i<length; i++) {
-//         let x = i + 1;
-//         //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
-//         if (Number(sequence[i]) !== x) {
-//             sequence.splice(i, 0, x); // insert x here
-//             sequence.length = length; // chop off the rest
-//             return x;
-//         }
-//     }
-//     // else
-//     return length + 1; //array length + 1 as next number
-//   }
+function findNextNumber(sequence) {
+  const length = sequence.length;
+  for (let i = 0; i < length; i++) {
+    let x = i + 1;
+    //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
+    if (Number(sequence[i]) !== x) {
+      sequence.splice(i, 0, x); // insert x here
+      sequence.length = length; // chop off the rest
+      return x;
+    }
+  }
+  // else
+  return length + 1; //array length + 1 as next number
+}
