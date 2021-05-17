@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { addPoints } from '../../Firebase/index';
+import { addPoints, updateRound } from '../../Firebase/index';
 
 export default class EndScreen extends Phaser.Scene {
   constructor() {
@@ -29,6 +29,17 @@ export default class EndScreen extends Phaser.Scene {
       yPosition += 50;
       addPoints(this.gameId, currentId, earnedPoints);
     }
+
+    this.time.addEvent({
+      delay: 5000,
+      callback: () => {
+        this.scene.stop();
+        updateRound(this.gameId);
+        this.sys.game.destroy(true);
+      },
+      callbackScope: this,
+      loop: false,
+    });
   }
 
   calculatePoints(place) {

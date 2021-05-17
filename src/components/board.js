@@ -76,6 +76,16 @@ export class Board extends React.Component {
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
+        {turn === playerList.length ? (
+          <div>
+            <GameCanvas />{' '}
+            <button onClick={() => updateRound(gameId)}>
+              Click me to end the round!
+            </button>
+          </div>
+        ) : (
+          <div />
+        )}
         {turn < 0 ? (
           <button onClick={() => this.startGame()}>Start Game</button>
         ) : (
@@ -92,8 +102,6 @@ export class Board extends React.Component {
           //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
           // </div>
         )}
-        {turn === playerList.length ? (<div><GameCanvas /> <button onClick={()=> updateRound(gameId)}>Click me to end the round!</button></div>
-        ): <div />}
       </div>
     );
   }

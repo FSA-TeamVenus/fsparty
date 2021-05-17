@@ -196,5 +196,5 @@ body {
 /* End Lobby Section */
 
 #game-canvas {
-  z-index: 4;
+  z-index: 5;
 }
