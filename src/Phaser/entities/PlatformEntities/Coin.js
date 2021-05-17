@@ -9,9 +9,11 @@ export default class Coin extends Phaser.Physics.Arcade.Sprite {
     this.body.allowGravity = false;
   }
 
-  update(time, player) {}
+  update(time, player) {
+    this.updateSpin();
+  }
 
-  updateMovement() {
+  updateSpin() {
     this.play('spin', true);
   }
 }

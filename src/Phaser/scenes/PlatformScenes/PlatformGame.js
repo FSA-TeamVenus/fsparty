@@ -150,6 +150,25 @@ export default class PlatformGame extends Phaser.Scene {
       fill: 'white',
     });
     this.scoreText.setScrollFactor(0, 0);
+
+    //TIMER
+    this.initialTime = 60;
+    this.timerText = this.add.text(
+      0,
+      45,
+      'Time: ' + this.formatTime(this.initialTime),
+      {
+        fontSize: '20px',
+        fill: 'white',
+      }
+    );
+    this.timerText.setScrollFactor(0, 0);
+    this.timedEvent = this.time.addEvent({
+      delay: 1000,
+      callback: this.OnEvent,
+      callbackScope: this,
+      loop: true,
+    });
   }
 
   generateCoins() {
@@ -194,12 +213,13 @@ export default class PlatformGame extends Phaser.Scene {
     });
     this.anims.create({
       key: 'jump',
-      frames: this.anims.generateFrameNumbers('player', { start: 53, end: 56 }),
+      frames: this.anims.generateFrameNumbers('player', { frame: 55 }),
       frameRate: 10,
     });
     this.anims.create({
       key: 'spin',
       frames: this.anims.generateFrameNumbers('coin', { start: 1, end: 7 }),
+      frameRate: 10,
     });
   }
 
@@ -223,6 +243,18 @@ export default class PlatformGame extends Phaser.Scene {
         y: y,
       };
     }
+  }
+
+  formatTime(seconds) {
+    let minutes = Math.floor(seconds / 60);
+    let partInSeconds = seconds % 60;
+    partInSeconds = partInSeconds.toString().padStart(2, '0');
+    return `${minutes}: ${partInSeconds}`;
+  }
+
+  onEvent() {
+    this.initialTime -= 1;
+    timerText.setText('Time: ' + formatTime(this.initialTime));
   }
 
   isPlayerDead() {
