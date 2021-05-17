@@ -112,7 +112,7 @@ body {
 
 /*  --------- Dice ----- */
 
-#dice-roll {
+.dice-roll {
   width: 100px;
   height: 100px;
   position: absolute;
