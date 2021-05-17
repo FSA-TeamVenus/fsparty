@@ -215,24 +215,27 @@ export function createNewGame() {
 
 export function getNewPlayerId(gameId) {
   let playersRef = database.ref(`${gameId}/main/players`);
+  let updates = {};
   playersRef.once('value').then((snapshot) => {
     let players = snapshot.val();
     const newId = Object.keys(players).length;
     window.localStorage.setItem('idKey', newId);
+    updates[`${gameId}/main/players/${newId}`] = { score: 0, };
+    database.ref().update(updates);
   });
 }
 
 export function addPlayerToGame(gameId, playerId, playerData) {
-  let mainGameRef = `${gameId}/main/players`;
-  let racingGameRef = `${gameId}/racingGame/players`;
-  let platformGameRef = `${gameId}/platformGame/players`;
+  let mainGameRef = `${gameId}/main/players/${playerId}`;
+  let racingGameRef = `${gameId}/racingGame/players/${playerId}`;
+  let platformGameRef = `${gameId}/platformGame/players/${playerId}`;
   let updates = {};
-  updates[mainGameRef + `/${playerId}`] = {
+  updates[mainGameRef] = {
     ...playerData,
     score: 0,
     position: 0,
   };
-  updates[racingGameRef + `/${playerId}`] = { playerId, x: 32 };
-  updates[platformGameRef + `/${playerId}`] = { playerId };
+  updates[racingGameRef] = { playerId, x: 32 };
+  updates[platformGameRef] = { playerId };
   database.ref().update(updates);
 }
