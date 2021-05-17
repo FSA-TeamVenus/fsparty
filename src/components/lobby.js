@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { addPlayer, addGame, getNewId, getNewGameId, validateGameId, deleteBranch, deleteKey } from '../Firebase';
+import Players from './players';
 
 export class Lobby extends React.Component {
   constructor(props) {
@@ -276,9 +277,7 @@ export class Lobby extends React.Component {
         <h2 className="title">FS Party</h2>
         { gameState === "ENTER_LOBBY" ?
           (
-            <div id="lobby-waiting">
-                Waiting ....
-            </div>
+            <Players gameState={gameState} gameId={gameId}/>
           )
           :
           (
