@@ -209,7 +209,7 @@ export function createNewGame() {
       let gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
-      window.localStorage.setItem('gameId', gameId);
+      window.localStorage.setItem("gameId", gameId);
     });
 }
 

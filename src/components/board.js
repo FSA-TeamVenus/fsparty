@@ -51,7 +51,6 @@ export class Board extends React.Component {
 
   rollDice() {
     const { turn, pos, playerList } = this.state;
-
     const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
     updatePos(gameId, playerId, number);
@@ -64,6 +63,9 @@ export class Board extends React.Component {
   // }
 
   render() {
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
+
     const { turn, playerList, round } = this.state;
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
