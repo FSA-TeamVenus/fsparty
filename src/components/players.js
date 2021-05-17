@@ -25,6 +25,7 @@ export class Players extends React.Component {
         const { playerList } = this.state
         const keys = Object.keys(playerList);
         console.log("keys===>",keys)
+        console.log("playerList==>", playerList)
 
         return(
             <div id="lobby-waiting">
@@ -37,7 +38,7 @@ export class Players extends React.Component {
                     Players
                         { 
                             keys.forEach( key => {
-                                return (playerList[key]);
+                                return (playerList[key].name);
                             })
                         }
                     </div> 
