@@ -19,10 +19,14 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 //  ----------------- Racing game functions ----------------
-export const racingGamePlayers = database.ref('1/racingGame/players');
+
+export const playersRef = (gameId) => {
+  return database.ref(`${gameId}/racingGame/players`);
+};
+export const racingGamePlayers = database.ref('8/racingGame/players');
 
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
-  const players = database.ref(`${gameId}/racingGame/players`);
+  const players = playersRef(gameId);
   players.on('value', (snapshot) => {
     const list = snapshot.val();
     if (!spawned) {
@@ -169,7 +173,7 @@ export function updateScore(gameId, playerId, newScore) {
   return firebase.database().ref().update(updates);
 }
 
-// ------ create new game
+// ------ create new game -------
 
 const gameObj = {
   main: {
@@ -196,6 +200,13 @@ const gameObj = {
       },
     },
   },
+};
+
+const racingGameInitY = {
+  0: 400,
+  1: 300,
+  2: 200,
+  3: 100,
 };
 
 export function createNewGame() {
@@ -231,7 +242,12 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     score: 0,
     position: 0,
   };
-  updates[racingGameRef + `/${playerId}`] = { playerId, x: 32 };
+  updates[racingGameRef + `/${playerId}`] = {
+    playerId,
+    color: playerData.color,
+    x: 32,
+    y: racingGameInitY[playerId],
+  };
   updates[platformGameRef + `/${playerId}`] = { playerId };
   database.ref().update(updates);
 }

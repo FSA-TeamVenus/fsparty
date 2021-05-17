@@ -1,15 +1,11 @@
 import Phaser from 'phaser';
 import {
-  racingGamePlayers,
+  playersRef,
   getRacingGamePlayers,
   updateRacingGamePlayers,
   finishRacingGame,
 } from '../../Firebase/index';
 import Player from '../entities/Player';
-
-// setting playerId here temporarily until the main game can set it
-
-// or token
 
 export default class RacingGame extends Phaser.Scene {
   constructor() {
@@ -42,7 +38,7 @@ export default class RacingGame extends Phaser.Scene {
 
   create() {
     this.managePlayers();
-
+    this.playersRef = playersRef(this.gameId);
     this.createSprites();
 
     // this.background = this.add.image(400, 300, 'bg');
@@ -76,9 +72,7 @@ export default class RacingGame extends Phaser.Scene {
         this.myCharacter.oldPosition &&
         this.myCharacter.oldPosition.x !== position
       ) {
-        racingGamePlayers
-          .child(`${this.myId}`)
-          .update({ x: this.myCharacter.x });
+        this.playersRef.child(`${this.myId}`).update({ x: this.myCharacter.x });
       }
       this.myCharacter.oldPositon = {
         x: this.myCharacter.x,
