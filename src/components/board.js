@@ -16,6 +16,9 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
+let gameId = Number(window.localStorage.getItem('gameId'));
+let playerId = Number(window.localStorage.getItem('idKey'));
+
 export class Board extends React.Component {
   constructor(props) {
     super(props);
@@ -29,9 +32,6 @@ export class Board extends React.Component {
   }
 
   componentDidMount() {
-    const gameId = Number(window.localStorage.getItem('gameId'));
-    const playerId = Number(window.localStorage.getItem('idKey'));
-    console.log('playerId', window.localStorage.getItem('playerId'));
     this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
     getTurn(gameId, this.stateCb);
     getPos(gameId, playerId, this.stateCb);
@@ -51,7 +51,6 @@ export class Board extends React.Component {
 
   rollDice() {
     const { turn, pos, playerList } = this.state;
-
     const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
     updatePos(gameId, playerId, number);
@@ -64,6 +63,9 @@ export class Board extends React.Component {
   // }
 
   render() {
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
+
     const { turn, playerList, round } = this.state;
     const nextPlayer = playerList[turn];
     console.log('in render', playerList);

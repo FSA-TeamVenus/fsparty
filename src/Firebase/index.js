@@ -211,6 +211,7 @@ export function createNewGame() {
       gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
+      window.localStorage.setItem("gameId", gameId);
     });
 
   return gameId;
