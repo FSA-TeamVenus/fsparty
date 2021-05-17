@@ -19,13 +19,10 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 //  ----------------- Racing game functions ----------------
-<<<<<<< HEAD
 
 export const playersRef = (gameId) => {
   return database.ref(`${gameId}/racingGame/players`);
 };
-=======
->>>>>>> main
 export const racingGamePlayers = database.ref('8/racingGame/players');
 
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
@@ -104,8 +101,8 @@ export function getRound(gameId, cb) {
 export function updateTurn(gameId) {
   let turnUpdate = {};
   getTurn(gameId, (data) => {
-      turnUpdate[`${gameId}/main/turn`] = data + 1;
-    });
+    turnUpdate[`${gameId}/main/turn`] = data + 1;
+  });
   return firebase.database().ref().update(turnUpdate);
 }
 
@@ -223,7 +220,7 @@ export function createNewGame() {
       let gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
-      window.localStorage.setItem("gameId", gameId);
+      window.localStorage.setItem('gameId', gameId);
     });
 }
 
