@@ -189,17 +189,17 @@ export default class PlatformGame extends Phaser.Scene {
     });
     this.anims.create({
       key: 'run',
-      frames: this.anims.generateFrameNumbers('player', { start: 14, end: 21 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 14, end: 20 }),
       frameRate: 10,
     });
     this.anims.create({
       key: 'jump',
-      frames: this.anims.generateFrameNumbers('player', { frame: 55 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 53, end: 56 }),
       frameRate: 10,
     });
     this.anims.create({
-      key: 'idle',
-      frames: this.anims.generateFrameNumbers('coin', { frame: 0 }),
+      key: 'spin',
+      frames: this.anims.generateFrameNumbers('coin', { start: 1, end: 7 }),
     });
   }
 

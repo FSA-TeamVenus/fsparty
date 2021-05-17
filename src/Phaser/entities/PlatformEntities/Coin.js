@@ -10,4 +10,8 @@ export default class Coin extends Phaser.Physics.Arcade.Sprite {
   }
 
   update(time, player) {}
+
+  updateMovement() {
+    this.play('spin', true);
+  }
 }
