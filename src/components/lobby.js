@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, Route, Switch, Redirect } from 'react-router-dom';
-import { addPlayer, getNewId, deleteBranch } from '../Firebase';
+import { addPlayer, addGame, getNewId, getNewGameId, validateGameId, deleteBranch, deleteKey } from '../Firebase';
 
 export class Lobby extends React.Component {
   constructor(props) {
@@ -8,7 +8,7 @@ export class Lobby extends React.Component {
     this.state = {
       player: {},
       gameReady: false,
-      gameState: null,
+      gameState: '',
       gameId: null,
       sprites: [
         { name: "Kratos", imgUrl: 'assets/images/kratos-avatar-1.jpg'},
@@ -30,98 +30,179 @@ export class Lobby extends React.Component {
   }
 
   componentDidMount() {
-
-    //DO NOT UNCOMMENT!!!
-    //THIS WILL DELETE ENTIRE `main/players` BRANCH
-    //ONLY USED IN EMERGENCY WHEN ENDLESS LOOP ADDED 600 RECORDS TO DB!
-    //deleteBranch();
-
+    /*
+    getNewGameId(data => { 
+      Object.keys(data).filter(key => {
+        if (Number(key) > 4) deleteKey(key)
+      })
+    })
+    */
   }
 
-  handleSubmit(evt) {
+  getRadioValue(radio) {
+    let ele = radio;
+    let val;
+    for(let i = 0; i < ele.length; i++) {
+        if(ele[i].checked)
+        val = ele[i].value;
+    }
+    return val;
+  }
+
+  async handleSubmit(evt) {
     evt.preventDefault();
-    this.addNewPlayer();
+    const isNewGame = this.getRadioValue(document.getElementsByName('choose-game')) === 'new' ? true : false;
+    console.log("radio button===>", isNewGame)
+
+    if(!isNewGame)  
+      await this.addNewGame();
+
+    await this.addNewPlayer();
   }
 
-  handleNewGame() {
-    //TODO: generate new gameId or grab existing if joining a game
-    const gameId = 1;
+  addNewGame(){
+    const gameId = this.state.gameId
+    // add new Game info to firebase
+    const gameInfo = {
+      main: {
+        players: {
+          0: {
+            name: 'new_player'
+          }
+        }
+      }
+    }
+    addGame(gameId, gameInfo)
+  }
+
+  getPlayerId() {
+    let STATE = 'NEW_GAME'
+    const gameId = this.state.gameId
 
     //This function contacts firebase to get new playerId,
     //then sets that Id in state
     getNewId(gameId, data => {
-      const playerId = Object.keys(data).length;
+      let playerId
+      if (!gameId) {
+        //null game id passed into handleNewGame() so this is a new game set first player to id: 0
+        playerId = 0
+      } else {
+        //existing game Id was passed into handleNewGame() so set player to next available id 
+        playerId = Object.keys(data).length;
+      }
       this.setState(
         {
           player: { id: playerId },
-          gameState: 'NEW_GAME'
+          gameState: STATE,
         }
       )
+      console.log("New Player ID: ===>", playerId)
     });
+  }
+
+  findNextNumber(sequence) {
+    const length = sequence.length;
+    for (let i=0; i<length; i++) {
+        let x = i + 1;
+        //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
+        if (Number(sequence[i]) !== x) {
+            sequence.splice(i, 0, x); // insert x here
+            sequence.length = length; // chop off the rest
+            return x;
+        }
+    }
+    // else
+    return length + 1; //array length + 1 as next number 
+  }
+
+  getGameId(gameId) {
+    //generate new gameId or grab existing if joining a game,
+    // then sets that gameId in state
+    getNewGameId(gameId, data => {
+      let STATE = 'NEW_GAME'
+      let newGameId = 0;
+      console.log(!gameId)
+      if (!gameId) {
+        newGameId = this.findNextNumber(Object.keys(data));
+      } else {
+        newGameId = gameId
+      }
+      this.setState(
+        {
+          gameId: newGameId,
+          gameState: STATE
+        }
+      )
+      console.log("Game ID: ===>", newGameId)
+    }) 
+  }
+
+  async handleNewGame(gameId) {
+    await this.getGameId(gameId);
+    await this.getPlayerId();
   }
 
   async handleJoinGame() {
     //get game Id entered by user
     const gameId = document.getElementById('game-id').value;
-    const exists = true;
-    let STATE = 'ENTER_LOBBY'
-
-    //TODO: validate gameId
-    // checkGameId(gameId, data => {
-    //   const exists = Object.keys(data).find( key => {
-    //       return key === gameId
-    //   });
-
-      if (!exists) STATE = 'JOIN_GAME'
-
-      await this.handleNewGame();
+    console.log("game id: ", gameId)
+    //validate gameId
+    validateGameId(gameId, async valid => {
+      let STATE = 'ENTER_LOBBY'
+      if(!valid) {
+        STATE = 'JOIN_GAME'
+      } else {
+        await this.handleNewGame(gameId);
+      }
       this.setState(
         {
           gameState: STATE
         }
       )
-
-
-    //});
+    });
   }
 
-  createNewPlayer() {
-    const playerName = document.getElementById('playername').value;
-    const color = document.getElementById('playercolor').value;
-    const sprite = document.getElementById('avatarname').value;
-
+  saveNewPlayerToState(newPlayer) {
     this.setState(
       {
-        player: 
-        { 
-          name: playerName,
-          color: color,
-          sprite: sprite 
-        }
+        player: newPlayer
       }
     )
   }
 
   async addNewPlayer() {
-    const newPlayer = await this.createNewPlayer(playerId);
-    const { id, name, color, sprite } = this.state.player;
-    console.log(id)
-    console.log(name)
+    const playerId = document.getElementById('playerId').value;
+    const playerName = document.getElementById('playername').value;
+    const color = document.getElementById('playercolor').value;
+    const sprite = document.getElementById('avatarname').value;
+
+    const newPlayer = { 
+      id: playerId,
+      name: playerName,
+      color: color,
+      sprite: sprite 
+    }
+ 
+    await this.saveNewPlayerToState(newPlayer);
+
+    console.log(playerId)
+    console.log(playerName)
     console.log(color)
     console.log(sprite)
 
     //call firebase.addPlayer(gameId, playerId, playerObj)
     if(playerId < 4) {
-      addPlayer(1, playerId,
+      addPlayer(this.state.gameId, playerId,
         {
-          name: name,
+          name: playerName,
           position: 0,
           score: 0,
           color: color,
           sprite: sprite
         });
 
-        //TODO: set local storage for gameId, playerid
+        //save player object in local storage 
+        window.localStorage.setItem('player', JSON.stringify(newPlayer));
       }
       
       const STATE = "ENTER_LOBBY"
@@ -138,7 +219,7 @@ export class Lobby extends React.Component {
 
     switch (STATE) {
       case "START_NEW_GAME":
-        this.handleNewGame();
+        this.handleNewGame(null);
         break;
       case "JOIN_GAME":
         this.handleJoinGame();
@@ -153,7 +234,7 @@ export class Lobby extends React.Component {
     let TYPE = 'START_NEW_GAME'
     this.setState(
       {
-        gameState: TYPE
+        gameState: TYPE,
       }
     )
   }
@@ -259,7 +340,7 @@ export class Lobby extends React.Component {
                 <button type="submit" id="form-submit">
                   JOIN!
                 </button>
-                <input id="playerId" name="playerId" type="text" className="lobby-input" value={player.playerId} />
+                <input id="playerId" name="playerId" type="text" className="lobby-input" value={player.id} />
               </div>
               </form>
             )
@@ -272,7 +353,7 @@ export class Lobby extends React.Component {
                 <label htmlFor="existing-game">
                   Join existing game?
                 </label>
-                <input id="existing-game" name="choose-game" type="radio" onClick={this.handleSelectJoin} className="lobby-input" />
+                <input id="existing-game" name="choose-game" type="radio" onClick={this.handleSelectJoin} className="lobby-input" value="join" />
                 <div className="input-div">
                   <div id="enter-game-id" className={showDiv}>
                     <label htmlFor="game-id">

@@ -116,6 +116,14 @@ export function updatePos(gameId, playerId, newPos) {
   return firebase.database().ref().update(updates);
 }
 
+//game
+export function addGame(gameId, gameInfo) {
+  console.log("GameInfo===>", gameInfo)
+  let updates = {};
+  updates[`${gameId}`] = gameInfo;
+  return firebase.database().ref().update(updates);
+}
+
 //add player to game
 export function addPlayer(gameId, playerId, playerInfo) {
   let updates = {};
@@ -134,8 +142,44 @@ export function getNewId(gameId, cb) {
   return firebase.database().ref(ref)
 }
 
-export function deleteBranch() {
-  const adaRef = database.ref('1/main/players');
+export function validateGameId(gameId, cb) {
+  let games = firebase.database().ref();
+  games.once("value", (snapshot) => {
+    const data = snapshot.val();
+    const result = Object.keys(data).filter(key => {
+      return Number(key) == Number(gameId)
+    })
+    const exists = result.length > 0 ? true : false;
+    cb(exists);
+  });
+  // return games.off
+  return firebase.database().ref().off
+}
+
+export function getNewGameId(gameId, cb) {
+  let games = firebase.database().ref();
+  games.once("value", (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'gameList');
+  });
+  // return games.off
+  return firebase.database().ref().off
+}
+
+export function deleteKey(key) {
+  const dref = database.ref(key);
+  dref.remove()
+  .then(function () {
+    console.log("Success deleting key: ", dref.key)
+  })
+  .catch(function(error) {
+    console.log(`Removal of key ${dref.key} failed: " + error.message`)
+  })
+}
+
+export function deleteBranch(gameId) {
+  const ref = getRef(gameId);
+  const adaRef = database.ref(ref + '/players');
   adaRef.remove()
   .then(function() {
     console.log("Remove succeeded.")
