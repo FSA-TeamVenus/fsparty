@@ -19,10 +19,13 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 //  ----------------- Racing game functions ----------------
+<<<<<<< HEAD
 
 export const playersRef = (gameId) => {
   return database.ref(`${gameId}/racingGame/players`);
 };
+=======
+>>>>>>> main
 export const racingGamePlayers = database.ref('8/racingGame/players');
 
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
@@ -98,24 +101,24 @@ export function getRound(gameId, cb) {
   });
 }
 //increment turn
-export function updateTurn(gameId, restartTurns) {
+export function updateTurn(gameId) {
   let turnUpdate = {};
-  if (restartTurns === true) turnUpdate[`${gameId}/main/turn`] = 0;
-  else {
-    getTurn(gameId, (data) => {
+  getTurn(gameId, (data) => {
       turnUpdate[`${gameId}/main/turn`] = data + 1;
     });
-  }
   return firebase.database().ref().update(turnUpdate);
 }
 
-//increment round
+//increment round and reset turn to 0
 export function updateRound(gameId) {
-  let roundUpdate = {};
+  let updates = {};
   getRound(gameId, (data) => {
-    roundUpdate[`${gameId}/main/round`] = data + 1;
+    updates[`${gameId}/main/round`] = data + 1;
   });
-  return firebase.database().ref().update(roundUpdate);
+  getTurn(gameId, (data) => {
+    updates[`${gameId}/main/turn`] = 0;
+  });
+  return firebase.database().ref().update(updates);
 }
 //get user position
 export function getPos(gameId, playerId, cb) {
@@ -178,6 +181,7 @@ export function updateScore(gameId, playerId, newScore) {
 const gameObj = {
   main: {
     turn: -1,
+    round: 1,
     players: {
       0: {
         playerId: 0,
@@ -219,7 +223,7 @@ export function createNewGame() {
       let gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
-      window.localStorage.setItem('gameId', gameId);
+      window.localStorage.setItem("gameId", gameId);
     });
 }
 
