@@ -65,7 +65,7 @@ export class Board extends React.Component {
 
   render() {
     const { turn, playerList, round } = this.state;
-    const nextPlayer = playerList[turn];
+    // const nextPlayer = playerList[turn];
 
     return (
       <div>
