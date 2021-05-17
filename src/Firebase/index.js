@@ -115,6 +115,12 @@ export function updateRound(gameId) {
   getTurn(gameId, (data) => {
     updates[`${gameId}/main/turn`] = 0;
   });
+  updates[`${gameId}/main/racingGame/players`] = {
+    0: { x: 32 },
+    1: { x: 32 },
+    2: { x: 32 },
+    3: { x: 32 },
+  };
   return firebase.database().ref().update(updates);
 }
 //get user position
