@@ -232,7 +232,7 @@ export function getNewPlayerId(gameId) {
     let players = snapshot.val();
     const newId = Object.keys(players).length;
     window.localStorage.setItem('idKey', newId);
-    updates[`${gameId}/main/players/${newId}`] = { score: 0, };
+    updates[`${gameId}/main/players/${newId}`] = { score: 0 };
     database.ref().update(updates);
   });
 }
@@ -258,17 +258,17 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   database.ref().update(updates);
 }
 
-findNextNumber(sequence) {
-    const length = sequence.length;
-    for (let i=0; i<length; i++) {
-        let x = i + 1;
-        //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
-        if (Number(sequence[i]) !== x) {
-            sequence.splice(i, 0, x); // insert x here
-            sequence.length = length; // chop off the rest
-            return x;
-        }
-    }
-    // else
-    return length + 1; //array length + 1 as next number
-  }
+// findNextNumber(sequence) {
+//     const length = sequence.length;
+//     for (let i=0; i<length; i++) {
+//         let x = i + 1;
+//         //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
+//         if (Number(sequence[i]) !== x) {
+//             sequence.splice(i, 0, x); // insert x here
+//             sequence.length = length; // chop off the rest
+//             return x;
+//         }
+//     }
+//     // else
+//     return length + 1; //array length + 1 as next number
+//   }
