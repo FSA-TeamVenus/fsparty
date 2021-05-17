@@ -46,7 +46,7 @@ export class Board extends React.Component {
   }
 
   startGame() {
-    updateTurn(gameId, this.stateCb);
+    updateTurn(gameId);
   }
 
   rollDice() {
@@ -55,7 +55,7 @@ export class Board extends React.Component {
     const number = Phaser.Math.Between(0, 6);
     updatePos(gameId, playerId, number);
     pathDictionary[pos + number].action(gameId, playerId, myPlayer);
-    updateTurn(gameId, this.stateCb);
+    updateTurn(gameId);
   }
 
   // moveGamePiece(tile, player){
@@ -67,8 +67,9 @@ export class Board extends React.Component {
     playerId = Number(window.localStorage.getItem('idKey'));
 
     const { turn, playerList, round } = this.state;
-    const nextPlayer = playerList[turn];
-    console.log('in render', playerList);
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
+
     return (
       <div>
         {playerList.map((player) => (
@@ -82,7 +83,8 @@ export class Board extends React.Component {
         )}
         {playerId == turn && playerList ? (
           <button id="dice-roll" onClick={() => this.rollDice()}>
-            Roll {playerList[playerId].name}
+            Roll
+            {/* {playerList[playerId].name} */}
           </button>
         ) : (
           ''
@@ -90,7 +92,8 @@ export class Board extends React.Component {
           //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
           // </div>
         )}
-        {turn === playerList.length ? <GameCanvas /> : <div />}
+        {turn === playerList.length ? (<div><GameCanvas /> <button onClick={()=> updateRound(gameId)}>Click me to end the round!</button></div>
+        ): <div />}
       </div>
     );
   }
