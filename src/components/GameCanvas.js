@@ -11,6 +11,10 @@ export default class GameCanvas extends React.Component {
     new Game(config);
   }
 
+  // componentWillUnmount() {
+  //   this.sys.game.destroy(true);
+  // }
+
   shouldComponentUpdate() {
     return false;
   }

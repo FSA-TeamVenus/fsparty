@@ -37,14 +37,14 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   create() {
+    this.players = this.add.group();
+    this.createSprites();
     this.managePlayers();
     this.playersRef = playersRef(this.gameId);
-    this.createSprites();
 
     // this.background = this.add.image(400, 300, 'bg');
     // this.track = this.add.image(400, 450, 'track');
     // this.track2 = this.add.image(400, 150, 'track');
-    this.players = this.add.group();
 
     this.finishLine = this.physics.add.image(750, 400, 'finish_line');
 
@@ -77,14 +77,7 @@ export default class RacingGame extends Phaser.Scene {
       this.myCharacter.oldPositon = {
         x: this.myCharacter.x,
       };
-      if (this.finishers.length === this.players.getChildren().length) {
-        finishRacingGame(this.gameId);
-        this.scene.start('endScreen', {
-          gameId: this.gameId,
-          allPlayers: this.allPlayers,
-          finishers: this.finishers,
-        });
-      }
+      this.checkGameOver();
     }
   }
 
@@ -103,6 +96,7 @@ export default class RacingGame extends Phaser.Scene {
     newPlayer.playerId = player.playerId;
     newPlayer.name = player.name;
     this.allPlayers[player.playerId] = newPlayer;
+    console.log(this.players);
     this.players.add(newPlayer);
   }
 
@@ -169,5 +163,23 @@ export default class RacingGame extends Phaser.Scene {
       frameRate: 20,
       repeat: -1,
     });
+  }
+
+  checkGameOver() {
+    if (this.finishers.length === this.players.getChildren().length) {
+      this.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          finishRacingGame(this.gameId);
+          this.scene.start('endScreen', {
+            gameId: this.gameId,
+            allPlayers: this.allPlayers,
+            finishers: this.finishers,
+          });
+        },
+        callbackScope: this,
+        loop: false,
+      });
+    }
   }
 }
