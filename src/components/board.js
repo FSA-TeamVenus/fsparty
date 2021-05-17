@@ -16,8 +16,8 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
-const gameId = Number(window.localStorage.getItem('gameId'));
-const playerId = Number(window.localStorage.getItem('idKey'));
+let gameId = Number(window.localStorage.getItem('gameId'));
+let playerId = Number(window.localStorage.getItem('idKey'));
 
 export class Board extends React.Component {
   constructor(props) {
@@ -65,6 +65,8 @@ export class Board extends React.Component {
 
   render() {
     const { turn, playerList, round } = this.state;
+    let gameId = Number(window.localStorage.getItem('gameId'));
+    let playerId = Number(window.localStorage.getItem('idKey'));
 
     return (
       <div>

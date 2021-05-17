@@ -8,8 +8,8 @@ import {
 import Player from '../entities/Player';
 
 // setting playerId here temporarily until the main game can set it
-window.localStorage.setItem('playerId', '1');
-const myId = Number(window.localStorage.getItem('playerId'));
+
+const myId = Number(window.localStorage.getItem('idKey'));
 // or token
 
 export default class RacingGame extends Phaser.Scene {
@@ -18,7 +18,7 @@ export default class RacingGame extends Phaser.Scene {
 
     this.allPlayers = {};
     this.spawned = false;
-    this.gameId = 1;
+    this.gameId = Number(window.localStorage.getItem('gameId'));
     this.finishers = [];
 
     this.addPlayers = this.addPlayers.bind(this);

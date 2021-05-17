@@ -46,7 +46,7 @@ export default class CreatePlayer extends React.Component {
             onChange={this.handleChange}
           >
             <option value={'blue'}>blue</option>
-            <option value={'yellow'}>yellow</option>
+            <option value={'green'}>green</option>
             <option value={'pink'}>pink</option>
             <option value={'red'}>red</option>
           </select>
