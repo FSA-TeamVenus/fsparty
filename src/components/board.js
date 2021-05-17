@@ -46,7 +46,7 @@ export class Board extends React.Component {
   }
 
   startGame() {
-    updateTurn(gameId, this.stateCb);
+    updateTurn(gameId);
   }
 
   rollDice() {
@@ -56,7 +56,7 @@ export class Board extends React.Component {
     const number = Phaser.Math.Between(0, 6);
     updatePos(gameId, playerId, number);
     pathDictionary[pos + number].action(gameId, playerId, myPlayer);
-    updateTurn(gameId, this.stateCb);
+    updateTurn(gameId);
   }
 
   // moveGamePiece(tile, player){
@@ -90,7 +90,8 @@ export class Board extends React.Component {
           //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
           // </div>
         )}
-        {turn === playerList.length ? <GameCanvas /> : <div />}
+        {turn === playerList.length ? (<div><GameCanvas /> <button onClick={()=> updateRound(gameId)}>Click me to end the round!</button></div>
+        ): <div />}
       </div>
     );
   }
