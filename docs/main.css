@@ -119,6 +119,7 @@ body {
   left: 50%;
   margin-left: -50px;
   top: 50%;
+  z-index: 3;
 }
 /* Lobby Section */
 /* body {
@@ -196,5 +197,8 @@ body {
 /* End Lobby Section */
 
 #game-canvas {
+  position: absolute;
   z-index: 5;
+  top: 200px;
+  left: 250px;
 }

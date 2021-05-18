@@ -27,8 +27,11 @@ export class Board extends React.Component {
       turn: null,
       pos: 0,
       round: null,
+      game: '',
+      instructions: '',
     };
     this.stateCb = this.stateCb.bind(this);
+    this.randomGameSelection = this.randomGameSelection.bind(this);
   }
 
   componentDidMount() {
@@ -62,6 +65,21 @@ export class Board extends React.Component {
 
   // }
 
+  randomGameSelection() {
+    const games = { 0: 'platformGame', 1: 'racingGame' };
+    const instructions = {
+      0: 'you have 20 seconds to collect as many coins as possible. move your character with the cursors',
+      1: "Hit space bar to give 'er some gas",
+    };
+    const randomNumber = Phaser.Math.Between(0, 1);
+
+    this.setState({
+      game: games[randomNumber],
+      instructions: instructions[randomNumber],
+    });
+    updateTurn(gameId);
+  }
+
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
@@ -77,24 +95,31 @@ export class Board extends React.Component {
         ))}
         <Leaderboard players={playerList} />
         {turn === playerList.length ? (
+          <button className="dice-roll" onClick={this.randomGameSelection}>
+            random game
+          </button>
+        ) : (
+          <div />
+        )}
+        {turn === playerList.length + 1 ? (
           <div>
-            <GameCanvas />{' '}
-            <button onClick={() => updateRound(gameId)}>
-              Click me to end the round!
-            </button>
+            <GameCanvas
+              scene={this.state.game}
+              instructions={this.state.instructions}
+            />
           </div>
         ) : (
           <div />
         )}
         {turn < 0 ? (
-          <button className='dice-roll' onClick={() => this.startGame()}>
+          <button className="dice-roll" onClick={() => this.startGame()}>
             Start Game
           </button>
         ) : (
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
         {playerId == turn && playerList ? (
-          <button className='dice-roll' onClick={() => this.rollDice()}>
+          <button className="dice-roll" onClick={() => this.rollDice()}>
             Roll
             {/* {playerList[playerId].name} */}
           </button>

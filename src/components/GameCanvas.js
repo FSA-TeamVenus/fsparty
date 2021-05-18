@@ -1,14 +1,16 @@
 import React from 'react';
 import { Game } from '../Phaser/index';
-import config from '../Phaser/config/config';
+import platformConfig from '../Phaser/config/platformConfig';
 
 export default class GameCanvas extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
 
   componentDidMount() {
-    new Game(config);
+    const scene = this.props.scene;
+    const instructions = this.props.instructions;
+    new Game(platformConfig, scene, instructions);
   }
 
   // componentWillUnmount() {
@@ -20,6 +22,6 @@ export default class GameCanvas extends React.Component {
   }
 
   render() {
-    return <div id='game-canvas'></div>;
+    return <div id="game-canvas"></div>;
   }
 }
