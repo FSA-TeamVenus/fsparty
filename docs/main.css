@@ -120,6 +120,28 @@ body {
   margin-left: -50px;
   top: 50%;
 }
+
+#start {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 50%;
+}
+
+#game-id {
+  width: 100px;
+  height: 25px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 25%;
+  background-color: white;
+  text-align: center;
+  padding: 2px;
+}
+
 /* Lobby Section */
 /* body {
   background-color: black;
