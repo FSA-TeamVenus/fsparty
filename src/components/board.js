@@ -81,13 +81,14 @@ export class Board extends React.Component {
       0: 'you have 20 seconds to collect as many coins as possible. move your character with the cursors',
       1: "Hit space bar to give 'er some gas",
     };
-    const randomNumber = Phaser.Math.Between(0, 1);
+    const index = 0;
 
     this.setState({
-      game: games[randomNumber],
-      instructions: instructions[randomNumber],
+      game: games[index % 2],
+      instructions: instructions[index % 2],
     });
     updateTurn(gameId);
+    index += 1;
   }
 
   render() {
