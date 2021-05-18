@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createNewGame, getNewPlayerId } from '../Firebase/index';
+import { GameTitle } from './GameTitle';
 
 export default class WelcomeScreen extends React.Component {
   constructor() {
@@ -10,8 +11,7 @@ export default class WelcomeScreen extends React.Component {
     };
 
     this.handleNewGame = this.handleNewGame.bind(this);
-    this.handleJoinGame = this.handleJoinGame.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+
   }
 
   handleNewGame() {
@@ -19,32 +19,15 @@ export default class WelcomeScreen extends React.Component {
     window.localStorage.setItem('idKey', '0');
   }
 
-  handleChange(evt) {
-    this.setState({
-      gameId: evt.target.value,
-    });
-  }
-
-  handleJoinGame() {
-    const gameId = this.state.gameId;
-    window.localStorage.setItem('gameId', gameId);
-    getNewPlayerId(gameId);
-  }
-
   render() {
     return (
       <div>
+        <GameTitle />
         <Link to="/create">
           <button onClick={this.handleNewGame}>Create Game</button>
         </Link>
-        <input
-          type="text"
-          id="gameId"
-          value={this.state.gameId}
-          onChange={this.handleChange}
-        ></input>
-        <Link to="/create">
-          <button onClick={this.handleJoinGame}>Join Game</button>
+        <Link to="/join">
+          <button>Join Game</button>
         </Link>
       </div>
     );

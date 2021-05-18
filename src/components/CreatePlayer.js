@@ -1,6 +1,7 @@
 import React from 'react';
 import { addPlayerToGame } from '../Firebase/index';
 import { Link } from 'react-router-dom';
+import { GameTitle } from './GameTitle';
 
 export default class CreatePlayer extends React.Component {
   constructor() {
@@ -12,11 +13,19 @@ export default class CreatePlayer extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
 
   handleChange(evt) {
     this.setState({
       [evt.target.name]: evt.target.value,
+    });
+  }
+
+  handleCancel(evt) {
+    window.localStorage.removeItem('gameId');
+    this.setState({
+      gameId: '',
     });
   }
 
@@ -30,6 +39,7 @@ export default class CreatePlayer extends React.Component {
   render() {
     return (
       <div>
+        <GameTitle />
         <h1>Create Your Player</h1>
         <form onSubmit={this.handleSubmit}>
           <label htmlFor="name">Name</label>
@@ -65,6 +75,9 @@ export default class CreatePlayer extends React.Component {
           </select>
           <Link to="/board">
             <button onClick={this.handleSubmit}>Join Game</button>
+          </Link>
+          <Link to="/">
+            <button onClick={this.handleCancel}>Cancel</button>
           </Link>
         </form>
       </div>
