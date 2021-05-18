@@ -112,7 +112,7 @@ body {
 
 /*  --------- Dice ----- */
 
-#dice-roll {
+.dice-roll {
   width: 100px;
   height: 100px;
   position: absolute;
@@ -214,5 +214,5 @@ body {
 /* End Lobby Section */
 
 #game-canvas {
-  z-index: 4;
+  z-index: 5;
 }

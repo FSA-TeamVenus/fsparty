@@ -19,10 +19,14 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 //  ----------------- Racing game functions ----------------
+
+export const playersRef = (gameId) => {
+  return database.ref(`${gameId}/racingGame/players`);
+};
 export const racingGamePlayers = database.ref('8/racingGame/players');
 
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
-  const players = database.ref(`${gameId}/racingGame/players`);
+  const players = playersRef(gameId);
   players.on('value', (snapshot) => {
     const list = snapshot.val();
     if (!spawned) {
@@ -97,8 +101,8 @@ export function getRound(gameId, cb) {
 export function updateTurn(gameId) {
   let turnUpdate = {};
   getTurn(gameId, (data) => {
-      turnUpdate[`${gameId}/main/turn`] = data + 1;
-    });
+    turnUpdate[`${gameId}/main/turn`] = data + 1;
+  });
   return firebase.database().ref().update(turnUpdate);
 }
 
@@ -111,6 +115,12 @@ export function updateRound(gameId) {
   getTurn(gameId, (data) => {
     updates[`${gameId}/main/turn`] = 0;
   });
+  // updates[`${gameId}/main/racingGame/players`] = {
+  //   0: { x: 32 },
+  //   1: { x: 32 },
+  //   2: { x: 32 },
+  //   3: { x: 32 },
+  // };
   return firebase.database().ref().update(updates);
 }
 //get user position
@@ -169,7 +179,7 @@ export function updateScore(gameId, playerId, newScore) {
   return firebase.database().ref().update(updates);
 }
 
-// ------ create new game
+// ------ create new game -------
 
 const gameObj = {
   main: {
@@ -199,6 +209,13 @@ const gameObj = {
   },
 };
 
+const racingGameInitY = {
+  0: 400,
+  1: 300,
+  2: 200,
+  3: 100,
+};
+
 export function createNewGame() {
   let updates = {};
   database
@@ -206,10 +223,11 @@ export function createNewGame() {
     .once('value')
     .then((snapshot) => {
       const games = snapshot.val();
-      let gameId = Object.keys(games).length + 1;
+      let gameId = findNextNumber(Object.keys(games));
+      // let gameId = Object.keys(games).length + 1;
       updates[gameId] = gameObj;
       database.ref().update(updates);
-      window.localStorage.setItem("gameId", gameId);
+      window.localStorage.setItem('gameId', gameId);
     });
 }
 
@@ -220,7 +238,7 @@ export function getNewPlayerId(gameId) {
     let players = snapshot.val();
     const newId = Object.keys(players).length;
     window.localStorage.setItem('idKey', newId);
-    updates[`${gameId}/main/players/${newId}`] = { score: 0, };
+    updates[`${gameId}/main/players/${newId}`] = { score: 0 };
     database.ref().update(updates);
   });
 }
@@ -235,7 +253,28 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     score: 0,
     position: 0,
   };
-  updates[racingGameRef] = { playerId, x: 32 };
+  updates[racingGameRef] = {
+    playerId,
+    color: playerData.color,
+    name: playerData.name,
+    x: 32,
+    y: racingGameInitY[playerId],
+  };
   updates[platformGameRef] = { playerId };
   database.ref().update(updates);
+}
+
+function findNextNumber(sequence) {
+  const length = sequence.length;
+  for (let i = 0; i < length; i++) {
+    let x = i + 1;
+    //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
+    if (Number(sequence[i]) !== x) {
+      sequence.splice(i, 0, x); // insert x here
+      sequence.length = length; // chop off the rest
+      return x;
+    }
+  }
+  // else
+  return length + 1; //array length + 1 as next number
 }

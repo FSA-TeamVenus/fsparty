@@ -51,7 +51,6 @@ export class Board extends React.Component {
 
   rollDice() {
     const { turn, pos, playerList } = this.state;
-
     const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
     updatePos(gameId, playerId, number);
@@ -64,6 +63,9 @@ export class Board extends React.Component {
   // }
 
   render() {
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
+
     const { turn, playerList, round } = this.state;
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
@@ -75,13 +77,25 @@ export class Board extends React.Component {
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
+        {turn === playerList.length ? (
+          <div>
+            <GameCanvas />{' '}
+            <button onClick={() => updateRound(gameId)}>
+              Click me to end the round!
+            </button>
+          </div>
+        ) : (
+          <div />
+        )}
         {turn < 0 ? (
-          <button id="start" onClick={() => this.startGame()}>Start Game</button>
+          <button className="dice-roll" onClick={() => this.startGame()}>
+            Start Game
+          </button>
         ) : (
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
         {playerId == turn && playerList ? (
-          <button id="dice-roll" onClick={() => this.rollDice()}>
+          <button className="dice-roll" onClick={() => this.rollDice()}>
             Roll
             {/* {playerList[playerId].name} */}
           </button>
@@ -91,8 +105,6 @@ export class Board extends React.Component {
           //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
           // </div>
         )}
-        {turn === playerList.length ? (<div><GameCanvas /> <button onClick={()=> updateRound(gameId)}>Click me to end the round!</button></div>
-        ): <div />}
       </div>
     );
   }

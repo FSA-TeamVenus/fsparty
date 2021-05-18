@@ -45,17 +45,19 @@ export default class CreatePlayer extends React.Component {
             value={this.state.color}
             onChange={this.handleChange}
           >
+            <option value={''}>---</option>
             <option value={'blue'}>blue</option>
             <option value={'green'}>green</option>
             <option value={'pink'}>pink</option>
             <option value={'red'}>red</option>
           </select>
-          <label htmlFor="name">Name</label>
+          <label htmlFor="sprite">Sprite</label>
           <select
             name="sprite"
             value={this.state.sprite}
             onChange={this.handleChange}
           >
+            <option value={''}>---</option>
             <option value={'link'}>link</option>
             <option value={'kratos'}>kratos</option>
             <option value={'donkeyKong'}>donkey kong</option>

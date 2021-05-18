@@ -1,15 +1,11 @@
 import Phaser from 'phaser';
 import {
-  racingGamePlayers,
+  playersRef,
   getRacingGamePlayers,
   updateRacingGamePlayers,
   finishRacingGame,
 } from '../../Firebase/index';
 import Player from '../entities/Player';
-
-// setting playerId here temporarily until the main game can set it
-
-// or token
 
 export default class RacingGame extends Phaser.Scene {
   constructor() {
@@ -41,14 +37,14 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   create() {
-    this.managePlayers();
-
+    this.players = this.add.group();
     this.createSprites();
+    this.managePlayers();
+    this.playersRef = playersRef(this.gameId);
 
     // this.background = this.add.image(400, 300, 'bg');
     // this.track = this.add.image(400, 450, 'track');
     // this.track2 = this.add.image(400, 150, 'track');
-    this.players = this.add.group();
 
     this.finishLine = this.physics.add.image(750, 400, 'finish_line');
 
@@ -76,21 +72,12 @@ export default class RacingGame extends Phaser.Scene {
         this.myCharacter.oldPosition &&
         this.myCharacter.oldPosition.x !== position
       ) {
-        racingGamePlayers
-          .child(`${this.myId}`)
-          .update({ x: this.myCharacter.x });
+        this.playersRef.child(`${this.myId}`).update({ x: this.myCharacter.x });
       }
       this.myCharacter.oldPositon = {
         x: this.myCharacter.x,
       };
-      if (this.finishers.length === this.players.getChildren().length) {
-        finishRacingGame(this.gameId);
-        this.scene.start('endScreen', {
-          gameId: this.gameId,
-          allPlayers: this.allPlayers,
-          finishers: this.finishers,
-        });
-      }
+      this.checkGameOver();
     }
   }
 
@@ -109,6 +96,7 @@ export default class RacingGame extends Phaser.Scene {
     newPlayer.playerId = player.playerId;
     newPlayer.name = player.name;
     this.allPlayers[player.playerId] = newPlayer;
+    console.log(this.players);
     this.players.add(newPlayer);
   }
 
@@ -175,5 +163,23 @@ export default class RacingGame extends Phaser.Scene {
       frameRate: 20,
       repeat: -1,
     });
+  }
+
+  checkGameOver() {
+    if (this.finishers.length === this.players.getChildren().length) {
+      this.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          finishRacingGame(this.gameId);
+          this.scene.start('endScreen', {
+            gameId: this.gameId,
+            allPlayers: this.allPlayers,
+            finishers: this.finishers,
+          });
+        },
+        callbackScope: this,
+        loop: false,
+      });
+    }
   }
 }
