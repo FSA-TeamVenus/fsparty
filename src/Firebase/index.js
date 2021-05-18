@@ -60,7 +60,15 @@ export const addPoints = (gameId, playerId, newPoints) => {
   });
 };
 
-// -------------- main game functions -----------------
+export const platformPlayers = database.ref('1/platformGame/players');
+
+export const serverCoins = database.ref('1/platformGame/coins');
+
+// set up listener for changes to 'users' scope of database
+// users.on('value', (snapshot) => {
+//   userData.push(snapshot.val());
+//   //console.log(userData);
+// });
 
 //get tailored firebase ref
 const getRef = (gameId, playerId) => {
