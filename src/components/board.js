@@ -16,7 +16,8 @@ import {
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
-const gameId = 1;
+let gameId = Number(window.localStorage.getItem('gameId'));
+let playerId = Number(window.localStorage.getItem('idKey'));
 
 export class Board extends React.Component {
   constructor(props) {
@@ -33,7 +34,7 @@ export class Board extends React.Component {
   componentDidMount() {
     this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
     getTurn(gameId, this.stateCb);
-    getPos(gameId, this.props.player.id, this.stateCb);
+    getPos(gameId, playerId, this.stateCb);
     getRound(gameId, this.stateCb);
   }
   componentWillUnmount() {
@@ -45,17 +46,16 @@ export class Board extends React.Component {
   }
 
   startGame() {
-    updateTurn(gameId, this.stateCb);
+    updateTurn(gameId);
   }
 
   rollDice() {
     const { turn, pos, playerList } = this.state;
-    const { player } = this.props;
-    const myPlayer = playerList[player.id];
+    const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
-    updatePos(gameId, player.id, number);
-    pathDictionary[pos + number].action(gameId, player.id, myPlayer);
-    updateTurn(gameId, this.stateCb);
+    updatePos(gameId, playerId, number);
+    pathDictionary[pos + number].action(gameId, playerId, myPlayer);
+    updateTurn(gameId);
   }
 
   // moveGamePiece(tile, player){
@@ -63,25 +63,40 @@ export class Board extends React.Component {
   // }
 
   render() {
-    const { player } = this.props;
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
+
     const { turn, playerList, round } = this.state;
-    const nextPlayer = playerList[turn];
-    console.log(playerList);
+    gameId = Number(window.localStorage.getItem('gameId'));
+    playerId = Number(window.localStorage.getItem('idKey'));
+
     return (
       <div>
-        {/* <h3 id="welcome">Welcome, {user.name}</h3> */}
         {playerList.map((player) => (
-          <PlayerCard key={player.name} player={player} />
+          <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
+        {turn === playerList.length ? (
+          <div>
+            <GameCanvas />{' '}
+            <button onClick={() => updateRound(gameId)}>
+              Click me to end the round!
+            </button>
+          </div>
+        ) : (
+          <div />
+        )}
         {turn < 0 ? (
-          <button onClick={() => this.startGame()}>Start Game</button>
+          <button className='dice-roll' onClick={() => this.startGame()}>
+            Start Game
+          </button>
         ) : (
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
-        {player.id == turn && playerList ? (
-          <button id='dice-roll' onClick={() => this.rollDice()}>
-            Roll {player.name}
+        {playerId == turn && playerList ? (
+          <button className='dice-roll' onClick={() => this.rollDice()}>
+            Roll
+            {/* {playerList[playerId].name} */}
           </button>
         ) : (
           ''
@@ -89,7 +104,6 @@ export class Board extends React.Component {
           //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
           // </div>
         )}
-        {turn === playerList.length ? <GameCanvas /> : <div />}
       </div>
     );
   }

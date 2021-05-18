@@ -1,16 +1,11 @@
 import Phaser from 'phaser';
 import {
-  racingGamePlayers,
+  playersRef,
   getRacingGamePlayers,
   updateRacingGamePlayers,
   finishRacingGame,
 } from '../../Firebase/index';
 import Player from '../entities/Player';
-
-// setting playerId here temporarily until the main game can set it
-window.localStorage.setItem('playerId', '1');
-const myId = Number(window.localStorage.getItem('playerId'));
-// or token
 
 export default class RacingGame extends Phaser.Scene {
   constructor() {
@@ -18,7 +13,8 @@ export default class RacingGame extends Phaser.Scene {
 
     this.allPlayers = {};
     this.spawned = false;
-    this.gameId = 1;
+    this.gameId;
+    this.myId;
     this.finishers = [];
 
     this.addPlayers = this.addPlayers.bind(this);
@@ -36,17 +32,19 @@ export default class RacingGame extends Phaser.Scene {
     this.load.image('finish_line', 'assets/images/finish_line.png');
     this.load.image('track', 'assets/images/track.png');
     this.load.image('bg', 'assets/images/racing_bg.png');
+    this.gameId = Number(window.localStorage.getItem('gameId'));
+    this.myId = Number(window.localStorage.getItem('idKey'));
   }
 
   create() {
-    this.managePlayers();
-
+    this.players = this.add.group();
     this.createSprites();
+    this.managePlayers();
+    this.playersRef = playersRef(this.gameId);
 
     // this.background = this.add.image(400, 300, 'bg');
     // this.track = this.add.image(400, 450, 'track');
     // this.track2 = this.add.image(400, 150, 'track');
-    this.players = this.add.group();
 
     this.finishLine = this.physics.add.image(750, 400, 'finish_line');
 
@@ -74,25 +72,18 @@ export default class RacingGame extends Phaser.Scene {
         this.myCharacter.oldPosition &&
         this.myCharacter.oldPosition.x !== position
       ) {
-        racingGamePlayers.child(`${myId}`).update({ x: this.myCharacter.x });
+        this.playersRef.child(`${this.myId}`).update({ x: this.myCharacter.x });
       }
       this.myCharacter.oldPositon = {
         x: this.myCharacter.x,
       };
-      if (this.finishers.length === this.players.getChildren().length) {
-        finishRacingGame(this.gameId);
-        this.scene.start('endScreen', {
-          gameId: this.gameId,
-          allPlayers: this.allPlayers,
-          finishers: this.finishers,
-        });
-      }
+      this.checkGameOver();
     }
   }
 
   addPlayers(data) {
     data.forEach((player) => {
-      if (player.playerId === myId) {
+      if (player.playerId === this.myId) {
         this.spawnMyCharacter(player);
       } else this.spawnOtherCharacters(player);
     });
@@ -105,6 +96,7 @@ export default class RacingGame extends Phaser.Scene {
     newPlayer.playerId = player.playerId;
     newPlayer.name = player.name;
     this.allPlayers[player.playerId] = newPlayer;
+    console.log(this.players);
     this.players.add(newPlayer);
   }
 
@@ -112,7 +104,7 @@ export default class RacingGame extends Phaser.Scene {
     this.myCharacter = new Player(this, player.x, player.y, 'car')
       .setScale(2)
       .play(`${player.color}`);
-    this.myCharacter.playerId = myId;
+    this.myCharacter.playerId = this.myId;
     this.myCharacter.name = player.name;
     this.allPlayers[this.myCharacter.playerId] = this.myCharacter;
     this.players.add(this.myCharacter);
@@ -121,7 +113,7 @@ export default class RacingGame extends Phaser.Scene {
   managePlayers() {
     getRacingGamePlayers(this.gameId, this.spawned, this.addPlayers);
 
-    updateRacingGamePlayers(this.gameId, myId, this.updateOtherPlayers);
+    updateRacingGamePlayers(this.gameId, this.myId, this.updateOtherPlayers);
   }
 
   updateOtherPlayers(player) {
@@ -171,5 +163,23 @@ export default class RacingGame extends Phaser.Scene {
       frameRate: 20,
       repeat: -1,
     });
+  }
+
+  checkGameOver() {
+    if (this.finishers.length === this.players.getChildren().length) {
+      this.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          finishRacingGame(this.gameId);
+          this.scene.start('endScreen', {
+            gameId: this.gameId,
+            allPlayers: this.allPlayers,
+            finishers: this.finishers,
+          });
+        },
+        callbackScope: this,
+        loop: false,
+      });
+    }
   }
 }
