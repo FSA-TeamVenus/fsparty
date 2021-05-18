@@ -49,13 +49,25 @@ export class Board extends React.Component {
     updateTurn(gameId);
   }
 
+
   rollDice() {
     const { turn, pos, playerList } = this.state;
     const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
-    updatePos(gameId, playerId, number);
-    pathDictionary[pos + number].action(gameId, playerId, myPlayer);
-    updateTurn(gameId);
+    const button = document.getElementById('dice-roll')
+    button.disabled = true;
+    const rollDisplay = document.getElementById("roll-display");
+    rollDisplay.style.display = 'flex';
+    rollDisplay.innerHTML = `You rolled ... `;
+    setTimeout(function() {
+      rollDisplay.innerHTML = `${number}!`
+    }, 1500);
+    setTimeout(function() {
+      updatePos(gameId, playerId, number)
+      updateTurn(gameId)
+      pathDictionary[pos + number].action(gameId, playerId, myPlayer);
+
+    }, 4000);
   }
 
   // moveGamePiece(tile, player){
@@ -65,45 +77,47 @@ export class Board extends React.Component {
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
-
     const { turn, playerList, round } = this.state;
-    gameId = Number(window.localStorage.getItem('gameId'));
-    playerId = Number(window.localStorage.getItem('idKey'));
-
+    let nextPlayer = playerList[turn];
     return (
       <div>
-        {turn < 0 ? <h4 id='game-id'>Game Id: {gameId}</h4> : ''}
+        {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ""}
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
         {turn === playerList.length ? (
           <div>
-            <GameCanvas />{' '}
-            <button onClick={() => updateRound(gameId)}>
-              Click me to end the round!
-            </button>
+            <GameCanvas />{" "}
           </div>
         ) : (
           <div />
         )}
-        {turn < 0 ? (
+        {turn < 0 && round == 1 && playerId == 0 ? (
           <button id="start" onClick={() => this.startGame()}>
             Start Game
           </button>
         ) : (
+          <div>
           <TileGrid tileList={tileList} playerList={playerList} />
+          {!playerId == turn ? (
+          <div id="next-player">
+            <h4>Round: {round}</h4>
+            <h4>Next Player: {nextPlayer ? nextPlayer.name : "..."}</h4>
+          </div>) : (
+            ''
+          )}
+          </div>
         )}
         {playerId == turn && playerList ? (
-          <button className='dice-roll' onClick={() => this.rollDice()}>
-            Roll
-            {/* {playerList[playerId].name} */}
+          <div>
+        <div id='roll-display' disabled={true}></div>
+          <button id='dice-roll' className="dice-roll" onClick={() => this.rollDice()}>
+            Roll {playerList[playerId].name}!
           </button>
+          </div>
         ) : (
           ''
-          // <div>
-          //   Round: {round}. Next Player: {nextPlayer ? nextPlayer.name : '...'}
-          // </div>
         )}
       </div>
     );
