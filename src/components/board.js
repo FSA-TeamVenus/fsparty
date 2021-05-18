@@ -95,7 +95,7 @@ export class Board extends React.Component {
           <TileGrid tileList={tileList} playerList={playerList} />
         )}
         {playerId == turn && playerList ? (
-          <button className="dice-roll" onClick={() => this.rollDice()}>
+          <button className='dice-roll' onClick={() => this.rollDice()}>
             Roll
             {/* {playerList[playerId].name} */}
           </button>

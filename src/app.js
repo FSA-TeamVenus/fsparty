@@ -10,10 +10,10 @@ const App = () => {
   return (
     <div>
       <Switch>
-        <Route path="/create" component={CreatePlayer} />
-        <Route path="/lobby" component={Lobby2} />
-        <Route path="/board" component={Board} />
-        <Route path="/" component={WelcomeScreen} />
+        <Route path='/create' component={CreatePlayer} />
+        <Route path='/lobby' component={Lobby2} />
+        <Route path='/board' component={Board} />
+        <Route path='/' component={WelcomeScreen} />
       </Switch>
     </div>
   );
