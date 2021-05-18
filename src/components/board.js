@@ -72,7 +72,7 @@ export class Board extends React.Component {
 
     return (
       <div>
-        <div id='game-id'>GameId: {gameId}</div>
+        {turn < 0 ? <h4 id='game-id'>Game Id: {gameId}</h4> : ''}
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
@@ -88,7 +88,7 @@ export class Board extends React.Component {
           <div />
         )}
         {turn < 0 ? (
-          <button className="dice-roll" onClick={() => this.startGame()}>
+          <button id="start" onClick={() => this.startGame()}>
             Start Game
           </button>
         ) : (
