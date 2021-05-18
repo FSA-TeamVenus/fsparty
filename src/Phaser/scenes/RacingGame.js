@@ -3,7 +3,6 @@ import {
   playersRef,
   getRacingGamePlayers,
   updateRacingGamePlayers,
-  finishRacingGame,
 } from '../../Firebase/index';
 import Player from '../entities/Player';
 
@@ -24,6 +23,11 @@ export default class RacingGame extends Phaser.Scene {
     this.updateOtherPlayers = this.updateOtherPlayers.bind(this);
   }
 
+  init() {
+    this.initY = { 0: 400, 1: 300, 2: 200, 3: 100 };
+    this.initX = 32;
+  }
+
   preload() {
     this.load.spritesheet('car', 'assets/images/race_car.png', {
       frameWidth: 32,
@@ -40,13 +44,14 @@ export default class RacingGame extends Phaser.Scene {
     this.players = this.add.group();
     this.createSprites();
     this.managePlayers();
-    this.playersRef = playersRef(this.gameId);
+    this.playersRef = playersRef(this.gameId, 'racingGame');
 
     // this.background = this.add.image(400, 300, 'bg');
     // this.track = this.add.image(400, 450, 'track');
     // this.track2 = this.add.image(400, 150, 'track');
 
     this.finishLine = this.physics.add.image(750, 400, 'finish_line');
+    this.finishLine.body.allowGravity = false;
 
     this.spaceBar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
@@ -90,7 +95,12 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   spawnOtherCharacters(player) {
-    const newPlayer = new Player(this, player.x, player.y, 'car')
+    const newPlayer = new Player(
+      this,
+      this.initX,
+      this.initY[player.playerId],
+      'car'
+    )
       .setScale(2)
       .play(`${player.color}`);
     newPlayer.playerId = player.playerId;
@@ -101,9 +111,15 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   spawnMyCharacter(player) {
-    this.myCharacter = new Player(this, player.x, player.y, 'car')
+    this.myCharacter = new Player(
+      this,
+      this.initX,
+      this.initY[player.playerId],
+      'car'
+    )
       .setScale(2)
       .play(`${player.color}`);
+    console.log('spawned');
     this.myCharacter.playerId = this.myId;
     this.myCharacter.name = player.name;
     this.allPlayers[this.myCharacter.playerId] = this.myCharacter;
@@ -170,7 +186,6 @@ export default class RacingGame extends Phaser.Scene {
       this.time.addEvent({
         delay: 2000,
         callback: () => {
-          finishRacingGame(this.gameId);
           this.scene.start('endScreen', {
             gameId: this.gameId,
             allPlayers: this.allPlayers,
