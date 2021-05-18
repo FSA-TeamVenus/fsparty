@@ -115,7 +115,6 @@ export class Board extends React.Component {
               scene={this.state.game}
               instructions={this.state.instructions}
             />
-            <GameCanvas />{' '}
           </div>
         ) : (
           <div />

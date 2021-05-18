@@ -192,8 +192,8 @@ export default class PlatformGame extends Phaser.Scene {
   getCoins(player, coin) {
     if (player.playerId === this.myId) {
       coin.disableBody(true, true);
-      this.score += 10;
-      this.scoreText.setText('Points: ' + this.score);
+      this.score += 1;
+      this.scoreText.setText('Coins: ' + this.score);
       serverCoins.child(`${coin.id}`).update({ collected: true });
       this.serverPlayers.child(`${this.myId}`).update({ score: this.score });
       this.collectSound.play();
