@@ -19,14 +19,10 @@ export default class PlatformGame extends Phaser.Scene {
   //h/home/reidvanwagner/fsparty/docs/assets/images/sounds/coin.wav
   preload() {
     //IMAGES>>>>>>>>>>>>>>
-    this.load.spritesheet(
-      'player',
-      'assets/images/assets/images/character.png',
-      {
-        frameWidth: 32,
-        frameHeight: 33,
-      }
-    );
+    this.load.spritesheet('player', 'assets/images/character.png', {
+      frameWidth: 32,
+      frameHeight: 33,
+    });
     this.load.spritesheet('coin', 'assets/images/coins.png', {
       frameWidth: 15,
       frameHeight: 15,
