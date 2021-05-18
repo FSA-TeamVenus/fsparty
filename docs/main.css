@@ -120,6 +120,58 @@ body {
   margin-left: -50px;
   top: 50%;
   z-index: 3;
+  background-color: yellow;
+}
+
+#roll-display {
+  z-index: 4;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 50%;
+  background-color: yellow;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid blue;
+}
+
+#start {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 50%;
+}
+
+#game-id {
+  width: 100px;
+  height: 25px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 25%;
+  background-color: white;
+  text-align: center;
+  padding: 2px;
+}
+
+#next-player {
+  width: 200px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -100px;
+  flex-direction: column;
+  background-color: yellow;
 }
 /* Lobby Section */
 /* body {
