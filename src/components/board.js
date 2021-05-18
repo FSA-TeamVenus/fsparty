@@ -27,8 +27,11 @@ export class Board extends React.Component {
       turn: null,
       pos: 0,
       round: null,
+      game: '',
+      instructions: '',
     };
     this.stateCb = this.stateCb.bind(this);
+    this.randomGameSelection = this.randomGameSelection.bind(this);
   }
 
   componentDidMount() {
@@ -49,30 +52,43 @@ export class Board extends React.Component {
     updateTurn(gameId);
   }
 
-
   rollDice() {
     const { turn, pos, playerList } = this.state;
     const myPlayer = playerList[playerId];
     const number = Phaser.Math.Between(0, 6);
-    const button = document.getElementById('dice-roll')
+    const button = document.getElementById('dice-roll');
     button.disabled = true;
-    const rollDisplay = document.getElementById("roll-display");
+    const rollDisplay = document.getElementById('roll-display');
     rollDisplay.style.display = 'flex';
     rollDisplay.innerHTML = `You rolled ... `;
-    setTimeout(function() {
-      rollDisplay.innerHTML = `${number}!`
+    setTimeout(function () {
+      rollDisplay.innerHTML = `${number}!`;
     }, 1500);
-    setTimeout(function() {
-      updatePos(gameId, playerId, number)
-      updateTurn(gameId)
+    setTimeout(function () {
+      updatePos(gameId, playerId, number);
+      updateTurn(gameId);
       pathDictionary[pos + number].action(gameId, playerId, myPlayer);
-
     }, 4000);
   }
 
   // moveGamePiece(tile, player){
 
   // }
+
+  randomGameSelection() {
+    const games = { 0: 'platformGame', 1: 'racingGame' };
+    const instructions = {
+      0: 'you have 20 seconds to collect as many coins as possible. move your character with the cursors',
+      1: "Hit space bar to give 'er some gas",
+    };
+    const randomNumber = Phaser.Math.Between(0, 1);
+
+    this.setState({
+      game: games[randomNumber],
+      instructions: instructions[randomNumber],
+    });
+    updateTurn(gameId);
+  }
 
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
@@ -81,14 +97,24 @@ export class Board extends React.Component {
     let nextPlayer = playerList[turn];
     return (
       <div>
-        {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ""}
+        {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ''}
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
         {turn === playerList.length ? (
+          <button className="dice-roll" onClick={this.randomGameSelection}>
+            random game
+          </button>
+        ) : (
+          <div />
+        )}
+        {turn === playerList.length + 1 ? (
           <div>
-            <GameCanvas />{" "}
+            <GameCanvas
+              scene={this.state.game}
+              instructions={this.state.instructions}
+            />
           </div>
         ) : (
           <div />
@@ -99,22 +125,27 @@ export class Board extends React.Component {
           </button>
         ) : (
           <div>
-          <TileGrid tileList={tileList} playerList={playerList} />
-          {!playerId == turn ? (
-          <div id="next-player">
-            <h4>Round: {round}</h4>
-            <h4>Next Player: {nextPlayer ? nextPlayer.name : "..."}</h4>
-          </div>) : (
-            ''
-          )}
+            <TileGrid tileList={tileList} playerList={playerList} />
+            {!playerId == turn ? (
+              <div id="next-player">
+                <h4>Round: {round}</h4>
+                <h4>Next Player: {nextPlayer ? nextPlayer.name : '...'}</h4>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         )}
         {playerId == turn && playerList ? (
           <div>
-        <div id='roll-display' disabled={true}></div>
-          <button id='dice-roll' className="dice-roll" onClick={() => this.rollDice()}>
-            Roll {playerList[playerId].name}!
-          </button>
+            <div id="roll-display" disabled={true}></div>
+            <button
+              id="dice-roll"
+              className="dice-roll"
+              onClick={() => this.rollDice()}
+            >
+              Roll {playerList[playerId].name}!
+            </button>
           </div>
         ) : (
           ''

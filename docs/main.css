@@ -119,11 +119,12 @@ body {
   left: 50%;
   margin-left: -50px;
   top: 50%;
+  z-index: 3;
   background-color: yellow;
 }
 
 #roll-display {
-  z-index: 2;
+  z-index: 4;
   width: 100px;
   height: 100px;
   position: absolute;
@@ -248,5 +249,8 @@ body {
 /* End Lobby Section */
 
 #game-canvas {
+  position: absolute;
   z-index: 5;
+  top: 200px;
+  left: 250px;
 }

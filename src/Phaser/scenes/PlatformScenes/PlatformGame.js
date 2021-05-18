@@ -2,10 +2,10 @@ import Phaser from 'phaser';
 import PlatformPlayer from '../../entities/PlatformEntities/PlatformPlayer';
 import Platform from '../../entities/PlatformEntities/Platform';
 import Coin from '../../entities/PlatformEntities/Coin';
-import { platformPlayers, serverCoins } from '../../../Firebase/index';
+import { playersRef, serverCoins } from '../../../Firebase/index';
 
-window.localStorage.setItem('playerId', '1');
-const myId = Number(window.localStorage.getItem('playerId'));
+// window.localStorage.setItem('playerId', '1');
+// const this.myId = Number(window.localStorage.getItem('playerId'));
 
 export default class PlatformGame extends Phaser.Scene {
   constructor() {
@@ -36,12 +36,14 @@ export default class PlatformGame extends Phaser.Scene {
     //SOUNDS>>>>>>>>>>>>>>>>>>
     this.load.audio('coin', 'assets/images/sounds/coin.wav');
     this.load.audio('jump', 'assets/images/sounds/jump.wav');
+    this.gameId = Number(window.localStorage.getItem('gameId'));
+    this.myId = Number(window.localStorage.getItem('idKey'));
   }
 
   create() {
     //PLAYERS
     this.players = this.add.group();
-    this.serverPlayers = platformPlayers;
+    this.serverPlayers = playersRef(this.gameId, 'platformGame');
 
     // get players from the database - this could maybe get replaced with a one time call // basically a get request
     this.serverPlayers.on('value', (snapshot) => {
@@ -55,7 +57,7 @@ export default class PlatformGame extends Phaser.Scene {
     // listen for player movement udpdates
     this.serverPlayers.on('child_changed', (snapshot) => {
       const player = snapshot.val();
-      if (player.playerId !== myId) {
+      if (player.playerId !== this.myId) {
         const player2update = this.allPlayers[player.playerId];
         player2update.x = player.x;
         player2update.y = player.y;
@@ -152,22 +154,20 @@ export default class PlatformGame extends Phaser.Scene {
     this.scoreText.setScrollFactor(0, 0);
 
     //TIMER
-    this.initialTime = 60;
-    this.timerText = this.add.text(
-      0,
-      45,
-      'Time: ' + this.formatTime(this.initialTime),
-      {
-        fontSize: '20px',
-        fill: 'white',
-      }
-    );
-    this.timerText.setScrollFactor(0, 0);
-    this.timedEvent = this.time.addEvent({
-      delay: 1000,
-      callback: this.OnEvent,
+    this.time.addEvent({
+      delay: 20000,
+      callback: () => {
+        const finishers = [];
+        Object.keys(this.allPlayers).forEach((key) => finishers.push(key));
+        finishers.sort((a, b) => a.score - b.score);
+        this.scene.start('endScreen', {
+          gameId: this.gameId,
+          allPlayers: this.allPlayers,
+          finishers: finishers,
+        });
+      },
       callbackScope: this,
-      loop: true,
+      loop: false,
     });
   }
 
@@ -190,12 +190,12 @@ export default class PlatformGame extends Phaser.Scene {
   }
 
   getCoins(player, coin) {
-    if (player.playerId === myId) {
+    if (player.playerId === this.myId) {
       coin.disableBody(true, true);
-      this.score += 10;
-      this.scoreText.setText('Points: ' + this.score);
+      this.score += 1;
+      this.scoreText.setText('Coins: ' + this.score);
       serverCoins.child(`${coin.id}`).update({ collected: true });
-      this.serverPlayers.child(`${myId}`).update({ score: this.score });
+      this.serverPlayers.child(`${this.myId}`).update({ score: this.score });
       this.collectSound.play();
     }
   }
@@ -236,7 +236,9 @@ export default class PlatformGame extends Phaser.Scene {
         (this.player.oldPosition && this.player.oldPosition.x !== position.x) ||
         this.player.oldPosition.y !== position.y
       ) {
-        this.serverPlayers.child(`${myId}`).update({ x: this.player.x, y: y });
+        this.serverPlayers
+          .child(`${this.myId}`)
+          .update({ x: this.player.x, y: y });
       }
       this.player.oldPositon = {
         x: this.player.x,
@@ -280,7 +282,7 @@ export default class PlatformGame extends Phaser.Scene {
 
   addPlayers(data) {
     data.forEach((player) => {
-      if (player.playerId === myId) {
+      if (player.playerId === this.myId) {
         this.spawnMyCharacter(player);
       } else this.spawnOtherCharacters(player);
     });
@@ -290,7 +292,8 @@ export default class PlatformGame extends Phaser.Scene {
     this.player = new PlatformPlayer(this, player.x, player.y, 'player')
       .setScale(3)
       .setSize(20, 27, true);
-    this.player.playerId = myId;
+    this.player.playerId = this.myId;
+    this.player.name = player.name;
     this.allPlayers[player.playerId] = this.player;
     this.players.add(this.player);
   }
@@ -300,6 +303,7 @@ export default class PlatformGame extends Phaser.Scene {
       .setScale(3)
       .setSize(20, 27, true);
     newPlayer.playerId = player.playerId;
+    newPlayer.name = player.name;
     this.allPlayers[player.playerId] = newPlayer;
     this.players.add(newPlayer);
   }

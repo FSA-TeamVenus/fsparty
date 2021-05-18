@@ -20,14 +20,13 @@ const database = firebase.database();
 
 //  ----------------- Racing game functions ----------------
 
-export const playersRef = (gameId) => {
-  return database.ref(`${gameId}/racingGame/players`);
+export const playersRef = (gameId, game) => {
+  return database.ref(`${gameId}/${game}/players`);
 };
-export const racingGamePlayers = database.ref('8/racingGame/players');
 
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
-  const players = playersRef(gameId);
-  players.on('value', (snapshot) => {
+  const players = playersRef(gameId, 'racingGame');
+  players.once('value').then((snapshot) => {
     const list = snapshot.val();
     if (!spawned) {
       cb(list);
@@ -37,18 +36,13 @@ export const getRacingGamePlayers = (gameId, spawned, cb) => {
 };
 
 export const updateRacingGamePlayers = (gameId, playerId, cb) => {
-  const players = database.ref(`${gameId}/racingGame/players`);
+  const players = playersRef(gameId, 'racingGame');
   players.on('child_changed', (snapshot) => {
     const player = snapshot.val();
     if (player.playerId !== playerId) {
       cb(player);
     }
   });
-};
-
-export const finishRacingGame = (gameId) => {
-  const game = database.ref(`${gameId}/racingGame`);
-  game.update({ completed: true });
 };
 
 export const addPoints = (gameId, playerId, newPoints) => {
@@ -60,15 +54,7 @@ export const addPoints = (gameId, playerId, newPoints) => {
   });
 };
 
-export const platformPlayers = database.ref('1/platformGame/players');
-
 export const serverCoins = database.ref('1/platformGame/coins');
-
-// set up listener for changes to 'users' scope of database
-// users.on('value', (snapshot) => {
-//   userData.push(snapshot.val());
-//   //console.log(userData);
-// });
 
 //get tailored firebase ref
 const getRef = (gameId, playerId) => {
@@ -123,12 +109,7 @@ export function updateRound(gameId) {
   getTurn(gameId, (data) => {
     updates[`${gameId}/main/turn`] = 0;
   });
-  // updates[`${gameId}/main/racingGame/players`] = {
-  //   0: { x: 32 },
-  //   1: { x: 32 },
-  //   2: { x: 32 },
-  //   3: { x: 32 },
-  // };
+
   return firebase.database().ref().update(updates);
 }
 //get user position
@@ -150,13 +131,8 @@ export function updatePos(gameId, playerId, diceRoll, cb) {
     if (newPosition > 43) newPosition = newPosition - 44;
     player.update({ position: newPosition });
   });
-  // let updates = {};
-  // getPos(gameId, playerId, function (data) {
-  //   console.log(data)
-  //   updates[`${gameId}/main/players/${playerId}/position`] = data + diceRoll;
-  //   return firebase.database().ref().update(updates);
-  // });
 }
+
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
   let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
@@ -265,10 +241,8 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     playerId,
     color: playerData.color,
     name: playerData.name,
-    x: 32,
-    y: racingGameInitY[playerId],
   };
-  updates[platformGameRef] = { playerId };
+  updates[platformGameRef] = { playerId, name: playerData.name };
   database.ref().update(updates);
 }
 
