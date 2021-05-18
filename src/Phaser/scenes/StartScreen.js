@@ -12,7 +12,7 @@ export default class StartScreen extends Phaser.Scene {
 
   create() {
     this.add.text(300, 150, 'Instructions');
-    this.add.text(300, 250, `space bar to move`);
+    this.add.text(300, 250, `hit space bar to move`);
     this.add.text(300, 300, `hit ENTER to start`);
 
     this.enter = this.input.keyboard.addKey(
