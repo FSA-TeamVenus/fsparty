@@ -180,7 +180,6 @@ const gameObj = {
     players: {
       0: {
         playerId: 0,
-        x: 32,
       },
     },
   },
@@ -191,13 +190,6 @@ const gameObj = {
       },
     },
   },
-};
-
-const racingGameInitY = {
-  0: 400,
-  1: 300,
-  2: 200,
-  3: 100,
 };
 
 export function createNewGame() {

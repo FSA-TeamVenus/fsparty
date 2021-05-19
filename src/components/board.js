@@ -27,8 +27,8 @@ export class Board extends React.Component {
       turn: null,
       pos: 0,
       round: null,
-      game: 'platformGame',
-      instructions: 'collect coins, arrow keys to move',
+      game: 'racingGame',
+      instructions: 'space to move',
     };
     this.stateCb = this.stateCb.bind(this);
     this.randomGameSelection = this.randomGameSelection.bind(this);
