@@ -5,6 +5,8 @@ import WelcomeScreen from './components/WelcomeScreen';
 import CreatePlayer from './components/CreatePlayer';
 import JoinGame from './components/JoinGame';
 import Lobby from './components/Lobby';
+import useSound from 'use-sound';
+import themeSfx from '../assets/sounds/mario-theme-8bit.wav';
 
 const App = () => {
   return (
