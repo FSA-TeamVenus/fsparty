@@ -13,7 +13,11 @@ export default class EndScreen extends Phaser.Scene {
   }
 
   create() {
-    this.add.text(300, 150, 'RESULTS');
+    this.add.text(300, 150, 'RESULTS', {
+      fontSize: '30px',
+      fontFamily: "'lores-12', 'sans-serif'",
+      fontStyle: 'bold',
+    });
     let yPosition = 200;
     for (let i = 0; i < this.finishersList.length; i++) {
       const currentId = this.finishersList[i];
@@ -24,7 +28,11 @@ export default class EndScreen extends Phaser.Scene {
       this.add.text(
         300,
         yPosition,
-        `${place}: ${currentPlayer.name} ------- +${earnedPoints} points`
+        `${place}: ${currentPlayer.name} ------- +${earnedPoints} points`,
+        {
+          fontSize: '30px',
+          fontFamily: "'lores-12', 'sans-serif'",
+        }
       );
       yPosition += 50;
       addPoints(this.gameId, currentId, earnedPoints);

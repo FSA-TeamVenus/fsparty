@@ -11,8 +11,15 @@ export default class StartScreen extends Phaser.Scene {
   }
 
   create() {
-    this.add.text(300, 150, 'Instructions');
-    this.add.text(300, 250, `${this.instructions}`);
+    this.add.text(300, 150, 'INSTRUCTIONS', {
+      fontSize: '30px',
+      fontFamily: "'lores-12', 'sans-serif'",
+      fontStyle: 'bold',
+    });
+    this.add.text(300, 250, `${this.instructions}`, {
+      fontSize: '20px',
+      fontFamily: "'lores-12', 'sans-serif'",
+    });
 
     this.enter = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER

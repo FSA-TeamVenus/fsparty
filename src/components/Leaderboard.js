@@ -6,17 +6,18 @@ export default class Leaderboard extends React.Component {
   }
 
   render() {
-    const { players } = this.props;
+    const { players, round } = this.props;
     const sortedPlayers = players.sort((a, b) => b.score - a.score);
     // console.log(sortedPlayers);
     return (
       <div id="leaderboard">
-        <h3>LEADERBOARD</h3>
+        <p>LEADERBOARD</p>
+        <p>ROUND: {round}</p>
         <div id="leader-div">
           {sortedPlayers.map((player, idx) => (
-            <p className="leader-p" key={idx}>{`${idx + 1}: ${
-              player.name
-            } -- ${player.score}`}</p>
+            <p className="leader-p" key={idx}>{`${idx + 1}: ${player.name} -- ${
+              player.score
+            }`}</p>
           ))}
         </div>
       </div>
