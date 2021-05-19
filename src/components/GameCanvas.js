@@ -10,7 +10,7 @@ export default class GameCanvas extends React.Component {
   componentDidMount() {
     const scene = this.props.scene;
     const instructions = this.props.instructions;
-    new Game(platformConfig, scene, instructions);
+    new Game(platformConfig, 'shootingGame', instructions);
   }
 
   // componentWillUnmount() {

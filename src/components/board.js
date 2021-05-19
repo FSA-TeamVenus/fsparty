@@ -113,7 +113,7 @@ export class Board extends React.Component {
         {turn === playerList.length + 1 ? (
           <div>
             <GameCanvas
-              scene={this.state.game}
+              scene={'shootingGame'}
               instructions={this.state.instructions}
             />
           </div>
@@ -127,7 +127,7 @@ export class Board extends React.Component {
         ) : (
           <div>
             <TileGrid tileList={tileList} playerList={playerList} />
-            {!playerId == turn ? (
+            {playerId !== turn ? (
               <div id="next-player">
                 <h4>Round: {round}</h4>
                 <h4>Next Player: {nextPlayer ? nextPlayer.name : '...'}</h4>
