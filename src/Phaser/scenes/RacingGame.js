@@ -4,7 +4,7 @@ import {
   getRacingGamePlayers,
   updateRacingGamePlayers,
 } from '../../Firebase/index';
-import Player from '../entities/Player';
+import RaceCar from '../entities/RaceCar';
 
 export default class RacingGame extends Phaser.Scene {
   constructor() {
@@ -24,18 +24,17 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   init() {
-    this.initY = { 0: 400, 1: 300, 2: 200, 3: 100 };
-    this.initX = 32;
+    this.initY = { 0: 450, 1: 350, 2: 250, 3: 150 };
+    this.initX = 50;
   }
 
   preload() {
-    this.load.spritesheet('car', 'assets/images/race_car.png', {
+    this.load.spritesheet('car', 'assets/images/racecar_top.png', {
       frameWidth: 32,
       frameHeight: 16,
     });
-    this.load.image('finish_line', 'assets/images/finish_line.png');
-    this.load.image('track', 'assets/images/track.png');
-    this.load.image('bg', 'assets/images/racing_bg.png');
+    this.load.image('finish_line', 'assets/images/finish_line_600.png');
+    this.load.image('racingMap', 'assets/images/racing_tileset_grey.png');
     this.gameId = Number(window.localStorage.getItem('gameId'));
     this.myId = Number(window.localStorage.getItem('idKey'));
   }
@@ -46,19 +45,46 @@ export default class RacingGame extends Phaser.Scene {
     this.managePlayers();
     this.playersRef = playersRef(this.gameId, 'racingGame');
 
-    // this.background = this.add.image(400, 300, 'bg');
-    // this.track = this.add.image(400, 450, 'track');
-    // this.track2 = this.add.image(400, 150, 'track');
+    const level = [
+      [1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3],
+      [4, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 2, 2],
+      [4, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 2, 2],
+      [4, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 2, 2],
+      [4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      [1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3],
+    ];
 
-    this.finishLine = this.physics.add.image(750, 400, 'finish_line');
+    const map = this.make.tilemap({
+      data: level,
+      tileWidth: 100,
+      tileHeight: 100,
+    });
+    const tiles = map.addTilesetImage('racingMap');
+    map.createLayer(0, tiles, 0, 0);
+
+    this.finishLine = this.physics.add.image(1450, 400, 'finish_line');
+    this.blocker = this.physics.add.image(1620, 400, 'finish_line');
     this.finishLine.body.allowGravity = false;
+    this.blocker.body.allowGravity = false;
+    this.blocker.setImmovable(true);
 
     this.spaceBar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
 
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.cameras.main
+          .startFollow(this.myCharacter)
+          .setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+      },
+      callbackScope: this,
+      loop: false,
+    });
+
     this.spaceBar.on('down', () => {
-      this.myCharacter.setVelocityX(100);
+      this.myCharacter.setVelocityX(300);
     });
 
     this.physics.add.overlap(
@@ -68,6 +94,8 @@ export default class RacingGame extends Phaser.Scene {
       null,
       this
     );
+
+    this.physics.add.collider(this.players, this.blocker);
   }
 
   update() {
@@ -95,7 +123,7 @@ export default class RacingGame extends Phaser.Scene {
   }
 
   spawnOtherCharacters(player) {
-    const newPlayer = new Player(
+    const newPlayer = new RaceCar(
       this,
       this.initX,
       this.initY[player.playerId],
@@ -106,12 +134,11 @@ export default class RacingGame extends Phaser.Scene {
     newPlayer.playerId = player.playerId;
     newPlayer.name = player.name;
     this.allPlayers[player.playerId] = newPlayer;
-    console.log(this.players);
     this.players.add(newPlayer);
   }
 
   spawnMyCharacter(player) {
-    this.myCharacter = new Player(
+    this.myCharacter = new RaceCar(
       this,
       this.initX,
       this.initY[player.playerId],
@@ -119,7 +146,6 @@ export default class RacingGame extends Phaser.Scene {
     )
       .setScale(2)
       .play(`${player.color}`);
-    console.log('spawned');
     this.myCharacter.playerId = this.myId;
     this.myCharacter.name = player.name;
     this.allPlayers[this.myCharacter.playerId] = this.myCharacter;
@@ -153,29 +179,36 @@ export default class RacingGame extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: 'pink',
+      key: 'green',
       frames: [{ key: 'car', frame: 1 }],
       frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
-      key: 'blue',
+      key: 'orange',
       frames: [{ key: 'car', frame: 2 }],
       frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
-      key: 'green',
+      key: 'yellow',
       frames: [{ key: 'car', frame: 3 }],
       frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
-      key: 'orange',
+      key: 'blue',
       frames: [{ key: 'car', frame: 4 }],
+      frameRate: 20,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'pink',
+      frames: [{ key: 'car', frame: 5 }],
       frameRate: 20,
       repeat: -1,
     });
