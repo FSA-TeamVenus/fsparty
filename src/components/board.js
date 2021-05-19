@@ -12,7 +12,7 @@ import {
   updatePos,
   getPos,
   getRound,
-  updateRound,
+  updateMiniGame,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 
@@ -27,8 +27,7 @@ export class Board extends React.Component {
       turn: null,
       pos: 0,
       round: null,
-      game: 'platformGame',
-      instructions: 'collect coins, arrow keys to move',
+      gameIndex: 0,
     };
     this.stateCb = this.stateCb.bind(this);
     this.randomGameSelection = this.randomGameSelection.bind(this);
@@ -76,19 +75,20 @@ export class Board extends React.Component {
   // }
 
   randomGameSelection() {
-    // const games = { 0: 'platformGame', 1: 'racingGame' };
-    // const instructions = {
-    //   0: 'you have 20 seconds to collect as many coins as possible. move your character with the cursors',
-    //   1: "Hit space bar to give 'er some gas",
-    // };
-    // let index = 0;
-
-    // this.setState({
-    //   game: games[index % 2],
-    //   instructions: instructions[index % 2],
-    // });
+    const games = { 0: 'platformGame', 1: 'racingGame' };
+    const instructions = {
+      0: 'you have 20 seconds to collect as many coins as possible. move your character with the cursors',
+      1: "Hit space bar to give 'er some gas",
+    };
+    const index = this.state.gameIndex;
+    console.log(index);
+    const scene = games[index % 2];
+    const gameInstructions = instructions[index % 2];
+    updateMiniGame(gameId, scene, gameInstructions);
     updateTurn(gameId);
-    // index += 1;
+    this.setState({
+      gameIndex: index + 1,
+    });
   }
 
   render() {
@@ -103,7 +103,7 @@ export class Board extends React.Component {
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
-        {turn === playerList.length ? (
+        {turn === playerList.length && playerId === 0 ? (
           <button className="dice-roll" onClick={this.randomGameSelection}>
             start mini game
           </button>
@@ -112,10 +112,7 @@ export class Board extends React.Component {
         )}
         {turn === playerList.length + 1 ? (
           <div>
-            <GameCanvas
-              scene={this.state.game}
-              instructions={this.state.instructions}
-            />
+            <GameCanvas gameId={gameId} />
           </div>
         ) : (
           <div />

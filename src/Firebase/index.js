@@ -163,6 +163,24 @@ export function updateScore(gameId, playerId, newScore) {
   return firebase.database().ref().update(updates);
 }
 
+// ---------- update mini-game -------
+
+export function updateMiniGame(gameId, game, instructions) {
+  let updates = {};
+  updates[`${gameId}/main/minigame`] = game;
+  updates[`${gameId}/main/gameInstructions`] = instructions;
+  return firebase.database().ref().update(updates);
+}
+
+export function getMiniGameData(gameId, cb) {
+  const gameRef = database.ref(`${gameId}/main`);
+  gameRef.once('value').then((snapshot) => {
+    const scene = snapshot.val().minigame;
+    const instructions = snapshot.val().gameInstructions;
+    cb(scene, instructions);
+  });
+}
+
 // ------ create new game -------
 
 const gameObj = {
@@ -180,7 +198,6 @@ const gameObj = {
     players: {
       0: {
         playerId: 0,
-        x: 32,
       },
     },
   },
@@ -191,13 +208,6 @@ const gameObj = {
       },
     },
   },
-};
-
-const racingGameInitY = {
-  0: 400,
-  1: 300,
-  2: 200,
-  3: 100,
 };
 
 export function createNewGame() {

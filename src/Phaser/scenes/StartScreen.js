@@ -12,22 +12,19 @@ export default class StartScreen extends Phaser.Scene {
 
   create() {
     this.add.text(300, 150, 'Instructions');
-    this.add.text(300, 250, `collect coins, arrows to move`);
-    this.add.text(300, 300, `hit ENTER to start`);
+    this.add.text(300, 250, `${this.instructions}`);
 
     this.enter = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER
     );
 
-    this.enter.on('down', () => {
-      this.time.addEvent({
-        delay: 2000,
-        callback: () => {
-          this.scene.start(`platformGame`);
-        },
-        callbackScope: this,
-        loop: false,
-      });
+    this.time.addEvent({
+      delay: 10000,
+      callback: () => {
+        this.scene.start(`${this.nextScene}`);
+      },
+      callbackScope: this,
+      loop: false,
     });
   }
 }
