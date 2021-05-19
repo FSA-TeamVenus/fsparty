@@ -53,11 +53,8 @@ export class Board extends React.Component {
     const { pos, playerList } = this.state;
     const myPlayer = playerList[playerId];
     const diceRoll = Phaser.Math.Between(0, 6);
-    const button = document.getElementById('dice-roll');
-    button.disabled = true;
     const rollDisplay = document.getElementById('roll-display');
-    rollDisplay.style.display = 'flex';
-    rollDisplay.innerHTML = `You rolled ... `;
+    rollDisplay.innerHTML = 'rolling...';
     setTimeout(function () {
       rollDisplay.innerHTML = `${diceRoll}!`;
     }, 1500);
@@ -98,7 +95,7 @@ export class Board extends React.Component {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
     const { turn, playerList, round } = this.state;
-    // let nextPlayer = playerList[turn];
+    let currentPlayer = playerList[turn] || { name: '' };
     return (
       <div>
         {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ''}
@@ -136,7 +133,7 @@ export class Board extends React.Component {
         {playerId == turn && playerList ? (
           <div>
             <button
-              id="dice-roll"
+              // id="dice-roll"
               className="dice-roll"
               onClick={() => this.rollDice()}
             >
@@ -146,6 +143,10 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
+        <div id="current-turn">
+          current turn: {currentPlayer.name} <p>{currentPlayer.sprite}</p>
+        </div>
+        <div id="roll-display"> roll here</div>
       </div>
     );
   }
