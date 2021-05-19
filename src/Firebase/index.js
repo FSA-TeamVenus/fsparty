@@ -187,6 +187,7 @@ const gameObj = {
   main: {
     turn: -1,
     round: 1,
+    roundsMax: 0,
     players: {
       0: {
         playerId: 0,
@@ -269,4 +270,15 @@ function findNextNumber(sequence) {
   }
   // else
   return length + 1; //array length + 1 as next number
+}
+
+export function updateRoundsMax(gameId, roundsMax) {
+  // let mainGameRef = `${gameId}/main/${roundsMax}`;
+  let updates = {};
+  // console.log(roundsMax);
+  // updates[mainGameRef] = {
+  //   roundsMax: roundsMax,
+  // };
+  updates[`${gameId}/main/roundsMax`] = roundsMax;
+  database.ref().update(updates);
 }
