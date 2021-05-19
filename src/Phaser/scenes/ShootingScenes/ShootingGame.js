@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { AutomaticPrefetchPlugin } from "webpack";
 import {
   getShootingPlayers,
   getOtherReticles,
@@ -32,6 +31,7 @@ export default class ShootingGame extends Phaser.Scene {
     for (let i = 1; i < 3;i++) {
       let ghost = this.add.image(0, 0, 'ghost').setScale(.25)
     }
+    window.scene = this;
   }
 
   update() {

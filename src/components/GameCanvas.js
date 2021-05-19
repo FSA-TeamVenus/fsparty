@@ -1,6 +1,7 @@
 import React from 'react';
 import { Game } from '../Phaser/index';
 import platformConfig from '../Phaser/config/platformConfig';
+import { getMiniGameData } from '../Firebase/index';
 
 export default class GameCanvas extends React.Component {
   constructor(props) {
@@ -8,9 +9,14 @@ export default class GameCanvas extends React.Component {
   }
 
   componentDidMount() {
-    const scene = this.props.scene;
-    const instructions = this.props.instructions;
-    new Game(platformConfig, 'shootingGame', instructions);
+    const gameId = this.props.gameId;
+
+    function startGame(gameScene, gameInstructions) {
+      const scene = gameScene;
+      const instructions = gameInstructions;
+      new Game(platformConfig, scene, instructions);
+    }
+    getMiniGameData(gameId, startGame);
   }
 
   // componentWillUnmount() {
