@@ -1,4 +1,4 @@
-import { updateScore } from "../Firebase";
+import { updateScore } from '../Firebase';
 
 const map = [
   [0, 1, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 0],
@@ -21,16 +21,16 @@ const actionTypes = {
 
 class Tile {
   constructor(id, actionType) {
-    (this.id = id), (this.actionType = actionType);
+    this.id = id;
+    this.actionType = actionType;
   }
   action(gameId, playerId, player) {
-    if (this.actionType === 'add') {
-     let newScore = player.score + 5;
-     updateScore(gameId, playerId, newScore);
-
-    } else if (this.actionType === 'remove') {
+    if (this.actionType === actionTypes[2]) {
+      let newScore = player.score + 5;
+      updateScore(gameId, playerId, newScore);
+    } else if (this.actionType === actionTypes[3]) {
       let newScore = player.score - 5;
-      updateScore(gameId, playerId, newScore)
+      updateScore(gameId, playerId, newScore);
     }
   }
 }
@@ -56,7 +56,7 @@ function populateDictionary(map, list) {
   const pathTiles = list.filter((tile) => tile.actionType !== 'background');
 
   const dictionary = {};
-  let dictionaryIndex = 0;
+  let dictionaryIndex = 1;
   let i = 0;
   let j = 1;
   let lastMove = '';

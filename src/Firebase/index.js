@@ -123,7 +123,7 @@ export function getPos(gameId, playerId, cb) {
   return pos.off();
 }
 //increment position by newPos
-export function updatePos(gameId, playerId, diceRoll, cb) {
+export function updatePos(gameId, playerId, diceRoll) {
   const player = database.ref(`${gameId}/main/players/${playerId}`);
   player.once('value').then((snapshot) => {
     const position = snapshot.val().position;
@@ -245,7 +245,7 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   updates[mainGameRef] = {
     ...playerData,
     score: 0,
-    position: 0,
+    position: 1,
   };
   updates[racingGameRef] = {
     playerId,
@@ -260,7 +260,6 @@ function findNextNumber(sequence) {
   const length = sequence.length;
   for (let i = 0; i < length; i++) {
     let x = i + 1;
-    //console.log(`Key: ${Number(sequence[i])} x: ${x}`)
     if (Number(sequence[i]) !== x) {
       sequence.splice(i, 0, x); // insert x here
       sequence.length = length; // chop off the rest
