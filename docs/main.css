@@ -1,8 +1,8 @@
 /*  body */
 
 body {
-  /*background-image: url('https://c.wallhere.com/photos/f2/61/digital_art_Super_Mario_video_games-263116.jpg!d');*/
-  background-image: url('assets/images/game-splash-background-2.jpeg');
+  background-image: url('https://c.wallhere.com/photos/f2/61/digital_art_Super_Mario_video_games-263116.jpg!d');
+  /* background-image: url('assets/images/game-splash-background-2.jpeg'); */
   background-position: center;
   background-repeat: repeat-y;
   background-size: cover;
@@ -125,34 +125,61 @@ body {
 
 @font-face {
   font-family: 'mario_party_hudsonregular';
-  src: url('assets/images/fonts/mario-party-hudson-font-webfont.woff2') format('woff2'),
-       url('assets/images/fonts/mario-party-hudson-font-webfont.woff') format('woff');
+  src: url('assets/fonts/mario-party-hudson-font-webfont.woff2') format('woff2'),
+       url('assets/fonts/mario-party-hudson-font-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
+
+.mario-font {
+  font-family: 'mario_party_hudsonregular';
+}
+
 .game-title {
-  font-family: 'mario_party_hudsonregular'; 
-  font-size: 5rem;
+  width: 350px;
+  height: 250px;
+
 }
 
 .center-box {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 1em;
+  font-family: 'mario_party_hudsonregular';
+  color: white;
 }
 
 .center-btn {
   padding-right: 1em;
 }
 
+.create-gm-btn {
+  src: url('assets/images/create-game-btn.png');
+  width: 140px;
+  height: 70px;
+}
+
+.join-gm-btn {
+  src: url('assets/images/join-game-btn.png');
+  width: 140px;
+  height: 70px;
+
+}
+
 .input-div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1em;
+  margin: .5em;
   width: 100%;
+  font-family: 'mario_party_hudsonregular';
+  color: white;
+}
+
+.input-div h1 {
+  margin-bottom: 0px;
+  font-weight:lighter;
 }
 
 .avatar {

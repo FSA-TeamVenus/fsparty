@@ -2,6 +2,7 @@ import React from 'react';
 import { addPlayerToGame } from '../Firebase/index';
 import { Link } from 'react-router-dom';
 import { GameTitle } from './GameTitle';
+import btnClickAudio from '../../docs/assets/sounds/btn-click.mp3';
 
 export default class CreatePlayer extends React.Component {
   constructor() {
@@ -16,6 +17,11 @@ export default class CreatePlayer extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
   }
 
+  handleBtnClick() {
+    const sound = new Audio(btnClickAudio);
+    sound.play();
+  }
+
   handleChange(evt) {
     this.setState({
       [evt.target.name]: evt.target.value,
@@ -23,6 +29,7 @@ export default class CreatePlayer extends React.Component {
   }
 
   handleCancel(evt) {
+    this.handleBtnClick();
     window.localStorage.removeItem('gameId');
     this.setState({
       gameId: '',
@@ -30,6 +37,7 @@ export default class CreatePlayer extends React.Component {
   }
 
   handleSubmit() {
+    this.handleBtnClick();
     const playerId = Number(window.localStorage.getItem('idKey'));
     const gameId = window.localStorage.getItem('gameId');
     const playerObj = { ...this.state, playerId };
@@ -38,22 +46,24 @@ export default class CreatePlayer extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="input-div">
         <GameTitle />
         <h1>Create Your Player</h1>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} className="center-box">
           <label htmlFor="name">Name</label>
           <input
             type="text"
             name="name"
             value={this.state.name}
             onChange={this.handleChange}
+            className="center-box"
           ></input>
           <label htmlFor="color">Color</label>
           <select
             name="color"
             value={this.state.color}
             onChange={this.handleChange}
+            className="center-box"
           >
             <option value={''}>---</option>
             <option value={'blue'}>blue</option>
@@ -66,6 +76,7 @@ export default class CreatePlayer extends React.Component {
             name="sprite"
             value={this.state.sprite}
             onChange={this.handleChange}
+            className="center-box"
           >
             <option value={''}>---</option>
             <option value={'link'}>link</option>
@@ -74,10 +85,12 @@ export default class CreatePlayer extends React.Component {
             <option value={'sonic'}>sonic</option>
           </select>
           <Link to="/board">
-            <button onClick={this.handleSubmit}>Join Game</button>
+            {/* <button onClick={this.handleSubmit}>Join Game</button> */}
+            <img onClick={this.handleSubmit} className="join-gm-btn" src="../../assets/images/join-game-btn.png" />
           </Link>
           <Link to="/">
-            <button onClick={this.handleCancel}>Cancel</button>
+            {/* <button onClick={this.handleCancel}>Cancel</button> */}
+            <img onClick={this.handleBtnClick} className="join-gm-btn" src="../../assets/images/cancel-btn.png" />
           </Link>
         </form>
       </div>
