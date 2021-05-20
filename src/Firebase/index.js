@@ -244,6 +244,7 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   let updates = {};
   updates[mainGameRef] = {
     ...playerData,
+    playerId,
     score: 0,
     position: 1,
   };
