@@ -136,7 +136,7 @@ export function updatePos(gameId, playerId, diceRoll, cb) {
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
   let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
-  playerList.on('value', (snapshot) => {
+  playerList.once('value', (snapshot) => {
     const data = snapshot.val();
     cb(data);
   });
@@ -154,6 +154,28 @@ export function updateReticlePos(gameId, playerId, data) {
   let updates = {};
   updates[`${gameId}/shootingGame/players/${playerId}`] = data;
   return firebase.database().ref().update(updates);
+}
+//update targets/targetIdx/hit to true
+export function updateTarget(gameId, targetIdx, hit) {
+  let updates = {};
+  if (hit) updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
+  else updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
+  return firebase.database().ref().update(updates);
+}
+//update shooting game score
+export function updateShootingScore(gameId, playerId, score) {
+  console.log(score)
+  let updates = {};
+  updates[`${gameId}/shootingGame/players/${playerId}/score`] = score + 1;
+  return firebase.database().ref().update(updates);
+}
+//establish target listener
+export function getTargets(gameId, cb) {
+  const targets = database.ref(`${gameId}/shootingGame/targets`);
+  targets.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data);
+  });
 }
 
 export function updateScore(gameId, playerId, newScore) {
@@ -208,6 +230,31 @@ const gameObj = {
       },
     },
   },
+  shootingGame: {
+    players: {
+      0: {
+        playerId: 0,
+      },
+    },
+    targets: {
+      0: {
+        hit: false,
+        x: 400,
+      },
+      1: {
+        hit: false,
+        x: 400,
+      },
+      2: {
+        hit: false,
+        x: 400,
+      },
+      3: {
+        hit: false,
+        x: 400,
+      },
+    }
+  }
 };
 
 export function createNewGame() {
