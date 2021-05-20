@@ -52,6 +52,21 @@ a {
   background-image: url('assets/board/images/red_circle.png');
 }
 
+.popup-style {
+  font-size: 80px;
+  text-align: center;
+  padding-top: 10px;
+}
+
+#ok {
+  background-color: rgb(255, 174, 0);
+  font-size: 30px;
+}
+
+#view-result-button {
+  font-size: 30px;
+}
+
 .popup-container {
   width: 400px;
   height: 300px;
@@ -125,8 +140,8 @@ a {
 }
 
 .tile-sprite {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
 
 /* leaderboard styles */
@@ -154,6 +169,10 @@ a {
 
 .leader-div {
   background-color: rgb(109, 92, 92);
+  border-style: inset;
+  border-width: 2px;
+  border-right-color: rgb(189, 188, 188);
+  border-left-color: rgb(36, 35, 35);
   margin: 5px;
   padding: 10px;
 }
@@ -260,16 +279,35 @@ a {
   background-color: Yellow;
 }
 
+.orange {
+  background-color: orange;
+}
+
 .pink {
   background-color: pink;
 }
 
-.pink-text {
-  color: pink;
+.blue-text {
+  color: Blue;
 }
 
-.orange {
-  background-color: orange;
+.red-text {
+  color: Red;
+}
+.green-text {
+  color: Green;
+}
+
+.yellow-text {
+  color: Yellow;
+}
+
+.orange-text {
+  color: orange;
+}
+
+.pink-text {
+  color: pink;
 }
 
 /* ---- phaser canvas ---- */
@@ -277,8 +315,10 @@ a {
 #game-canvas {
   position: absolute;
   z-index: 5;
-  top: 10px;
-  left: 200px;
+  margin-left: 50%;
+  left: -400px;
+  width: 1000px;
+  background-color: grey;
 }
 
 /* ----- welcom/creation ------ */
@@ -302,6 +342,7 @@ a {
 .flex-cont-row {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
 }
@@ -362,4 +403,15 @@ a {
 
 #code-label {
   padding-top: 10px;
+}
+
+/* --------- end screen ------------ */
+
+#game-over {
+  font-size: 40px;
+  margin: 10px;
+}
+
+#play-again {
+  font-size: 30px;
 }
