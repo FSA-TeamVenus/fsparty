@@ -153,7 +153,7 @@ export default class PlatformGame extends Phaser.Scene {
     });
     this.scoreText.setScrollFactor(0, 0);
 
-    //TIMER
+    //TIMER>>>>>>>>>>>>>>
     this.time.addEvent({
       delay: 20000,
       callback: () => {
@@ -169,6 +169,13 @@ export default class PlatformGame extends Phaser.Scene {
       callbackScope: this,
       loop: false,
     });
+    //TIME DISPLAY >>>>>>>>>>>
+    this.timeDisplay = 0;
+    this.timerText = this.add.text(0, 46, 'Time Remaining: 20', {
+      fontSize: '15px',
+      fill: 'white',
+    });
+    this.timerText.setScrollFactor(0, 0);
   }
 
   generateCoins() {
@@ -247,16 +254,15 @@ export default class PlatformGame extends Phaser.Scene {
     }
   }
 
-  formatTime(seconds) {
-    let minutes = Math.floor(seconds / 60);
-    let partInSeconds = seconds % 60;
-    partInSeconds = partInSeconds.toString().padStart(2, '0');
-    return `${minutes}: ${partInSeconds}`;
-  }
-
   onEvent() {
     this.initialTime -= 1;
-    timerText.setText('Time: ' + formatTime(this.initialTime));
+    this.timerText.setText('Time Remaining: ' + formatTime(this.initialTime));
+  }
+
+  formatTime(seconds) {
+    let partInSeconds = seconds % 60;
+    partInSeconds = partInSeconds.toString().padStart(2, '20');
+    return `${partInSeconds}`;
   }
 
   isPlayerDead() {
