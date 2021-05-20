@@ -11,14 +11,18 @@ export default class Leaderboard extends React.Component {
     // console.log(sortedPlayers);
     return (
       <div id="leaderboard">
-        <p>LEADERBOARD</p>
-        <p>ROUND: {round}</p>
-        <div id="leader-div">
-          {sortedPlayers.map((player, idx) => (
-            <p className="leader-p" key={idx}>{`${idx + 1}: ${player.name} -- ${
-              player.score
-            }`}</p>
-          ))}
+        <div className="flex-cont-row">
+          <div className="leader-div">LEADERBOARD</div>
+          <div className="leader-div">ROUND: {round}</div>
+        </div>
+        <div className="flex-cont-column">
+          <div className="leader-div">
+            {sortedPlayers.map((player, idx) => (
+              <div className="leader-name-div" key={idx}>{`${idx + 1}: ${
+                player.name
+              } -- ${player.score} points`}</div>
+            ))}
+          </div>
         </div>
       </div>
     );

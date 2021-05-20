@@ -35,7 +35,7 @@ export class Board extends React.Component {
       },
     };
     this.stateCb = this.stateCb.bind(this);
-    this.selectGame = this.selectGame.bind(this);
+    this.selectMiniGame = this.selectMiniGame.bind(this);
     this.rollDice = this.rollDice.bind(this);
   }
 
@@ -77,7 +77,7 @@ export class Board extends React.Component {
 
   // }
 
-  selectGame() {
+  selectMiniGame() {
     const { gameIndex, gamesList, instructions } = this.state;
 
     const scene = gamesList[gameIndex % 2];
@@ -95,10 +95,9 @@ export class Board extends React.Component {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
     const { turn, playerList, round } = this.state;
-    let currentPlayer = playerList[turn] || { name: '' };
+    const currentPlayer = playerList[turn] || { name: '' };
     return (
       <div>
-        {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ''}
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
@@ -124,7 +123,7 @@ export class Board extends React.Component {
           </div>
         )}
         {turn === playerList.length && playerId === 0 ? (
-          <button className="dice-roll" onClick={this.selectGame}>
+          <button className="dice-roll" onClick={this.selectMiniGame}>
             start mini game
           </button>
         ) : (
@@ -143,10 +142,24 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
-        <div id="current-turn">
-          current turn: {currentPlayer.name} <p>{currentPlayer.sprite}</p>
-        </div>
-        <div id="roll-display"> roll here</div>
+        {turn < playerList.length ? (
+          <div id="current-turn">
+            <p
+              className={`${currentPlayer.color}-text`}
+            >{`${currentPlayer.name}'s turn!`}</p>
+            <img src={currentPlayer.spriteUrl} alt="" />
+          </div>
+        ) : (
+          <div />
+        )}
+        {turn < playerList.length ? (
+          <div
+            className={`${currentPlayer.color}-text`}
+            id="roll-display"
+          ></div>
+        ) : (
+          <div />
+        )}
       </div>
     );
   }
