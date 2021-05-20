@@ -12,7 +12,6 @@ import {
   getPos,
   getRound,
   updateMiniGame,
-  nukeListeners,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
 import { Link } from 'react-router-dom';
@@ -32,7 +31,7 @@ export class Board extends React.Component {
       gameIndex: 0,
       gamesList: { 0: 'platformGame', 1: 'racingGame' },
       instructions: {
-        0: 'you have 20 seconds \nto collect as many coins as possible. \nmove your character with the cursors',
+        0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
       },
     };
@@ -43,14 +42,17 @@ export class Board extends React.Component {
   }
 
   componentDidMount() {
-    getPlayersfromGame(gameId, this.stateCb);
-    getTurn(gameId, this.stateCb);
-    getPos(gameId, playerId, this.stateCb);
-    getRound(gameId, this.stateCb);
+    this.playersOff = getPlayersfromGame(gameId, this.stateCb);
+    this.turnOff = getTurn(gameId, this.stateCb);
+    this.posOff = getPos(gameId, playerId, this.stateCb);
+    this.roundOff = getRound(gameId, this.stateCb);
   }
 
   componentWillUnmount() {
-    nukeListeners(gameId, playerId);
+    this.playersOff();
+    this.turnOff();
+    this.posOff();
+    this.roundOff();
   }
 
   rollDice() {
@@ -58,10 +60,12 @@ export class Board extends React.Component {
     const myPlayer = playerList[playerId];
     const diceRoll = Phaser.Math.Between(0, 6);
     const rollDisplay = document.getElementById('roll-display');
+
     rollDisplay.innerHTML = 'rolling...';
     setTimeout(function () {
       rollDisplay.innerHTML = `${diceRoll}!`;
     }, 1500);
+
     this.stateCb(pos + diceRoll, 'pos');
     setTimeout(function () {
       updatePos(gameId, playerId, diceRoll);
@@ -101,8 +105,10 @@ export class Board extends React.Component {
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
+
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
+
     return (
       <div>
         {playerList.map((player) => (
@@ -150,7 +156,7 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
-        {turn < playerList.length ? (
+        {turn >= 0 && turn < playerList.length ? (
           <div id="current-turn">
             <p
               className={`${currentPlayer.color}-text`}
@@ -170,8 +176,8 @@ export class Board extends React.Component {
         )}
         {round === 2 && this.state.showModal ? (
           <div className="popup-container flex-cont-column modal" id="popup">
-            FINAL ROUND!
-            <div className="div-button" onClick={this.closeModal}>
+            <div className="popup-style">FINAL ROUND!</div>
+            <div className="div-button" id="ok" onClick={this.closeModal}>
               OK
             </div>
           </div>
@@ -180,7 +186,7 @@ export class Board extends React.Component {
         )}
         {round === 3 ? (
           <div className=" popup-container flex-cont-column">
-            <div>Game Over</div>
+            <div className="popup-style">Game Over</div>
             <Link
               to={{
                 pathname: '/end',
@@ -191,7 +197,7 @@ export class Board extends React.Component {
                 },
               }}
             >
-              View Results
+              <div id="view-result-button">View Results</div>
             </Link>
           </div>
         ) : (

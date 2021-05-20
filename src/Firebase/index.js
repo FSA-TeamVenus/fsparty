@@ -43,6 +43,7 @@ export const updateRacingGamePlayers = (gameId, playerId, cb) => {
       cb(player);
     }
   });
+  return () => players.off();
 };
 
 export const addPoints = (gameId, playerId, newPoints) => {
@@ -68,55 +69,54 @@ const getRef = (gameId, playerId) => {
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
   const ref = getRef(gameId);
-  let players = firebase.database().ref(ref + '/players');
+  const players = database.ref(ref + '/players');
   players.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'playerList');
   });
-
-  return players.off;
+  return () => players.off();
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
-  let turn = firebase.database().ref(`${gameId}/main/turn`);
+  const turn = database.ref(`${gameId}/main/turn`);
   turn.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'turn');
   });
-  return turn.off;
+  return () => turn.off();
 }
 //get round in a game instance
 export function getRound(gameId, cb) {
-  let round = firebase.database().ref(`${gameId}/main/round`);
+  const round = database.ref(`${gameId}/main/round`);
   round.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'round');
   });
-  return round.off;
+  return () => round.off();
 }
 
 //get user position
 export function getPos(gameId, playerId, cb) {
-  let ref = getRef(gameId, playerId);
-  let pos = firebase.database().ref(ref + `/position`);
+  const pos = database.ref(`${gameId}/main/players/${playerId}/position`);
   pos.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'pos');
   });
-  return pos.off;
+  return () => pos.off();
 }
+
 //increment turn
 export function updateTurn(gameId) {
-  let turnUpdate = {};
+  const turnUpdate = {};
   getTurn(gameId, (data) => {
     turnUpdate[`${gameId}/main/turn`] = data + 1;
   });
-  return firebase.database().ref().update(turnUpdate);
+  return database.ref().update(turnUpdate);
 }
 
 //increment round and reset turn to 0
 export function updateRound(gameId) {
-  let updates = {};
+  const updates = {};
   getRound(gameId, (data) => {
     updates[`${gameId}/main/round`] = data + 1;
   });
@@ -124,30 +124,18 @@ export function updateRound(gameId) {
     updates[`${gameId}/main/turn`] = 0;
   });
 
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
+
 //increment position by newPos
 export function updatePos(gameId, playerId, diceRoll) {
   const player = database.ref(`${gameId}/main/players/${playerId}`);
   player.once('value').then((snapshot) => {
     const position = snapshot.val().position;
-    let newPosition = position + diceRoll;
+    const newPosition = position + diceRoll;
     if (newPosition > 43) newPosition = newPosition - 44;
     player.update({ position: newPosition });
   });
-}
-
-export function nukeListeners(gameId, playerId) {
-  const gameRef = getRef(gameId);
-  const players = database.ref(gameRef + '/players');
-  const turn = database.ref(gameRef + '/turn');
-  const round = database.ref(gameRef + '/round');
-  const position = database.ref(gameRef + `players/${playerId}`);
-
-  players.off();
-  turn.off();
-  round.off();
-  position.off();
 }
 
 export function removeFromDatabase(gameId) {
@@ -159,7 +147,7 @@ export function removeFromDatabase(gameId) {
 
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
-  let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
+  const playerList = database.ref(`${gameId}/shootingGame/players`);
   playerList.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data);
@@ -167,7 +155,7 @@ export function getShootingPlayers(gameId, cb) {
 }
 //get other reticle positions (for shooting game)
 export function getOtherReticles(gameId, cb) {
-  let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
+  const playerList = database.ref(`${gameId}/shootingGame/players`);
   playerList.on('child_changed', (snapshot) => {
     const data = snapshot.val();
     cb(data);
@@ -175,25 +163,25 @@ export function getOtherReticles(gameId, cb) {
 }
 //update reticle position
 export function updateReticlePos(gameId, playerId, data) {
-  let updates = {};
+  const updates = {};
   updates[`${gameId}/shootingGame/players/${playerId}`] = data;
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
 
 export function updateScore(gameId, playerId, newScore) {
-  let updates = {};
+  const updates = {};
   updates[`${gameId}/main/players/${playerId}/score`] = newScore;
 
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
 
 // ---------- update mini-game -------
 
 export function updateMiniGame(gameId, game, instructions) {
-  let updates = {};
+  const updates = {};
   updates[`${gameId}/main/minigame`] = game;
   updates[`${gameId}/main/gameInstructions`] = instructions;
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
 
 export function getMiniGameData(gameId, cb) {
@@ -219,7 +207,6 @@ const gameObj = {
     },
   },
   racingGame: {
-    completed: false,
     players: {
       0: {
         playerId: 0,
@@ -257,7 +244,11 @@ export function getNewPlayerId(gameId) {
     let players = snapshot.val();
     const newId = Object.keys(players).length;
     window.localStorage.setItem('idKey', newId);
-    updates[`${gameId}/main/players/${newId}`] = { score: 0 };
+    updates[`${gameId}/main/players/${newId}`] = {
+      name: 'player joining...',
+      playerId: newId,
+      score: 0,
+    };
     database.ref().update(updates);
   });
 }
