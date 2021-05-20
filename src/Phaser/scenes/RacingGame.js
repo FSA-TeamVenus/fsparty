@@ -155,7 +155,11 @@ export default class RacingGame extends Phaser.Scene {
   managePlayers() {
     getRacingGamePlayers(this.gameId, this.spawned, this.addPlayers);
 
-    updateRacingGamePlayers(this.gameId, this.myId, this.updateOtherPlayers);
+    this.listenerOff = updateRacingGamePlayers(
+      this.gameId,
+      this.myId,
+      this.updateOtherPlayers
+    );
   }
 
   updateOtherPlayers(player) {
@@ -219,12 +223,12 @@ export default class RacingGame extends Phaser.Scene {
       this.time.addEvent({
         delay: 2000,
         callback: () => {
+          this.listenerOff();
           this.scene.start('endScreen', {
             playerId: this.myId,
             gameId: this.gameId,
             allPlayers: this.allPlayers,
             finishers: this.finishers,
-            listener: this.playersRef,
           });
         },
         callbackScope: this,

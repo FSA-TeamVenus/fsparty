@@ -11,10 +11,11 @@ export default class EndScreen extends Phaser.Scene {
     this.playerId = data.playerId;
     this.allPlayers = data.allPlayers;
     this.finishersList = data.finishers;
-    this.listener = data.listener;
   }
 
   create() {
+    this.seconds = 5;
+
     this.add.text(300, 150, 'RESULTS', {
       fontSize: '30px',
       fontFamily: "'lores-12', 'sans-serif'",
@@ -40,6 +41,22 @@ export default class EndScreen extends Phaser.Scene {
       addPoints(this.gameId, currentId, earnedPoints);
     }
 
+    this.timer = this.add.text(
+      250,
+      300,
+      `Back to main in ${this.seconds} seconds`
+    );
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.seconds -= 1;
+        this.timer.setText(`Back to main in ${this.seconds} seconds`);
+      },
+      callbackScope: this,
+      loop: 5,
+    });
+
     this.time.addEvent({
       delay: 5000,
       callback: () => {
@@ -47,7 +64,6 @@ export default class EndScreen extends Phaser.Scene {
         if (this.playerId === 0) {
           updateRound(this.gameId);
         }
-        // this.listener.off();
         this.sys.game.destroy(true);
       },
       callbackScope: this,
