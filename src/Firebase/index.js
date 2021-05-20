@@ -64,6 +64,7 @@ const getRef = (gameId, playerId) => {
     return `${gameId}/main`;
   }
 };
+
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
   const ref = getRef(gameId);
@@ -72,8 +73,8 @@ export function getPlayersfromGame(gameId, cb) {
     const data = snapshot.val();
     cb(data, 'playerList');
   });
-  // return players.off
-  return firebase.database().ref(ref).off;
+
+  return players.off;
 }
 //get turn in a game instance
 export function getTurn(gameId, cb) {
@@ -82,14 +83,27 @@ export function getTurn(gameId, cb) {
     const data = snapshot.val();
     cb(data, 'turn');
   });
+  return turn.off;
 }
 //get round in a game instance
 export function getRound(gameId, cb) {
-  let turn = firebase.database().ref(`${gameId}/main/round`);
-  turn.on('value', (snapshot) => {
+  let round = firebase.database().ref(`${gameId}/main/round`);
+  round.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data, 'round');
   });
+  return round.off;
+}
+
+//get user position
+export function getPos(gameId, playerId, cb) {
+  let ref = getRef(gameId, playerId);
+  let pos = firebase.database().ref(ref + `/position`);
+  pos.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data, 'pos');
+  });
+  return pos.off;
 }
 //increment turn
 export function updateTurn(gameId) {
@@ -112,16 +126,6 @@ export function updateRound(gameId) {
 
   return firebase.database().ref().update(updates);
 }
-//get user position
-export function getPos(gameId, playerId, cb) {
-  let ref = getRef(gameId, playerId);
-  let pos = firebase.database().ref(ref + `/position`);
-  pos.on('value', (snapshot) => {
-    const data = snapshot.val();
-    cb(data, 'pos');
-  });
-  return pos.off();
-}
 //increment position by newPos
 export function updatePos(gameId, playerId, diceRoll) {
   const player = database.ref(`${gameId}/main/players/${playerId}`);
@@ -132,6 +136,26 @@ export function updatePos(gameId, playerId, diceRoll) {
     player.update({ position: newPosition });
   });
 }
+
+export function nukeListeners(gameId, playerId) {
+  const gameRef = getRef(gameId);
+  const players = database.ref(gameRef + '/players');
+  const turn = database.ref(gameRef + '/turn');
+  const round = database.ref(gameRef + '/round');
+  const position = database.ref(gameRef + `players/${playerId}`);
+
+  players.off();
+  turn.off();
+  round.off();
+  position.off();
+}
+
+export function removeFromDatabase(gameId) {
+  const gameRef = database.ref(`${gameId}`);
+  gameRef.remove();
+}
+
+// -------- shooting game -------
 
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
@@ -190,6 +214,7 @@ const gameObj = {
     players: {
       0: {
         playerId: 0,
+        name: 'player joining...',
       },
     },
   },

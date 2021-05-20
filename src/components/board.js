@@ -4,7 +4,6 @@ import TileGrid from './TileGrid';
 import { tileList, pathDictionary } from './tileList';
 import PlayerCard from './PlayerCard';
 import Phaser from 'phaser';
-
 import {
   getPlayersfromGame,
   getTurn,
@@ -13,8 +12,10 @@ import {
   getPos,
   getRound,
   updateMiniGame,
+  nukeListeners,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
+import { Link } from 'react-router-dom';
 
 let gameId = Number(window.localStorage.getItem('gameId'));
 let playerId = Number(window.localStorage.getItem('idKey'));
@@ -27,6 +28,7 @@ export class Board extends React.Component {
       turn: null,
       pos: 1,
       round: null,
+      showModal: true,
       gameIndex: 0,
       gamesList: { 0: 'platformGame', 1: 'racingGame' },
       instructions: {
@@ -37,16 +39,18 @@ export class Board extends React.Component {
     this.stateCb = this.stateCb.bind(this);
     this.selectMiniGame = this.selectMiniGame.bind(this);
     this.rollDice = this.rollDice.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
-    this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
+    getPlayersfromGame(gameId, this.stateCb);
     getTurn(gameId, this.stateCb);
     getPos(gameId, playerId, this.stateCb);
     getRound(gameId, this.stateCb);
   }
+
   componentWillUnmount() {
-    this.rmPlayersListener();
+    nukeListeners(gameId, playerId);
   }
 
   rollDice() {
@@ -73,9 +77,6 @@ export class Board extends React.Component {
   startGame() {
     updateTurn(gameId);
   }
-  // moveGamePiece(tile, player){
-
-  // }
 
   selectMiniGame() {
     const { gameIndex, gamesList, instructions } = this.state;
@@ -88,6 +89,12 @@ export class Board extends React.Component {
 
     this.setState({
       gameIndex: this.state.gameIndex + 1,
+    });
+  }
+
+  closeModal() {
+    this.setState({
+      showModal: false,
     });
   }
 
@@ -110,7 +117,11 @@ export class Board extends React.Component {
           <div />
         )}
         {turn < 0 && round == 1 && playerId == 0 ? (
-          <button id="start" onClick={() => this.startGame()}>
+          <button
+            id="start"
+            className="board-button"
+            onClick={() => this.startGame()}
+          >
             Start Game
           </button>
         ) : (
@@ -123,19 +134,16 @@ export class Board extends React.Component {
           </div>
         )}
         {turn === playerList.length && playerId === 0 ? (
-          <button className="dice-roll" onClick={this.selectMiniGame}>
+          <button className="board-button" onClick={this.selectMiniGame}>
             start mini game
           </button>
         ) : (
           <div />
         )}
         {playerId == turn && playerList ? (
-          <div>
-            <button
-              // id="dice-roll"
-              className="dice-roll"
-              onClick={() => this.rollDice()}
-            >
+          <div className="popup-container flex-cont-column">
+            <div className="image-container">image</div>
+            <button className="dice-roll" onClick={() => this.rollDice()}>
               Roll Dice!
             </button>
           </div>
@@ -157,6 +165,35 @@ export class Board extends React.Component {
             className={`${currentPlayer.color}-text`}
             id="roll-display"
           ></div>
+        ) : (
+          <div />
+        )}
+        {round === 2 && this.state.showModal ? (
+          <div className="popup-container flex-cont-column modal" id="popup">
+            FINAL ROUND!
+            <div className="div-button" onClick={this.closeModal}>
+              OK
+            </div>
+          </div>
+        ) : (
+          <div />
+        )}
+        {round === 3 ? (
+          <div className=" popup-container flex-cont-column">
+            <div>Game Over</div>
+            <Link
+              to={{
+                pathname: '/end',
+                state: {
+                  players: playerList,
+                  gameId: gameId,
+                  playerId: playerId,
+                },
+              }}
+            >
+              View Results
+            </Link>
+          </div>
         ) : (
           <div />
         )}
