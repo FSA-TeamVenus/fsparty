@@ -7,7 +7,6 @@ export default class PlayerCard extends React.Component {
 
   render() {
     const { player } = this.props;
-    console.log(player);
     return (
       <div
         className={`card ${player.color} flex-cont-column`}

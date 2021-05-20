@@ -18,11 +18,6 @@ a {
   text-decoration: none;
 }
 
-#welcome {
-  width: 75%;
-  margin: 0 auto;
-}
-
 /* board styles */
 
 .tile-grid {
@@ -57,6 +52,83 @@ a {
   background-image: url('assets/board/images/red_circle.png');
 }
 
+.popup-container {
+  width: 400px;
+  height: 300px;
+  position: absolute;
+  left: 50%;
+  margin-left: -200px;
+  top: 30%;
+  z-index: 5;
+  background-color: rgb(189, 188, 188);
+  border-top: 4px solid rgb(222, 222, 222);
+  border-left: 4px solid rgb(222, 222, 222);
+  border-right: 4px solid rgb(69, 69, 69);
+  border-bottom: 4px solid rgb(69, 69, 69);
+}
+
+.board-button {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 50%;
+  background-color: rgb(255, 218, 6);
+  border-top: 10px solid rgb(255, 206, 99);
+  border-left: 10px solid rgb(255, 206, 99);
+  border-right: 10px solid rgb(255, 174, 0);
+  border-bottom: 10px solid rgb(255, 174, 0);
+  font-family: 'bd-geminis', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 3px;
+}
+
+#current-turn {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  left: 15%;
+  top: 35%;
+  z-index: 3;
+  text-align: center;
+  font-family: 'bd-geminis', sans-serif;
+  font-size: 20px;
+  letter-spacing: 3px;
+}
+
+#current-turn img {
+  width: 100px;
+  height: 100px;
+}
+
+#start {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 50%;
+}
+
+#game-id {
+  width: 100px;
+  height: 25px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 25%;
+  background-color: white;
+  text-align: center;
+  padding: 2px;
+}
+
+.tile-sprite {
+  width: 20px;
+  height: 20px;
+}
+
 /* leaderboard styles */
 
 #leaderboard {
@@ -74,6 +146,9 @@ a {
   text-align: center;
   color: rgba(250, 250, 1, 0.9);
   background-color: rgb(196, 6, 6);
+  border-bottom: 5px solid rgb(193, 17, 17);
+  border-right: 5px solid rgb(140, 3, 3);
+  border-left: 5px solid rgb(247, 121, 121);
   z-index: 3;
 }
 
@@ -138,18 +213,20 @@ a {
 .dice-roll {
   width: 100px;
   height: 100px;
-  position: absolute;
-  left: 50%;
-  margin-left: -50px;
-  top: 50%;
-  z-index: 3;
-  background-color: yellow;
-  border: 5px solid rgb(255, 174, 0);
-  border-radius: 5px;
+  background-color: rgb(255, 218, 6);
+  border-top: 7px solid rgb(255, 206, 99);
+  border-left: 7px solid rgb(255, 206, 99);
+  border-right: 7px solid rgb(255, 174, 0);
+  border-bottom: 7px solid rgb(255, 174, 0);
+  border-radius: 3px;
   font-family: 'bd-geminis', sans-serif;
   font-style: normal;
   font-weight: 400;
   letter-spacing: 3px;
+}
+
+.dice-roll:hover {
+  background-color: rgb(252, 151, 133);
 }
 
 #roll-display {
@@ -166,112 +243,7 @@ a {
   letter-spacing: 3px;
 }
 
-#current-turn {
-  width: 200px;
-  height: 200px;
-  position: absolute;
-  left: 15%;
-  top: 35%;
-  z-index: 3;
-  text-align: center;
-  font-family: 'bd-geminis', sans-serif;
-  font-size: 20px;
-  letter-spacing: 3px;
-}
-
-#current-turn img {
-  width: 100px;
-  height: 100px;
-}
-
-#start {
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  left: 50%;
-  margin-left: -50px;
-  top: 50%;
-}
-
-#game-id {
-  width: 100px;
-  height: 25px;
-  position: absolute;
-  left: 50%;
-  margin-left: -50px;
-  top: 25%;
-  background-color: white;
-  text-align: center;
-  padding: 2px;
-}
-
-#next-player {
-  width: 200px;
-  height: 100px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: -100px;
-  flex-direction: column;
-  background-color: yellow;
-}
-/* Lobby Section */
-/* body {
-  background-color: black;
-} */
-
-#lobby-window {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #000;
-  color: #fff;
-}
-
-.input-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: solid 0px red;
-  margin: 1em;
-}
-
-.avatar {
-  width: 125px;
-  height: 125px;
-  border: solid 1px white;
-}
-
-.form-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.form-col {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.title {
-  font-family: Arial, 'Mario Party Hudson';
-}
-
-.lobby-input {
-  width: 150px;
-  text-align: center;
-}
-
-.selected-color {
-  margin-top: 0.2em;
-  border: solid 1px white;
-  width: 97%;
-  height: 15px;
-}
+/* ------- colors -------- */
 
 .blue {
   background-color: Blue;
@@ -300,7 +272,7 @@ a {
   background-color: orange;
 }
 
-/* End Lobby Section */
+/* ---- phaser canvas ---- */
 
 #game-canvas {
   position: absolute;
@@ -308,6 +280,8 @@ a {
   top: 10px;
   left: 200px;
 }
+
+/* ----- welcom/creation ------ */
 
 .background-div {
   width: 100vw;

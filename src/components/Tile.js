@@ -13,8 +13,13 @@ export default class Tile extends React.Component {
           ? players.map((player) => {
               if (dictionary[player.position].id === id) {
                 return (
-                  <div key={player.playerId} className={player.color}>
-                    {player.name}
+                  <div key={player.playerId}>
+                    {/* {player.name[0]} */}
+                    <img
+                      className="tile-sprite"
+                      src={player.spriteUrl}
+                      alt="sprite"
+                    />
                   </div>
                 );
               }
