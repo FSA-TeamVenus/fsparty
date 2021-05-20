@@ -34,18 +34,36 @@ export default class WelcomeScreen extends React.Component {
   render() {
     return (
       <div>
-        <Link to="/create">
-          <button onClick={this.handleNewGame}>Create Game</button>
-        </Link>
-        <input
-          type="text"
-          id="gameId"
-          value={this.state.gameId}
-          onChange={this.handleChange}
-        ></input>
-        <Link to="/create">
-          <button onClick={this.handleJoinGame}>Join Game</button>
-        </Link>
+        <div className="flex-cont-column background-div">
+          <Link to="/create">
+            <div
+              className="div-button box-outline"
+              onClick={this.handleNewGame}
+            >
+              Create Game
+            </div>
+          </Link>
+          <div id="join-div">
+            <Link to="/create">
+              <div
+                className="div-button box-outline"
+                onClick={this.handleJoinGame}
+              >
+                Join Game
+              </div>
+            </Link>
+            <div className="flex-cont-row">
+              <div id="code-label">Game Code:</div>
+              <input
+                type="text"
+                id="gameId"
+                className="input-form box-outline"
+                value={this.state.gameId}
+                onChange={this.handleChange}
+              ></input>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
