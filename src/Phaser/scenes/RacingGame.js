@@ -220,9 +220,11 @@ export default class RacingGame extends Phaser.Scene {
         delay: 2000,
         callback: () => {
           this.scene.start('endScreen', {
+            playerId: this.myId,
             gameId: this.gameId,
             allPlayers: this.allPlayers,
             finishers: this.finishers,
+            listener: this.playersRef,
           });
         },
         callbackScope: this,

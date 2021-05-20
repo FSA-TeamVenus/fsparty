@@ -162,6 +162,7 @@ export default class PlatformGame extends Phaser.Scene {
         finishers.sort((a, b) => a.score - b.score);
         this.scene.start('endScreen', {
           gameId: this.gameId,
+          playerId: this.myId,
           allPlayers: this.allPlayers,
           finishers: finishers,
         });

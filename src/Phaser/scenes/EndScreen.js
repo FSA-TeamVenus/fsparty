@@ -8,8 +8,10 @@ export default class EndScreen extends Phaser.Scene {
 
   init(data) {
     this.gameId = data.gameId;
+    this.playerId = data.playerId;
     this.allPlayers = data.allPlayers;
     this.finishersList = data.finishers;
+    this.listener = data.listener;
   }
 
   create() {
@@ -42,7 +44,10 @@ export default class EndScreen extends Phaser.Scene {
       delay: 5000,
       callback: () => {
         this.scene.stop();
-        updateRound(this.gameId);
+        if (this.playerId === 0) {
+          updateRound(this.gameId);
+        }
+        // this.listener.off();
         this.sys.game.destroy(true);
       },
       callbackScope: this,
