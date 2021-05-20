@@ -12,6 +12,7 @@ import {
   updatePos,
   getPos,
   getRound,
+  updateRound,
   updateMiniGame,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
@@ -98,13 +99,13 @@ export class Board extends React.Component {
     let nextPlayer = playerList[turn];
     return (
       <div>
-        {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ''}
+        {turn < 0 ? <h4 id='game-id'>Game Id: {gameId}</h4> : ''}
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
         <Leaderboard players={playerList} />
         {turn === playerList.length && playerId === 0 ? (
-          <button className="dice-roll" onClick={this.randomGameSelection}>
+          <button className='dice-roll' onClick={this.randomGameSelection}>
             start mini game
           </button>
         ) : (
@@ -118,14 +119,14 @@ export class Board extends React.Component {
           <div />
         )}
         {turn < 0 && round == 1 && playerId == 0 ? (
-          <button id="start" onClick={() => this.startGame()}>
+          <button id='start' onClick={() => this.startGame()}>
             Start Game
           </button>
         ) : (
           <div>
             <TileGrid tileList={tileList} playerList={playerList} />
             {!playerId == turn ? (
-              <div id="next-player">
+              <div id='next-player'>
                 <h4>Round: {round}</h4>
                 <h4>Next Player: {nextPlayer ? nextPlayer.name : '...'}</h4>
               </div>
@@ -136,10 +137,10 @@ export class Board extends React.Component {
         )}
         {playerId == turn && playerList ? (
           <div>
-            <div id="roll-display" disabled={true}></div>
+            <div id='roll-display' disabled={true}></div>
             <button
-              id="dice-roll"
-              className="dice-roll"
+              id='dice-roll'
+              className='dice-roll'
               onClick={() => this.rollDice()}
             >
               Roll {playerList[playerId].name}!

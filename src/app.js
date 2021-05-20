@@ -5,11 +5,13 @@ import Board from './components/board';
 import WelcomeScreen from './components/WelcomeScreen';
 import CreatePlayer from './components/CreatePlayer';
 import Lobby2 from './components/Lobby2';
+import JoinGame from './components/JoinGame';
 
 const App = () => {
   return (
     <div>
       <Switch>
+        <Route path='/join' component={JoinGame} />
         <Route path='/create' component={CreatePlayer} />
         <Route path='/lobby' component={Lobby2} />
         <Route path='/board' component={Board} />

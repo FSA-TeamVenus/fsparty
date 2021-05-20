@@ -34,16 +34,16 @@ export default class WelcomeScreen extends React.Component {
   render() {
     return (
       <div>
-        <Link to="/create">
+        <Link to='/create'>
           <button onClick={this.handleNewGame}>Create Game</button>
         </Link>
         <input
-          type="text"
-          id="gameId"
+          type='text'
+          id='gameId'
           value={this.state.gameId}
           onChange={this.handleChange}
         ></input>
-        <Link to="/create">
+        <Link to='/join'>
           <button onClick={this.handleJoinGame}>Join Game</button>
         </Link>
       </div>
