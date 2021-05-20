@@ -21,21 +21,21 @@ export default class PlatformGame extends Phaser.Scene {
     //IMAGES>>>>>>>>>>>>>>
     this.load.spritesheet(
       'player',
-      'assets/images/assets/images/character.png',
+      'assets/platformGame/images/character.png',
       {
         frameWidth: 32,
         frameHeight: 33,
       }
     );
-    this.load.spritesheet('coin', 'assets/images/assets/images/coins.png', {
+    this.load.spritesheet('coin', 'assets/platformGame/images/coins.png', {
       frameWidth: 15,
       frameHeight: 15,
     });
-    this.load.image('platform', 'assets/images/assets/images/2dplatform.png');
-    this.load.image('desertBg', 'assets/images/assets/images/Desert.png');
+    this.load.image('platform', 'assets/platformGame/images/2dplatform.png');
+    this.load.image('desertBg', 'assets/platformGame/images/Desert.png');
     //SOUNDS>>>>>>>>>>>>>>>>>>
-    this.load.audio('coin', 'assets/images/sounds/coin.wav');
-    this.load.audio('jump', 'assets/images/sounds/jump.wav');
+    this.load.audio('coin', 'assets/platformGame/sounds/coin.wav');
+    this.load.audio('jump', 'assets/platformGame/sounds/jump.wav');
     this.gameId = Number(window.localStorage.getItem('gameId'));
     this.myId = Number(window.localStorage.getItem('idKey'));
   }
