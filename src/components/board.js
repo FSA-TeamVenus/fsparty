@@ -124,7 +124,7 @@ export class Board extends React.Component {
         ) : (
           <div>
             <TileGrid tileList={tileList} playerList={playerList} />
-            {playerId !== turn ? (
+            {playerId !== turn && playerList.length < turn  ? (
               <div id="next-player">
                 <h4>Round: {round}</h4>
                 <h4>Next Player: {nextPlayer ? nextPlayer.name : '...'}</h4>
