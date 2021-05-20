@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { removeFromDatabase } from '../Firebase/index';
 
 export default class GameEnd extends React.Component {
@@ -6,7 +7,7 @@ export default class GameEnd extends React.Component {
     super(props);
   }
 
-  componentWillUnmount() {
+  componentDidMount() {
     const { playerId, gameId } = this.props.location.state;
     if (playerId === 0) {
       removeFromDatabase(gameId);
@@ -18,7 +19,9 @@ export default class GameEnd extends React.Component {
     return (
       <div>
         <div className="background-div flex-cont-column">
-          <div className="image-div">GAME OVER</div>
+          <div className="image-div" id="game-over">
+            GAME OVER
+          </div>
           <div className="flex-cont-row">
             {players.map((player) => (
               <img
@@ -27,6 +30,9 @@ export default class GameEnd extends React.Component {
                 key={player.playerId}
               />
             ))}
+          </div>
+          <div id="play-again" className="div-button box-outline">
+            <Link to="/">Play Again</Link>
           </div>
         </div>
       </div>
