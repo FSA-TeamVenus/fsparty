@@ -10,6 +10,7 @@ export default class CreatePlayer extends React.Component {
     this.state = {
       name: '',
       color: 'red',
+      round: 0,
       colorIndex: 0,
       spriteUrl: 'assets/board/images/mushroom-red.png',
     };
