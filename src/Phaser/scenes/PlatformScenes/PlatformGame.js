@@ -4,38 +4,36 @@ import Platform from '../../entities/PlatformEntities/Platform';
 import Coin from '../../entities/PlatformEntities/Coin';
 import { playersRef, serverCoins } from '../../../Firebase/index';
 
-// window.localStorage.setItem('playerId', '1');
-// const this.myId = Number(window.localStorage.getItem('playerId'));
-
 export default class PlatformGame extends Phaser.Scene {
   constructor() {
     super('platformGame');
 
-    this.getCoins = this.getCoins.bind(this);
     this.spawned = false;
     this.allPlayers = {};
     this.coinPouch = {};
+    this.playersByCoins = [];
+    this.getCoins = this.getCoins.bind(this);
   }
-  //h/home/reidvanwagner/fsparty/docs/assets/images/sounds/coin.wav
+
   preload() {
     //IMAGES>>>>>>>>>>>>>>
     this.load.spritesheet(
       'player',
-      'assets/images/assets/images/character.png',
+      'assets/platformGame/images/character.png',
       {
         frameWidth: 32,
         frameHeight: 33,
       }
     );
-    this.load.spritesheet('coin', 'assets/images/assets/images/coins.png', {
+    this.load.spritesheet('coin', 'assets/platformGame/images/coins.png', {
       frameWidth: 15,
       frameHeight: 15,
     });
-    this.load.image('platform', 'assets/images/assets/images/2dplatform.png');
-    this.load.image('desertBg', 'assets/images/assets/images/Desert.png');
+    this.load.image('platform', 'assets/platformGame/images/2dplatform.png');
+    this.load.image('desertBg', 'assets/platformGame/images/Desert.png');
     //SOUNDS>>>>>>>>>>>>>>>>>>
-    this.load.audio('coin', 'assets/images/sounds/coin.wav');
-    this.load.audio('jump', 'assets/images/sounds/jump.wav');
+    this.load.audio('coin', 'assets/platformGame/sounds/coin.wav');
+    this.load.audio('jump', 'assets/platformGame/sounds/jump.wav');
     this.gameId = Number(window.localStorage.getItem('gameId'));
     this.myId = Number(window.localStorage.getItem('idKey'));
   }
@@ -45,8 +43,7 @@ export default class PlatformGame extends Phaser.Scene {
     this.players = this.add.group();
     this.serverPlayers = playersRef(this.gameId, 'platformGame');
 
-    // get players from the database - this could maybe get replaced with a one time call // basically a get request
-    this.serverPlayers.on('value', (snapshot) => {
+    this.serverPlayers.once('value').then((snapshot) => {
       const list = snapshot.val();
       if (!this.spawned) {
         this.addPlayers(list);
@@ -54,7 +51,6 @@ export default class PlatformGame extends Phaser.Scene {
       }
     });
 
-    // listen for player movement udpdates
     this.serverPlayers.on('child_changed', (snapshot) => {
       const player = snapshot.val();
       if (player.playerId !== this.myId) {
@@ -82,31 +78,7 @@ export default class PlatformGame extends Phaser.Scene {
     this.coins = this.add.group();
     this.generateCoins();
 
-    ///BASE LEVEL OF PLATFORMS
-
-    this.createPlatform(150, 550);
-    this.createPlatform(450, 550);
-    this.createPlatform(700, 550);
-
-    //SECOND LEVEL
-    this.createPlatform(150, 300);
-    this.createPlatform(700, 300);
-    this.createPlatform(450, 50);
-
-    //THIRD LEVEL
-    this.createPlatform(150, -200);
-    this.createPlatform(700, -200);
-    this.createPlatform(450, -450);
-
-    //FOURTH LEVEL
-    this.createPlatform(150, -700);
-    this.createPlatform(700, -700);
-    this.createPlatform(450, -950);
-
-    //FIFTH LEVEL
-    this.createPlatform(150, -1200);
-    this.createPlatform(700, -1200);
-    this.createPlatform(450, -1450);
+    this.spawnAllPlatforms();
 
     //CAMERA SETTINGS
 
@@ -147,28 +119,60 @@ export default class PlatformGame extends Phaser.Scene {
     //SCOREBOARD
     this.score = 0;
     this.scoreText;
-    this.scoreText = this.add.text(0, 18, 'Points: 0', {
+    this.scoreText = this.add.text(18, 18, 'Coins: 0', {
       fontSize: '25px',
       fill: 'white',
     });
     this.scoreText.setScrollFactor(0, 0);
 
-    //TIMER>>>>>>>>>>>>>>
+    this.initialTime = 20;
+    this.countdown = this.add.text(
+      200,
+      18,
+      `Time Remaining: ${this.initialTime}`,
+      {
+        fontSize: '25px',
+        fill: 'white',
+      }
+    );
+    this.countdown.setScrollFactor(0, 0);
+
     this.time.addEvent({
-      delay: 20000,
+      delay: 1000,
       callback: () => {
-        const finishers = [];
-        Object.keys(this.allPlayers).forEach((key) => finishers.push(key));
-        finishers.sort((a, b) => a.score - b.score);
-        this.scene.start('endScreen', {
-          gameId: this.gameId,
-          allPlayers: this.allPlayers,
-          finishers: finishers,
-        });
+        this.initialTime -= 1;
+        this.countdown.setText(`Time Remaining: ${this.initialTime}`);
       },
       callbackScope: this,
-      loop: false,
+      loop: 10,
     });
+
+    //TIMER
+    this.setGameTimeout();
+  }
+
+  update() {
+    if (this.player) {
+      this.player.update(this.cursors, this.jumpSound);
+      this.isPlayerDead();
+      const y = Math.floor(this.player.y);
+      let position = {
+        x: this.player.x,
+        y: y,
+      };
+      if (
+        (this.player.oldPosition && this.player.oldPosition.x !== position.x) ||
+        this.player.oldPosition.y !== position.y
+      ) {
+        this.serverPlayers
+          .child(`${this.myId}`)
+          .update({ x: this.player.x, y: y });
+      }
+      this.player.oldPositon = {
+        x: this.player.x,
+        y: y,
+      };
+    }
   }
 
   generateCoins() {
@@ -286,7 +290,7 @@ export default class PlatformGame extends Phaser.Scene {
     this.players.add(this.player);
   }
 
-  spawnOtherCharacters(player) {
+  spawnOtherCharacter(player) {
     const newPlayer = new PlatformPlayer(this, player.x, player.y, 'player')
       .setScale(3)
       .setSize(20, 27, true);
@@ -294,5 +298,55 @@ export default class PlatformGame extends Phaser.Scene {
     newPlayer.name = player.name;
     this.allPlayers[player.playerId] = newPlayer;
     this.players.add(newPlayer);
+  }
+
+  spawnAllPlatforms() {
+    this.createPlatform(150, 550);
+    this.createPlatform(450, 550);
+    this.createPlatform(700, 550);
+
+    //SECOND LEVEL
+    this.createPlatform(150, 300);
+    this.createPlatform(700, 300);
+    this.createPlatform(450, 50);
+
+    //THIRD LEVEL
+    this.createPlatform(150, -200);
+    this.createPlatform(700, -200);
+    this.createPlatform(450, -450);
+
+    //FOURTH LEVEL
+    this.createPlatform(150, -700);
+    this.createPlatform(700, -700);
+    this.createPlatform(450, -950);
+
+    //FIFTH LEVEL
+    this.createPlatform(150, -1200);
+    this.createPlatform(700, -1200);
+    this.createPlatform(450, -1450);
+  }
+
+  setGameTimeout() {
+    this.time.addEvent({
+      delay: 20000,
+      callback: () => {
+        Object.keys(this.allPlayers).forEach((key) =>
+          this.playersByCoins.push(key)
+        );
+        this.playersByCoins.sort((a, b) => a.score - b.score);
+
+        this.serverPlayers.off();
+        serverCoins.off();
+
+        this.scene.start('endScreen', {
+          gameId: this.gameId,
+          playerId: this.myId,
+          allPlayers: this.allPlayers,
+          finishers: this.playersByCoins,
+        });
+      },
+      callbackScope: this,
+      loop: false,
+    });
   }
 }

@@ -12,7 +12,16 @@ export default class WelcomeScreen extends React.Component {
     this.handleNewGame = this.handleNewGame.bind(this);
     this.handleJoinGame = this.handleJoinGame.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.rotateCube = this.rotateCube.bind(this);
   }
+
+  componentDidMount() {
+    // this.rotateCube();
+    document.addEventListener('mousemove', this.rotateCube);
+  }
+  // componentWillUnmount() {
+  //   document.removeEventListener('mousemove', this.rotateCube);
+  // }
 
   handleNewGame() {
     createNewGame();
@@ -31,21 +40,59 @@ export default class WelcomeScreen extends React.Component {
     getNewPlayerId(gameId);
   }
 
+  rotateCube(event) {
+    const cube = document.getElementById('box');
+    const x = event.pageX;
+    const y = event.pageY;
+
+    cube.style.transform = `rotateY(${x * 0.2}deg) rotateX(${y * 0.2}deg)`;
+  }
+
   render() {
     return (
-      <div>
-        <Link to='/create'>
-          <button onClick={this.handleNewGame}>Create Game</button>
-        </Link>
-        <input
-          type='text'
-          id='gameId'
-          value={this.state.gameId}
-          onChange={this.handleChange}
-        ></input>
-        <Link to='/join'>
-          <button onClick={this.handleJoinGame}>Join Game</button>
-        </Link>
+      <div className='background-div flex-cont-row'>
+        <div id='box-container'>
+          <section id='box'>
+            <div className='face one'></div>
+            <div className='face two'></div>
+            <div className='face three'></div>
+            <div className='face four'></div>
+            <div className='face five'></div>
+            <div className='face six'></div>
+          </section>
+        </div>
+        <div id='welcome-div'>
+          <div id='create-wrapper'>
+            <Link to='/create'>
+              <div
+                className='div-button box-outline'
+                onClick={this.handleNewGame}
+              >
+                Create Game
+              </div>
+            </Link>
+            <div id='join-div'>
+              <Link to='/create'>
+                <div
+                  className='div-button box-outline'
+                  onClick={this.handleJoinGame}
+                >
+                  Join Game
+                </div>
+              </Link>
+              <div className='flex-cont-row'>
+                <div id='code-label'>Game Code:</div>
+                <input
+                  type='text'
+                  id='gameId'
+                  className='input-form box-outline'
+                  value={this.state.gameId}
+                  onChange={this.handleChange}
+                ></input>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

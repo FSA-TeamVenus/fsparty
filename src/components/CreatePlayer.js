@@ -9,12 +9,19 @@ export default class CreatePlayer extends React.Component {
     super();
     this.state = {
       name: '',
+<<<<<<< HEAD
       color: '',
       sprite: '',
       round: 0,
+=======
+      color: 'red',
+      colorIndex: 0,
+      spriteUrl: 'assets/board/images/mushroom-red.png',
+>>>>>>> main
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleJoin = this.handleJoin.bind(this);
+    this.handleColorSelect = this.handleColorSelect.bind(this);
   }
 
   handleChange(evt) {
@@ -23,66 +30,75 @@ export default class CreatePlayer extends React.Component {
     });
   }
 
-  handleSubmit() {
+  handleJoin() {
     const playerId = Number(window.localStorage.getItem('idKey'));
     const gameId = window.localStorage.getItem('gameId');
-    const playerObj = { ...this.state, playerId };
+    const { name, color, spriteUrl } = this.state;
+    const playerObj = { name, color, spriteUrl };
     addPlayerToGame(gameId, playerId, playerObj);
     updateRoundsMax(gameId, this.state.round);
   }
 
+  handleColorSelect(evt) {
+    const colorArray = ['red', 'yellow', 'green', 'pink', 'orange', 'blue'];
+    const { colorIndex } = this.state;
+    const value = evt.target.value === 'next' ? 1 : -1;
+
+    const newIndex = colorIndex + value;
+    const newColor = colorArray[newIndex % colorArray.length];
+    const newUrl = `assets/board/images/mushroom-${newColor}.png`;
+
+    this.setState({
+      color: newColor,
+      colorIndex: newIndex,
+      spriteUrl: newUrl,
+    });
+  }
+
   render() {
+    const gameId = window.localStorage.getItem('gameId');
     return (
-      <div>
-        <h1>Create Your Player</h1>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor='name'>Name</label>
-          <input
-            type='text'
-            name='name'
-            value={this.state.name}
-            onChange={this.handleChange}
-          ></input>
-          <label htmlFor='color'>Color</label>
-          <select
-            name='color'
-            value={this.state.color}
-            onChange={this.handleChange}
-          >
-            <option value={''}>---</option>
-            <option value={'blue'}>blue</option>
-            <option value={'green'}>green</option>
-            <option value={'pink'}>pink</option>
-            <option value={'red'}>red</option>
-          </select>
-          <label htmlFor='sprite'>Sprite</label>
-          <select
-            name='sprite'
-            value={this.state.sprite}
-            onChange={this.handleChange}
-          >
-            <option value={''}>---</option>
-            <option value={'link'}>link</option>
-            <option value={'kratos'}>kratos</option>
-            <option value={'donkeyKong'}>donkey kong</option>
-            <option value={'sonic'}>sonic</option>
-          </select>
-          <label htmlFor='round'>Number of Rounds</label>
-          <select
-            name='round'
-            value={this.state.round}
-            onChange={this.handleChange}
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={15}>15</option>
-            <option value={20}>20</option>
-            <option value={25}>25</option>
-          </select>
-          <Link to='/board'>
-            <button onClick={this.handleSubmit}>Join Game</button>
-          </Link>
-        </form>
+      <div className="flex-cont-column background-div">
+        <div className="flex-cont-column">
+          <div className="flex-cont-row">
+            <div className="flex-cont-column">
+              <label htmlFor="color">Pick Your Color</label>
+              <div id="image-div" className="flex-cont-column box-outline">
+                <img src={this.state.spriteUrl} alt="mushroom" />
+              </div>
+              <div className="flex-cont-row">
+                <input
+                  type="button"
+                  className="input-form color-button box-outline"
+                  onClick={this.handleColorSelect}
+                  value={'previous'}
+                ></input>
+                <input
+                  type="button"
+                  className="input-form color-button box-outline"
+                  onClick={this.handleColorSelect}
+                  value={'next'}
+                ></input>
+              </div>
+            </div>
+            <div className="flex-cont-column">
+              <div className="input-form">Game Code: {gameId}</div>
+              <label htmlFor="name">Enter Your Name</label>
+              <input
+                type="text"
+                name="name"
+                className="input-form box-outline"
+                value={this.state.name}
+                onChange={this.handleChange}
+              ></input>
+              <div className="div-button image-div box-outline">
+                <Link to="/board">
+                  <div onClick={this.handleJoin}>Join Game</div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
