@@ -9,15 +9,10 @@ export default class CreatePlayer extends React.Component {
     super();
     this.state = {
       name: '',
-<<<<<<< HEAD
-      color: '',
-      sprite: '',
       round: 0,
-=======
       color: 'red',
       colorIndex: 0,
       spriteUrl: 'assets/board/images/mushroom-red.png',
->>>>>>> main
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleJoin = this.handleJoin.bind(this);
@@ -91,18 +86,18 @@ export default class CreatePlayer extends React.Component {
                 value={this.state.name}
                 onChange={this.handleChange}
               ></input>
-                <label htmlFor='round'>Number of Rounds</label>
-          <select
-            name='round'
-            value={this.state.round}
-            onChange={this.handleChange}
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={15}>15</option>
-            <option value={20}>20</option>
-            <option value={25}>25</option>
-          </select>
+              <label htmlFor="round">Number of Rounds</label>
+              <select
+                name="round"
+                value={this.state.round}
+                onChange={this.handleChange}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+                <option value={20}>20</option>
+                <option value={25}>25</option>
+              </select>
               <div className="div-button image-div box-outline">
                 <Link to="/board">
                   <div onClick={this.handleJoin}>Join Game</div>
