@@ -1,15 +1,23 @@
 import React from 'react';
-import { addPlayerToGame } from '../Firebase/index';
+import { addPlayerToGame, updateRoundsMax } from '../Firebase/index';
 import { Link } from 'react-router-dom';
+
+let playerId = Number(window.localStorage.getItem('idKey'));
 
 export default class CreatePlayer extends React.Component {
   constructor() {
     super();
     this.state = {
       name: '',
+<<<<<<< HEAD
+      color: '',
+      sprite: '',
+      round: 0,
+=======
       color: 'red',
       colorIndex: 0,
       spriteUrl: 'assets/board/images/mushroom-red.png',
+>>>>>>> main
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleJoin = this.handleJoin.bind(this);
@@ -28,6 +36,7 @@ export default class CreatePlayer extends React.Component {
     const { name, color, spriteUrl } = this.state;
     const playerObj = { name, color, spriteUrl };
     addPlayerToGame(gameId, playerId, playerObj);
+    updateRoundsMax(gameId, this.state.round);
   }
 
   handleColorSelect(evt) {
