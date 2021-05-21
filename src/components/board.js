@@ -61,7 +61,7 @@ export class Board extends React.Component {
     const diceRoll = Phaser.Math.Between(0, 6);
     const rollDisplay = document.getElementById('roll-display');
 
-    rollDisplay.innerHTML = 'rolling...';
+    rollDisplay.innerHTML = '...';
     setTimeout(function () {
       rollDisplay.innerHTML = `${diceRoll}!`;
     }, 1500);
@@ -148,7 +148,10 @@ export class Board extends React.Component {
         )}
         {playerId == turn && playerList ? (
           <div className="popup-container flex-cont-column">
-            <div className="image-container">image</div>
+            <div
+              className={`${currentPlayer.color}-text`}
+              id="roll-display"
+            ></div>
             <button className="dice-roll" onClick={() => this.rollDice()}>
               Roll Dice!
             </button>
@@ -163,14 +166,6 @@ export class Board extends React.Component {
             >{`${currentPlayer.name}'s turn!`}</p>
             <img src={currentPlayer.spriteUrl} alt="" />
           </div>
-        ) : (
-          <div />
-        )}
-        {turn < playerList.length ? (
-          <div
-            className={`${currentPlayer.color}-text`}
-            id="roll-display"
-          ></div>
         ) : (
           <div />
         )}

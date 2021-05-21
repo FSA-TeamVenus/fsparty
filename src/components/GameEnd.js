@@ -16,19 +16,25 @@ export default class GameEnd extends React.Component {
 
   render() {
     const { players } = this.props.location.state;
+    const sortedPlayers = players.sort((a, b) => a.score < b.score);
     return (
       <div>
         <div className="background-div flex-cont-column">
           <div className="image-div" id="game-over">
-            GAME OVER
+            RESULTS
           </div>
-          <div className="flex-cont-row">
-            {players.map((player) => (
-              <img
-                src={player.spriteUrl}
-                alt="player sprite"
-                key={player.playerId}
-              />
+          <div className="flex-cont-row podium-div">
+            {sortedPlayers.map((player, idx) => (
+              <div className="flex-cont-column" key={`${idx}`}>
+                <img
+                  src={player.spriteUrl}
+                  alt="player sprite"
+                  key={player.playerId}
+                />
+                <div id={`pod${idx}`} className="flex-cont-column podium">{`${
+                  idx + 1
+                }`}</div>
+              </div>
             ))}
           </div>
           <div id="play-again" className="div-button box-outline">
