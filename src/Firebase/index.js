@@ -288,6 +288,7 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   let mainGameRef = `${gameId}/main/players/${playerId}`;
   let racingGameRef = `${gameId}/racingGame/players/${playerId}`;
   let platformGameRef = `${gameId}/platformGame/players/${playerId}`;
+  let shootingGameRef = `${gameId}/shootingGame/players/${playerId}`;
   let updates = {};
   updates[mainGameRef] = {
     ...playerData,
@@ -300,6 +301,11 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     name: playerData.name,
   };
   updates[platformGameRef] = { playerId, name: playerData.name };
+  updates[shootingGameRef] = {
+    playerId,
+    name: playerData.name,
+    color: playerData.color,
+  };
   database.ref().update(updates);
 }
 

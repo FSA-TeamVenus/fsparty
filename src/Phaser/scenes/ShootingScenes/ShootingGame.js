@@ -30,15 +30,18 @@ export default class ShootingGame extends Phaser.Scene {
     this.myId = Number(window.localStorage.getItem("idKey"));
     this.load.image("ghost", "assets/images/ghost.png");
     this.load.image("reticle", "assets/images/test-reticle.png");
+    this.load.audio("shot", "assets/images/sounds/gunshot.wav");
   }
 
   create() {
+    this.gunshot = this.sound.add("shot");
     getShootingPlayers(this.gameId, this.addPlayers);
     this.input.setDefaultCursor("url(assets/images/crosshair.cur),pointer");
     for (let i = 0; i < 5; i++) {
       // const xx = Phaser.Math.Between(300)
+      const xx = 100 + i * 110
       const yy = 100 + i * 110;
-      this[`ghost${i}`] = this.add.image(400, yy, "ghost").setScale(0.1);
+      this[`ghost${i}`] = this.add.image(xx, yy, "ghost").setScale(0.1);
       this[`ghost${i}`].index = i;
       this[`ghost${i}`].setInteractive();
     }
@@ -91,6 +94,7 @@ export default class ShootingGame extends Phaser.Scene {
 
   shot(pointer, target) {
     console.log(`hit - ${target.index}`)
+    this.gunshot.play()
     //should set firebase gameId/shootingGame/targets/targetId/hit = true
     updateTarget(this.gameId, target.index, true)
     this.myScore++;
@@ -122,9 +126,11 @@ export default class ShootingGame extends Phaser.Scene {
   }
 
   update() {
-      this.moveTarget(this.ghost1, -1);
+      this.moveTarget(this.ghost0, -5);
+      this.moveTarget(this.ghost1, -2);
       this.moveTarget(this.ghost2, 2)
       this.moveTarget(this.ghost3, -3)
+      this.moveTarget(this.ghost4, -4)
   }
 }
 
