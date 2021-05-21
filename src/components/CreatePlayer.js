@@ -9,15 +9,9 @@ export default class CreatePlayer extends React.Component {
     super();
     this.state = {
       name: '',
-<<<<<<< HEAD
-      color: '',
-      sprite: '',
-      round: 0,
-=======
       color: 'red',
       colorIndex: 0,
       spriteUrl: 'assets/board/images/mushroom-red.png',
->>>>>>> main
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleJoin = this.handleJoin.bind(this);

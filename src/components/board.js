@@ -139,14 +139,6 @@ export class Board extends React.Component {
               playerList={playerList}
               dictionary={pathDictionary}
             />
-            {playerId !== turn && playerList.length < turn ? (
-              <div id="next-player">
-                <h4>Round: {round}</h4>
-                <h4>Next Player: {nextPlayer ? nextPlayer.name : "..."}</h4>
-              </div>
-            ) : (
-              ""
-            )}
           </div>
         )}
         {turn === playerList.length && playerId === 0 ? (
