@@ -169,13 +169,6 @@ export default class PlatformGame extends Phaser.Scene {
       callbackScope: this,
       loop: false,
     });
-    //TIME DISPLAY >>>>>>>>>>>
-    this.timeDisplay = 0;
-    this.timerText = this.add.text(0, 46, 'Time Remaining: 20', {
-      fontSize: '15px',
-      fill: 'white',
-    });
-    this.timerText.setScrollFactor(0, 0);
   }
 
   generateCoins() {
@@ -252,17 +245,6 @@ export default class PlatformGame extends Phaser.Scene {
         y: y,
       };
     }
-  }
-
-  onEvent() {
-    this.initialTime -= 1;
-    this.timerText.setText('Time Remaining: ' + formatTime(this.initialTime));
-  }
-
-  formatTime(seconds) {
-    let partInSeconds = seconds % 60;
-    partInSeconds = partInSeconds.toString().padStart(2, '20');
-    return `${partInSeconds}`;
   }
 
   isPlayerDead() {
