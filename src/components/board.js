@@ -11,10 +11,11 @@ import {
   updatePos,
   getPos,
   getRound,
-  updateRound,
   updateMiniGame,
+  getMaxRounds,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
+import GameEnd from './GameEnd';
 import { Link } from 'react-router-dom';
 
 let gameId = Number(window.localStorage.getItem('gameId'));
@@ -28,19 +29,24 @@ export class Board extends React.Component {
       turn: null,
       pos: 1,
       round: null,
+      maxRounds: 0,
       showModal: true,
+      gameOver: false,
+      rolled: false,
       gameIndex: 0,
-      gamesList: { 0: 'platformGame', 1: 'racingGame', 2: 'shootingGame'},
+      gamesList: { 0: 'platformGame', 1: 'racingGame', 2: 'shootingGame' },
       instructions: {
         0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
-        2: 'Click to shoot as many targets as you can'
+        2: 'Click to shoot as many targets as you can',
       },
     };
     this.stateCb = this.stateCb.bind(this);
     this.selectMiniGame = this.selectMiniGame.bind(this);
     this.rollDice = this.rollDice.bind(this);
+    this.displayDiceRoll = this.displayDiceRoll.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.endGame = this.endGame.bind(this);
   }
 
   componentDidMount() {
@@ -48,6 +54,7 @@ export class Board extends React.Component {
     this.turnOff = getTurn(gameId, this.stateCb);
     this.posOff = getPos(gameId, playerId, this.stateCb);
     this.roundOff = getRound(gameId, this.stateCb);
+    getMaxRounds(gameId, this.stateCb);
   }
 
   componentWillUnmount() {
@@ -61,19 +68,34 @@ export class Board extends React.Component {
     const { pos, playerList } = this.state;
     const myPlayer = playerList[playerId];
     const diceRoll = Phaser.Math.Between(0, 6);
-    const rollDisplay = document.getElementById('roll-display');
+    this.displayDiceRoll(diceRoll);
 
+    this.setState({
+      // pos: pos + diceRoll,
+      rolled: true,
+    });
+
+    setTimeout(this.movePlayer(pos, diceRoll, myPlayer), 4000);
+
+    setTimeout(function () {
+      this.setState({
+        rolled: false,
+      });
+    }, 5000);
+  }
+
+  displayDiceRoll(diceRoll) {
+    const rollDisplay = document.getElementById('roll-display');
     rollDisplay.innerHTML = '...';
     setTimeout(function () {
       rollDisplay.innerHTML = `${diceRoll}!`;
     }, 1500);
+  }
 
-    this.stateCb(pos + diceRoll, 'pos');
-    setTimeout(function () {
-      updatePos(gameId, playerId, diceRoll);
-      updateTurn(gameId);
-      pathDictionary[pos + diceRoll].action(gameId, playerId, myPlayer);
-    }, 4000);
+  movePlayer(pos, diceRoll, myPlayer) {
+    updatePos(gameId, playerId, diceRoll);
+    updateTurn(gameId);
+    pathDictionary[pos + diceRoll].action(gameId, playerId, myPlayer);
   }
 
   stateCb(value, key) {
@@ -104,13 +126,18 @@ export class Board extends React.Component {
     });
   }
 
+  endGame() {
+    this.setState({
+      gameOver: true,
+    });
+  }
+
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
 
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
-    let nextPlayer = playerList[turn];
     return (
       <div>
         {playerList.map((player) => (
@@ -125,11 +152,7 @@ export class Board extends React.Component {
           <div />
         )}
         {turn < 0 && round == 1 && playerId == 0 ? (
-          <button
-            id='start'
-            className='board-button'
-            onClick={() => this.startGame()}
-          >
+          <button id="start" className="board-button" onClick={this.startGame}>
             Start Game
           </button>
         ) : (
@@ -142,64 +165,58 @@ export class Board extends React.Component {
           </div>
         )}
         {turn === playerList.length && playerId === 0 ? (
-          <button className='board-button' onClick={this.selectMiniGame}>
+          <button className="board-button" onClick={this.selectMiniGame}>
             start mini game
           </button>
         ) : (
           <div />
         )}
         {playerId == turn && playerList ? (
-          <div className='popup-container flex-cont-column'>
+          <div className="popup-container flex-cont-column">
             <div
               className={`${currentPlayer.color}-text`}
-              id='roll-display'
+              id="roll-display"
             ></div>
-            <button className='dice-roll' onClick={() => this.rollDice()}>
-              Roll Dice!
-            </button>
+            {!this.state.rolled ? (
+              <button className="dice-roll" onClick={this.rollDice}>
+                Roll Dice!
+              </button>
+            ) : (
+              <div />
+            )}
           </div>
         ) : (
           <div />
         )}
         {turn >= 0 && turn < playerList.length ? (
-          <div id='current-turn'>
+          <div id="current-turn">
             <p
               className={`${currentPlayer.color}-text`}
             >{`${currentPlayer.name}'s turn!`}</p>
-            <img src={currentPlayer.spriteUrl} alt='' />
+            <img src={currentPlayer.spriteUrl} alt="" />
           </div>
         ) : (
           <div />
         )}
-        {round === 2 && this.state.showModal ? (
-          <div className='popup-container flex-cont-column modal' id='popup'>
-            <div className='popup-style'>FINAL ROUND!</div>
-            <div className='div-button' id='ok' onClick={this.closeModal}>
+        {round === this.state.maxRounds && this.state.showModal ? (
+          <div className="popup-container flex-cont-column modal" id="popup">
+            <div className="popup-style">FINAL ROUND!</div>
+            <div className="div-button" id="ok" onClick={this.closeModal}>
               OK
             </div>
           </div>
         ) : (
           <div />
         )}
-        {round === 3 ? (
-          <div className=' popup-container flex-cont-column'>
-            <div className='popup-style'>Game Over</div>
-            <Link
-              to={{
-                pathname: "/end",
-                state: {
-                  players: playerList,
-                  gameId: gameId,
-                  playerId: playerId,
-                },
-              }}
-            >
-              <div id='view-result-button'>View Results</div>
-            </Link>
+        {round === this.state.maxRounds + 1 ? (
+          <div className=" popup-container flex-cont-column">
+            <div className="popup-style">Game Over</div>
+            <div id="view-result-button">View Results</div>
           </div>
         ) : (
           <div />
         )}
+        {this.state.gameOver ? <GameEnd /> : <div />}
       </div>
     );
   }

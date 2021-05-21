@@ -66,6 +66,15 @@ const getRef = (gameId, playerId) => {
   }
 };
 
+export function getMaxRounds(gameId, cb) {
+  const ref = getRef(gameId);
+  const rounds = database.ref(ref + '/roundsMax');
+  rounds.once('value').then((snapshot) => {
+    const rounds = snapshot.val();
+    cb(rounds, 'maxRounds');
+  });
+}
+
 //get players array in a game instance
 export function getPlayersfromGame(gameId, cb) {
   const ref = getRef(gameId);
@@ -176,7 +185,7 @@ export function updateTarget(gameId, targetIdx, hit) {
 }
 //update shooting game score
 export function updateShootingScore(gameId, playerId, score) {
-  console.log(score)
+  console.log(score);
   let updates = {};
   updates[`${gameId}/shootingGame/players/${playerId}/score`] = score + 1;
   return firebase.database().ref().update(updates);
@@ -266,8 +275,8 @@ const gameObj = {
         hit: false,
         x: 400,
       },
-    }
-  }
+    },
+  },
 };
 
 export function createNewGame() {
@@ -342,12 +351,7 @@ function findNextNumber(sequence) {
 }
 
 export function updateRoundsMax(gameId, roundsMax) {
-  // let mainGameRef = `${gameId}/main/${roundsMax}`;
   let updates = {};
-  // console.log(roundsMax);
-  // updates[mainGameRef] = {
-  //   roundsMax: roundsMax,
-  // };
   updates[`${gameId}/main/roundsMax`] = roundsMax;
   database.ref().update(updates);
 }
