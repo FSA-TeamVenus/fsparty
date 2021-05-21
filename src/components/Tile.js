@@ -6,16 +6,24 @@ export default class Tile extends React.Component {
   }
   render() {
     const { id, actionType } = this.props.tileProps;
-    const players = this.props.players || [];
+    const { players, dictionary } = this.props;
     return (
-      <div className={`tile ${actionType}`}>
-        {/* {players.length
+      <div className={`tile ${actionType} flex-cont-row`}>
+        {dictionary
           ? players.map((player) => {
-              if (player.position === id) {
-                return <p key={player.playerId}>{player.name}</p>;
+              if (dictionary[player.position].id === id) {
+                return (
+                  <div key={player.playerId}>
+                    <img
+                      className="tile-sprite"
+                      src={player.spriteUrl}
+                      alt="sprite"
+                    />
+                  </div>
+                );
               }
             })
-          : ''} */}
+          : ''}
       </div>
     );
   }

@@ -19,10 +19,6 @@ export default class GameCanvas extends React.Component {
     getMiniGameData(gameId, startGame);
   }
 
-  // componentWillUnmount() {
-  //   this.sys.game.destroy(true);
-  // }
-
   shouldComponentUpdate() {
     return false;
   }
