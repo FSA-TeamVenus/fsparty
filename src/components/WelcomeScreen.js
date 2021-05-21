@@ -50,42 +50,42 @@ export default class WelcomeScreen extends React.Component {
 
   render() {
     return (
-      <div className="background-div flex-cont-row">
-        <div id="box-container">
-          <section id="box">
-            <div className="face one"></div>
-            <div className="face two"></div>
-            <div className="face three"></div>
-            <div className="face four"></div>
-            <div className="face five"></div>
-            <div className="face six"></div>
+      <div className='background-div flex-cont-row'>
+        <div id='box-container'>
+          <section id='box'>
+            <div className='face one'></div>
+            <div className='face two'></div>
+            <div className='face three'></div>
+            <div className='face four'></div>
+            <div className='face five'></div>
+            <div className='face six'></div>
           </section>
         </div>
-        <div id="welcome-div">
-          <div id="create-wrapper">
-            <Link to="/create">
+        <div id='welcome-div'>
+          <div id='create-wrapper'>
+            <Link to='/create'>
               <div
-                className="div-button box-outline"
+                className='div-button box-outline'
                 onClick={this.handleNewGame}
               >
                 Create Game
               </div>
             </Link>
-            <div id="join-div">
-              <Link to="/create">
+            <div id='join-div'>
+              <Link to='/create'>
                 <div
-                  className="div-button box-outline"
+                  className='div-button box-outline'
                   onClick={this.handleJoinGame}
                 >
                   Join Game
                 </div>
               </Link>
-              <div className="flex-cont-row">
-                <div id="code-label">Game Code:</div>
+              <div className='flex-cont-row'>
+                <div id='code-label'>Game Code:</div>
                 <input
-                  type="text"
-                  id="gameId"
-                  className="input-form box-outline"
+                  type='text'
+                  id='gameId'
+                  className='input-form box-outline'
                   value={this.state.gameId}
                   onChange={this.handleChange}
                 ></input>

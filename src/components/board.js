@@ -11,6 +11,7 @@ import {
   updatePos,
   getPos,
   getRound,
+  updateRound,
   updateMiniGame,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
@@ -125,8 +126,8 @@ export class Board extends React.Component {
         )}
         {turn < 0 && round == 1 && playerId == 0 ? (
           <button
-            id="start"
-            className="board-button"
+            id='start'
+            className='board-button'
             onClick={() => this.startGame()}
           >
             Start Game
@@ -149,19 +150,19 @@ export class Board extends React.Component {
           </div>
         )}
         {turn === playerList.length && playerId === 0 ? (
-          <button className="board-button" onClick={this.selectMiniGame}>
+          <button className='board-button' onClick={this.selectMiniGame}>
             start mini game
           </button>
         ) : (
           <div />
         )}
         {playerId == turn && playerList ? (
-          <div className="popup-container flex-cont-column">
+          <div className='popup-container flex-cont-column'>
             <div
               className={`${currentPlayer.color}-text`}
-              id="roll-display"
+              id='roll-display'
             ></div>
-            <button className="dice-roll" onClick={() => this.rollDice()}>
+            <button className='dice-roll' onClick={() => this.rollDice()}>
               Roll Dice!
             </button>
           </div>
@@ -169,19 +170,19 @@ export class Board extends React.Component {
           <div />
         )}
         {turn >= 0 && turn < playerList.length ? (
-          <div id="current-turn">
+          <div id='current-turn'>
             <p
               className={`${currentPlayer.color}-text`}
             >{`${currentPlayer.name}'s turn!`}</p>
-            <img src={currentPlayer.spriteUrl} alt="" />
+            <img src={currentPlayer.spriteUrl} alt='' />
           </div>
         ) : (
           <div />
         )}
         {round === 2 && this.state.showModal ? (
-          <div className="popup-container flex-cont-column modal" id="popup">
-            <div className="popup-style">FINAL ROUND!</div>
-            <div className="div-button" id="ok" onClick={this.closeModal}>
+          <div className='popup-container flex-cont-column modal' id='popup'>
+            <div className='popup-style'>FINAL ROUND!</div>
+            <div className='div-button' id='ok' onClick={this.closeModal}>
               OK
             </div>
           </div>
@@ -189,8 +190,8 @@ export class Board extends React.Component {
           <div />
         )}
         {round === 3 ? (
-          <div className=" popup-container flex-cont-column">
-            <div className="popup-style">Game Over</div>
+          <div className=' popup-container flex-cont-column'>
+            <div className='popup-style'>Game Over</div>
             <Link
               to={{
                 pathname: "/end",
@@ -201,7 +202,7 @@ export class Board extends React.Component {
                 },
               }}
             >
-              <div id="view-result-button">View Results</div>
+              <div id='view-result-button'>View Results</div>
             </Link>
           </div>
         ) : (
