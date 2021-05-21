@@ -147,8 +147,8 @@ export function removeFromDatabase(gameId) {
 
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
-  const playerList = database.ref(`${gameId}/shootingGame/players`);
-  playerList.on('value', (snapshot) => {
+  let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
+  playerList.once('value', (snapshot) => {
     const data = snapshot.val();
     cb(data);
   });
@@ -166,6 +166,28 @@ export function updateReticlePos(gameId, playerId, data) {
   const updates = {};
   updates[`${gameId}/shootingGame/players/${playerId}`] = data;
   return database.ref().update(updates);
+}
+//update targets/targetIdx/hit to true
+export function updateTarget(gameId, targetIdx, hit) {
+  let updates = {};
+  if (hit) updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
+  else updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
+  return firebase.database().ref().update(updates);
+}
+//update shooting game score
+export function updateShootingScore(gameId, playerId, score) {
+  console.log(score)
+  let updates = {};
+  updates[`${gameId}/shootingGame/players/${playerId}/score`] = score + 1;
+  return firebase.database().ref().update(updates);
+}
+//establish target listener
+export function getTargets(gameId, cb) {
+  const targets = database.ref(`${gameId}/shootingGame/targets`);
+  targets.on('value', (snapshot) => {
+    const data = snapshot.val();
+    cb(data);
+  });
 }
 
 export function updateScore(gameId, playerId, newScore) {
@@ -221,6 +243,31 @@ const gameObj = {
       },
     },
   },
+  shootingGame: {
+    players: {
+      0: {
+        playerId: 0,
+      },
+    },
+    targets: {
+      0: {
+        hit: false,
+        x: 400,
+      },
+      1: {
+        hit: false,
+        x: 400,
+      },
+      2: {
+        hit: false,
+        x: 400,
+      },
+      3: {
+        hit: false,
+        x: 400,
+      },
+    }
+  }
 };
 
 export function createNewGame() {
@@ -258,6 +305,7 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   let mainGameRef = `${gameId}/main/players/${playerId}`;
   let racingGameRef = `${gameId}/racingGame/players/${playerId}`;
   let platformGameRef = `${gameId}/platformGame/players/${playerId}`;
+  let shootingGameRef = `${gameId}/shootingGame/players/${playerId}`;
   let updates = {};
   updates[mainGameRef] = {
     ...playerData,
@@ -271,6 +319,11 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     name: playerData.name,
   };
   updates[platformGameRef] = { playerId, name: playerData.name };
+  updates[shootingGameRef] = {
+    playerId,
+    name: playerData.name,
+    color: playerData.color,
+  };
   database.ref().update(updates);
 }
 
