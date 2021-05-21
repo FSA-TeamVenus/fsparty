@@ -11,6 +11,7 @@ import {
   updatePos,
   getPos,
   getRound,
+  updateRound,
   updateMiniGame,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
@@ -29,10 +30,11 @@ export class Board extends React.Component {
       round: null,
       showModal: true,
       gameIndex: 0,
-      gamesList: { 0: 'platformGame', 1: 'racingGame' },
+      gamesList: { 0: 'platformGame', 1: 'racingGame', 2: 'shootingGame'},
       instructions: {
         0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
+        2: 'Click to shoot as many targets as you can'
       },
     };
     this.stateCb = this.stateCb.bind(this);
@@ -85,8 +87,8 @@ export class Board extends React.Component {
   selectMiniGame() {
     const { gameIndex, gamesList, instructions } = this.state;
 
-    const scene = gamesList[gameIndex % 2];
-    const gameInstructions = instructions[gameIndex % 2];
+    const scene = gamesList[gameIndex % 3];
+    const gameInstructions = instructions[gameIndex % 3];
 
     updateMiniGame(gameId, scene, gameInstructions);
     updateTurn(gameId);
@@ -108,7 +110,7 @@ export class Board extends React.Component {
 
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
-
+    let nextPlayer = playerList[turn];
     return (
       <div>
         {playerList.map((player) => (
@@ -124,8 +126,8 @@ export class Board extends React.Component {
         )}
         {turn < 0 && round == 1 && playerId == 0 ? (
           <button
-            id="start"
-            className="board-button"
+            id='start'
+            className='board-button'
             onClick={() => this.startGame()}
           >
             Start Game
@@ -140,19 +142,19 @@ export class Board extends React.Component {
           </div>
         )}
         {turn === playerList.length && playerId === 0 ? (
-          <button className="board-button" onClick={this.selectMiniGame}>
+          <button className='board-button' onClick={this.selectMiniGame}>
             start mini game
           </button>
         ) : (
           <div />
         )}
         {playerId == turn && playerList ? (
-          <div className="popup-container flex-cont-column">
+          <div className='popup-container flex-cont-column'>
             <div
               className={`${currentPlayer.color}-text`}
-              id="roll-display"
+              id='roll-display'
             ></div>
-            <button className="dice-roll" onClick={() => this.rollDice()}>
+            <button className='dice-roll' onClick={() => this.rollDice()}>
               Roll Dice!
             </button>
           </div>
@@ -160,19 +162,19 @@ export class Board extends React.Component {
           <div />
         )}
         {turn >= 0 && turn < playerList.length ? (
-          <div id="current-turn">
+          <div id='current-turn'>
             <p
               className={`${currentPlayer.color}-text`}
             >{`${currentPlayer.name}'s turn!`}</p>
-            <img src={currentPlayer.spriteUrl} alt="" />
+            <img src={currentPlayer.spriteUrl} alt='' />
           </div>
         ) : (
           <div />
         )}
         {round === 2 && this.state.showModal ? (
-          <div className="popup-container flex-cont-column modal" id="popup">
-            <div className="popup-style">FINAL ROUND!</div>
-            <div className="div-button" id="ok" onClick={this.closeModal}>
+          <div className='popup-container flex-cont-column modal' id='popup'>
+            <div className='popup-style'>FINAL ROUND!</div>
+            <div className='div-button' id='ok' onClick={this.closeModal}>
               OK
             </div>
           </div>
@@ -180,11 +182,11 @@ export class Board extends React.Component {
           <div />
         )}
         {round === 3 ? (
-          <div className=" popup-container flex-cont-column">
-            <div className="popup-style">Game Over</div>
+          <div className=' popup-container flex-cont-column'>
+            <div className='popup-style'>Game Over</div>
             <Link
               to={{
-                pathname: '/end',
+                pathname: "/end",
                 state: {
                   players: playerList,
                   gameId: gameId,
@@ -192,7 +194,7 @@ export class Board extends React.Component {
                 },
               }}
             >
-              <div id="view-result-button">View Results</div>
+              <div id='view-result-button'>View Results</div>
             </Link>
           </div>
         ) : (

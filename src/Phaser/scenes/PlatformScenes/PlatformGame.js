@@ -227,6 +227,30 @@ export default class PlatformGame extends Phaser.Scene {
     });
   }
 
+  update(time, delta) {
+    if (this.player) {
+      this.player.update(this.cursors, this.jumpSound);
+      this.isPlayerDead();
+      const y = Math.floor(this.player.y);
+      let position = {
+        x: this.player.x,
+        y: y,
+      };
+      if (
+        (this.player.oldPosition && this.player.oldPosition.x !== position.x) ||
+        this.player.oldPosition.y !== position.y
+      ) {
+        this.serverPlayers
+          .child(`${this.myId}`)
+          .update({ x: this.player.x, y: y });
+      }
+      this.player.oldPositon = {
+        x: this.player.x,
+        y: y,
+      };
+    }
+  }
+
   isPlayerDead() {
     if (this.player.isDead === true) {
       this.player.isDead = false;

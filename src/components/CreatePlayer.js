@@ -1,12 +1,15 @@
 import React from 'react';
-import { addPlayerToGame } from '../Firebase/index';
+import { addPlayerToGame, updateRoundsMax } from '../Firebase/index';
 import { Link } from 'react-router-dom';
+
+let playerId = Number(window.localStorage.getItem('idKey'));
 
 export default class CreatePlayer extends React.Component {
   constructor() {
     super();
     this.state = {
       name: '',
+      round: 0,
       color: 'red',
       colorIndex: 0,
       spriteUrl: 'assets/board/images/mushroom-red.png',
@@ -28,6 +31,7 @@ export default class CreatePlayer extends React.Component {
     const { name, color, spriteUrl } = this.state;
     const playerObj = { name, color, spriteUrl };
     addPlayerToGame(gameId, playerId, playerObj);
+    updateRoundsMax(gameId, this.state.round);
   }
 
   handleColorSelect(evt) {
@@ -82,6 +86,18 @@ export default class CreatePlayer extends React.Component {
                 value={this.state.name}
                 onChange={this.handleChange}
               ></input>
+              <label htmlFor="round">Number of Rounds</label>
+              <select
+                name="round"
+                value={this.state.round}
+                onChange={this.handleChange}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+                <option value={20}>20</option>
+                <option value={25}>25</option>
+              </select>
               <div className="div-button image-div box-outline">
                 <Link to="/board">
                   <div onClick={this.handleJoin}>Join Game</div>
