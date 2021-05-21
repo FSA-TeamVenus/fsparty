@@ -16,12 +16,11 @@ export default class WelcomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    // this.rotateCube();
     document.addEventListener('mousemove', this.rotateCube);
   }
-  // componentWillUnmount() {
-  //   document.removeEventListener('mousemove', this.rotateCube);
-  // }
+  componentWillUnmount() {
+    document.removeEventListener('mousemove', this.rotateCube);
+  }
 
   handleNewGame() {
     createNewGame();
@@ -72,14 +71,6 @@ export default class WelcomeScreen extends React.Component {
               </div>
             </Link>
             <div id="join-div">
-              <Link to="/create">
-                <div
-                  className="div-button box-outline"
-                  onClick={this.handleJoinGame}
-                >
-                  Join Game
-                </div>
-              </Link>
               <div className="flex-cont-row">
                 <div id="code-label">Game Code:</div>
                 <input
@@ -90,6 +81,14 @@ export default class WelcomeScreen extends React.Component {
                   onChange={this.handleChange}
                 ></input>
               </div>
+              <Link to="/create">
+                <div
+                  className="div-button box-outline"
+                  onClick={this.handleJoinGame}
+                >
+                  Join Game
+                </div>
+              </Link>
             </div>
           </div>
         </div>

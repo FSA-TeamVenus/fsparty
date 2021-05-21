@@ -25,9 +25,10 @@ export default class GameSettings extends React.Component {
   }
   render() {
     return (
-      <div>
+      <div className="background-div flex-cont-column">
         <h1>How Many Rounds?</h1>
         <select
+          className="input-form"
           name="round"
           value={this.state.round}
           onChange={this.handleChange}
