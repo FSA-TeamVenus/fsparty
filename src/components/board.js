@@ -4,7 +4,6 @@ import TileGrid from './TileGrid';
 import { tileList, pathDictionary } from './tileList';
 import PlayerCard from './PlayerCard';
 import Phaser from 'phaser';
-
 import {
   getPlayersfromGame,
   getTurn,
@@ -15,6 +14,7 @@ import {
   updateMiniGame,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
+import { Link } from 'react-router-dom';
 
 let gameId = Number(window.localStorage.getItem('gameId'));
 let playerId = Number(window.localStorage.getItem('idKey'));
@@ -25,22 +25,53 @@ export class Board extends React.Component {
     this.state = {
       playerList: [],
       turn: null,
-      pos: 0,
+      pos: 1,
       round: null,
+      showModal: true,
       gameIndex: 0,
+      gamesList: { 0: 'platformGame', 1: 'racingGame' },
+      instructions: {
+        0: 'use arrows to collect coins',
+        1: "Hit space bar to give 'er some gas",
+      },
     };
     this.stateCb = this.stateCb.bind(this);
-    this.randomGameSelection = this.randomGameSelection.bind(this);
+    this.selectMiniGame = this.selectMiniGame.bind(this);
+    this.rollDice = this.rollDice.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
-    this.rmPlayersListener = getPlayersfromGame(gameId, this.stateCb);
-    getTurn(gameId, this.stateCb);
-    getPos(gameId, playerId, this.stateCb);
-    getRound(gameId, this.stateCb);
+    this.playersOff = getPlayersfromGame(gameId, this.stateCb);
+    this.turnOff = getTurn(gameId, this.stateCb);
+    this.posOff = getPos(gameId, playerId, this.stateCb);
+    this.roundOff = getRound(gameId, this.stateCb);
   }
+
   componentWillUnmount() {
-    this.rmPlayersListener();
+    this.playersOff();
+    this.turnOff();
+    this.posOff();
+    this.roundOff();
+  }
+
+  rollDice() {
+    const { pos, playerList } = this.state;
+    const myPlayer = playerList[playerId];
+    const diceRoll = Phaser.Math.Between(0, 6);
+    const rollDisplay = document.getElementById('roll-display');
+
+    rollDisplay.innerHTML = '...';
+    setTimeout(function () {
+      rollDisplay.innerHTML = `${diceRoll}!`;
+    }, 1500);
+
+    this.stateCb(pos + diceRoll, 'pos');
+    setTimeout(function () {
+      updatePos(gameId, playerId, diceRoll);
+      updateTurn(gameId);
+      pathDictionary[pos + diceRoll].action(gameId, playerId, myPlayer);
+    }, 4000);
   }
 
   stateCb(value, key) {
@@ -51,65 +82,39 @@ export class Board extends React.Component {
     updateTurn(gameId);
   }
 
-  rollDice() {
-    const { turn, pos, playerList } = this.state;
-    const myPlayer = playerList[playerId];
-    const number = Phaser.Math.Between(0, 6);
-    const button = document.getElementById('dice-roll');
-    button.disabled = true;
-    const rollDisplay = document.getElementById('roll-display');
-    rollDisplay.style.display = 'flex';
-    rollDisplay.innerHTML = `You rolled ... `;
-    setTimeout(function () {
-      rollDisplay.innerHTML = `${number}!`;
-    }, 1500);
-    setTimeout(function () {
-      updatePos(gameId, playerId, number);
-      updateTurn(gameId);
-      pathDictionary[pos + number].action(gameId, playerId, myPlayer);
-    }, 4000);
-  }
+  selectMiniGame() {
+    const { gameIndex, gamesList, instructions } = this.state;
 
-  // moveGamePiece(tile, player){
+    const scene = gamesList[gameIndex % 2];
+    const gameInstructions = instructions[gameIndex % 2];
 
-  // }
-
-  randomGameSelection() {
-    const games = { 0: 'platformGame', 1: 'racingGame' };
-    const instructions = {
-      0: 'you have 20 seconds to collect as many coins as possible. move your character with the cursors',
-      1: "Hit space bar to give 'er some gas",
-    };
-    const index = this.state.gameIndex;
-    console.log(index);
-    const scene = games[index % 2];
-    const gameInstructions = instructions[index % 2];
     updateMiniGame(gameId, scene, gameInstructions);
     updateTurn(gameId);
+
     this.setState({
-      gameIndex: index + 1,
+      gameIndex: this.state.gameIndex + 1,
+    });
+  }
+
+  closeModal() {
+    this.setState({
+      showModal: false,
     });
   }
 
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
+
     const { turn, playerList, round } = this.state;
-    let nextPlayer = playerList[turn];
+    const currentPlayer = playerList[turn] || { name: '' };
+
     return (
       <div>
-        {turn < 0 ? <h4 id="game-id">Game Id: {gameId}</h4> : ''}
         {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
         ))}
-        <Leaderboard players={playerList} />
-        {turn === playerList.length && playerId === 0 ? (
-          <button className="dice-roll" onClick={this.randomGameSelection}>
-            start mini game
-          </button>
-        ) : (
-          <div />
-        )}
+        <Leaderboard players={playerList} round={round} />
         {turn === playerList.length + 1 ? (
           <div>
             <GameCanvas gameId={gameId} />
@@ -118,35 +123,80 @@ export class Board extends React.Component {
           <div />
         )}
         {turn < 0 && round == 1 && playerId == 0 ? (
-          <button id="start" onClick={() => this.startGame()}>
+          <button
+            id="start"
+            className="board-button"
+            onClick={() => this.startGame()}
+          >
             Start Game
           </button>
         ) : (
           <div>
-            <TileGrid tileList={tileList} playerList={playerList} />
-            {!playerId == turn ? (
-              <div id="next-player">
-                <h4>Round: {round}</h4>
-                <h4>Next Player: {nextPlayer ? nextPlayer.name : '...'}</h4>
-              </div>
-            ) : (
-              ''
-            )}
+            <TileGrid
+              tileList={tileList}
+              playerList={playerList}
+              dictionary={pathDictionary}
+            />
           </div>
         )}
+        {turn === playerList.length && playerId === 0 ? (
+          <button className="board-button" onClick={this.selectMiniGame}>
+            start mini game
+          </button>
+        ) : (
+          <div />
+        )}
         {playerId == turn && playerList ? (
-          <div>
-            <div id="roll-display" disabled={true}></div>
-            <button
-              id="dice-roll"
-              className="dice-roll"
-              onClick={() => this.rollDice()}
-            >
-              Roll {playerList[playerId].name}!
+          <div className="popup-container flex-cont-column">
+            <div
+              className={`${currentPlayer.color}-text`}
+              id="roll-display"
+            ></div>
+            <button className="dice-roll" onClick={() => this.rollDice()}>
+              Roll Dice!
             </button>
           </div>
         ) : (
-          ''
+          <div />
+        )}
+        {turn >= 0 && turn < playerList.length ? (
+          <div id="current-turn">
+            <p
+              className={`${currentPlayer.color}-text`}
+            >{`${currentPlayer.name}'s turn!`}</p>
+            <img src={currentPlayer.spriteUrl} alt="" />
+          </div>
+        ) : (
+          <div />
+        )}
+        {round === 2 && this.state.showModal ? (
+          <div className="popup-container flex-cont-column modal" id="popup">
+            <div className="popup-style">FINAL ROUND!</div>
+            <div className="div-button" id="ok" onClick={this.closeModal}>
+              OK
+            </div>
+          </div>
+        ) : (
+          <div />
+        )}
+        {round === 3 ? (
+          <div className=" popup-container flex-cont-column">
+            <div className="popup-style">Game Over</div>
+            <Link
+              to={{
+                pathname: '/end',
+                state: {
+                  players: playerList,
+                  gameId: gameId,
+                  playerId: playerId,
+                },
+              }}
+            >
+              <div id="view-result-button">View Results</div>
+            </Link>
+          </div>
+        ) : (
+          <div />
         )}
       </div>
     );

@@ -8,9 +8,18 @@ export default class PlayerCard extends React.Component {
   render() {
     const { player } = this.props;
     return (
-      <div className="card" id={`card${player.playerId}`}>
-        <p>{player.name}</p>
-        <p>{player.score}</p>
+      <div
+        className={`card ${player.color}-text flex-cont-column`}
+        id={`card${player.playerId}`}
+      >
+        <div className="card-sprite-div">
+          <div>{player.name}</div>
+          <img
+            src={player.spriteUrl}
+            alt="sprite"
+            className="card-sprite"
+          ></img>
+        </div>
       </div>
     );
   }
