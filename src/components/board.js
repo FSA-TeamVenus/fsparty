@@ -171,7 +171,7 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
-        {round === 2 && this.state.showModal ? (
+        {round === 3 && this.state.showModal ? (
           <div className='popup-container flex-cont-column modal' id='popup'>
             <div className='popup-style'>FINAL ROUND!</div>
             <div className='div-button' id='ok' onClick={this.closeModal}>
@@ -181,7 +181,7 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
-        {round === 3 ? (
+        {round === 4 ? (
           <div className=' popup-container flex-cont-column'>
             <div className='popup-style'>Game Over</div>
             <Link
