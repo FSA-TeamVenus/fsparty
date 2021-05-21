@@ -63,7 +63,7 @@ export default class WelcomeScreen extends React.Component {
         </div>
         <div id="welcome-div">
           <div id="create-wrapper">
-            <Link to="/create">
+            <Link to="/settings">
               <div
                 className="div-button box-outline"
                 onClick={this.handleNewGame}
