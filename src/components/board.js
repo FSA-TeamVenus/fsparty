@@ -29,10 +29,11 @@ export class Board extends React.Component {
       round: null,
       showModal: true,
       gameIndex: 0,
-      gamesList: { 0: 'platformGame', 1: 'racingGame' },
+      gamesList: { 0: 'platformGame', 1: 'racingGame', 2: 'shootingGame'},
       instructions: {
         0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
+        2: 'Click to shoot as many targets as you can'
       },
     };
     this.stateCb = this.stateCb.bind(this);
@@ -85,8 +86,8 @@ export class Board extends React.Component {
   selectMiniGame() {
     const { gameIndex, gamesList, instructions } = this.state;
 
-    const scene = gamesList[gameIndex % 2];
-    const gameInstructions = instructions[gameIndex % 2];
+    const scene = gamesList[gameIndex % 3];
+    const gameInstructions = instructions[gameIndex % 3];
 
     updateMiniGame(gameId, scene, gameInstructions);
     updateTurn(gameId);
@@ -108,7 +109,7 @@ export class Board extends React.Component {
 
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
-
+    let nextPlayer = playerList[turn];
     return (
       <div>
         {playerList.map((player) => (
@@ -132,14 +133,18 @@ export class Board extends React.Component {
           </button>
         ) : (
           <div>
-            <TileGrid tileList={tileList} playerList={playerList} />
-            {playerId !== turn && playerList.length < turn  ? (
+            <TileGrid
+              tileList={tileList}
+              playerList={playerList}
+              dictionary={pathDictionary}
+            />
+            {playerId !== turn && playerList.length < turn ? (
               <div id="next-player">
                 <h4>Round: {round}</h4>
-                <h4>Next Player: {nextPlayer ? nextPlayer.name : '...'}</h4>
+                <h4>Next Player: {nextPlayer ? nextPlayer.name : "..."}</h4>
               </div>
             ) : (
-              ''
+              ""
             )}
           </div>
         )}
@@ -188,7 +193,7 @@ export class Board extends React.Component {
             <div className="popup-style">Game Over</div>
             <Link
               to={{
-                pathname: '/end',
+                pathname: "/end",
                 state: {
                   players: playerList,
                   gameId: gameId,
