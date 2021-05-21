@@ -5,11 +5,8 @@ import Board from './components/board';
 import WelcomeScreen from './components/WelcomeScreen';
 import CreatePlayer from './components/CreatePlayer';
 import Lobby2 from './components/Lobby2';
-<<<<<<< HEAD
 import JoinGame from './components/JoinGame';
-=======
 import GameEnd from './components/GameEnd';
->>>>>>> main
 
 const App = () => {
   return (
