@@ -21,7 +21,7 @@ export default class GameSettings extends React.Component {
   handleSubmit() {
     const gameId = window.localStorage.getItem('gameId');
     const { rounds } = this.state;
-    updateRoundsMax(gameId, rounds);
+    updateRoundsMax(gameId, Number(rounds));
   }
   render() {
     return (
@@ -29,19 +29,22 @@ export default class GameSettings extends React.Component {
         <h1>How Many Rounds?</h1>
         <select
           className="input-form"
-          name="round"
+          name="rounds"
           value={this.state.round}
           onChange={this.handleChange}
         >
+          <option value={0}>---</option>
           <option value={5}>5</option>
           <option value={10}>10</option>
           <option value={15}>15</option>
           <option value={20}>20</option>
           <option value={25}>25</option>
         </select>
-        <Link to="/create">
-          <button onClick={this.handleSubmit}>Join Game</button>
-        </Link>
+        <div className="div-button image-div box-outline">
+          <Link to="/create">
+            <div onClick={this.handleSubmit}>OK</div>
+          </Link>
+        </div>
       </div>
     );
   }

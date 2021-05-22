@@ -1,8 +1,6 @@
 import React from 'react';
-import { addPlayerToGame, updateRoundsMax } from '../Firebase/index';
+import { addPlayerToGame } from '../Firebase/index';
 import { Link } from 'react-router-dom';
-
-let playerId = Number(window.localStorage.getItem('idKey'));
 
 export default class CreatePlayer extends React.Component {
   constructor() {
@@ -31,7 +29,6 @@ export default class CreatePlayer extends React.Component {
     const { name, color, spriteUrl } = this.state;
     const playerObj = { name, color, spriteUrl };
     addPlayerToGame(gameId, playerId, playerObj);
-    updateRoundsMax(gameId, this.state.round);
   }
 
   handleColorSelect(evt) {

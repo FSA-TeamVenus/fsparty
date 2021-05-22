@@ -29,7 +29,7 @@ export class Board extends React.Component {
       turn: null,
       pos: 1,
       round: null,
-      maxRounds: 0,
+      maxRounds: 5,
       showModal: true,
       gameOver: false,
       rolled: false,
@@ -69,19 +69,19 @@ export class Board extends React.Component {
     const myPlayer = playerList[playerId];
     const diceRoll = Phaser.Math.Between(0, 6);
     this.displayDiceRoll(diceRoll);
-
     this.setState({
-      // pos: pos + diceRoll,
       rolled: true,
     });
 
-    setTimeout(this.movePlayer(pos, diceRoll, myPlayer), 4000);
+    setTimeout(() => this.movePlayer(pos, diceRoll, myPlayer), 4000);
 
-    setTimeout(function () {
-      this.setState({
-        rolled: false,
-      });
-    }, 5000);
+    setTimeout(
+      () =>
+        this.setState({
+          rolled: false,
+        }),
+      5000
+    );
   }
 
   displayDiceRoll(diceRoll) {
@@ -140,9 +140,9 @@ export class Board extends React.Component {
     const currentPlayer = playerList[turn] || { name: '' };
     return (
       <div>
-        {playerList.map((player) => (
+        {/* {playerList.map((player) => (
           <PlayerCard key={player.playerId} player={player} />
-        ))}
+        ))} */}
         <Leaderboard players={playerList} round={round} />
         {turn === playerList.length + 1 ? (
           <div>
@@ -151,10 +151,20 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
-        {turn < 0 && round == 1 && playerId == 0 ? (
-          <button id="start" className="board-button" onClick={this.startGame}>
-            Start Game
-          </button>
+        {turn < 0 && round == 1 ? (
+          <div className="popup-container">
+            {playerId == 0 ? (
+              <button
+                id="start"
+                className="board-button"
+                onClick={this.startGame}
+              >
+                Start Game
+              </button>
+            ) : (
+              <div />
+            )}
+          </div>
         ) : (
           <div>
             <TileGrid
@@ -211,12 +221,18 @@ export class Board extends React.Component {
         {round === this.state.maxRounds + 1 ? (
           <div className=" popup-container flex-cont-column">
             <div className="popup-style">Game Over</div>
-            <div id="view-result-button">View Results</div>
+            <div id="view-result-button" onClick={this.endGame}>
+              View Results
+            </div>
           </div>
         ) : (
           <div />
         )}
-        {this.state.gameOver ? <GameEnd /> : <div />}
+        {this.state.gameOver ? (
+          <GameEnd players={playerList} playerId={playerId} gameId={gameId} />
+        ) : (
+          <div />
+        )}
       </div>
     );
   }

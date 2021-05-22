@@ -49,27 +49,29 @@ export default class WelcomeScreen extends React.Component {
 
   render() {
     return (
-      <div className="background-div flex-cont-row">
-        <div id="box-container">
-          <section id="box">
-            <div className="face one"></div>
-            <div className="face two"></div>
-            <div className="face three"></div>
-            <div className="face four"></div>
-            <div className="face five"></div>
-            <div className="face six"></div>
-          </section>
-        </div>
-        <div id="welcome-div">
-          <div id="create-wrapper">
-            <Link to="/settings">
-              <div
-                className="div-button box-outline"
-                onClick={this.handleNewGame}
-              >
-                Create Game
-              </div>
-            </Link>
+      <div className="background-div flex-cont-column">
+        <div className="flex-cont-column welcome">
+          <div id="box-container">
+            <section id="box">
+              <div className="face one"></div>
+              <div className="face two"></div>
+              <div className="face three"></div>
+              <div className="face four"></div>
+              <div className="face five"></div>
+              <div className="face six"></div>
+            </section>
+          </div>
+          <div id="welcome-div flex-cont-row">
+            <div>
+              <Link to="/settings">
+                <div
+                  className="div-button box-outline"
+                  onClick={this.handleNewGame}
+                >
+                  Create Game
+                </div>
+              </Link>
+            </div>
             <div id="join-div">
               <div className="flex-cont-row">
                 <div id="code-label">Game Code:</div>

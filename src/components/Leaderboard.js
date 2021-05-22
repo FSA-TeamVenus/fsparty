@@ -18,9 +18,15 @@ export default class Leaderboard extends React.Component {
         <div className="flex-cont-column">
           <div className="leader-div">
             {sortedPlayers.map((player, idx) => (
-              <div className="leader-name-div" key={idx}>{`${idx + 1}: ${
-                player.name
-              } -- ${player.score} points`}</div>
+              <div className="leader-name-div" key={idx}>
+                {`${idx + 1}:`}{' '}
+                <img
+                  className="tile-sprite"
+                  src={player.spriteUrl}
+                  alt="sprite"
+                />
+                {`${player.name}  --  ${player.score} points`}
+              </div>
             ))}
           </div>
         </div>

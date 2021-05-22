@@ -7,18 +7,19 @@ export default class GameEnd extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-    const { playerId, gameId } = this.props.location.state;
+  componentWillUnmount() {
+    const { playerId, gameId } = this.props;
     if (playerId === 0) {
       removeFromDatabase(gameId);
     }
   }
 
   render() {
-    const { players } = this.props.location.state;
+    const { players } = this.props;
+    console.log(this.props);
     const sortedPlayers = players.sort((a, b) => a.score < b.score);
     return (
-      <div>
+      <div id="game-end-wrap">
         <div className="background-div flex-cont-column">
           <div className="image-div" id="game-over">
             RESULTS

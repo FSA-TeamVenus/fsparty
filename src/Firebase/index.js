@@ -71,6 +71,7 @@ export function getMaxRounds(gameId, cb) {
   const rounds = database.ref(ref + '/roundsMax');
   rounds.once('value').then((snapshot) => {
     const rounds = snapshot.val();
+    console.log('rounds', rounds);
     cb(rounds, 'maxRounds');
   });
 }
@@ -352,6 +353,7 @@ function findNextNumber(sequence) {
 
 export function updateRoundsMax(gameId, roundsMax) {
   let updates = {};
+  console.log('roundsMax', roundsMax);
   updates[`${gameId}/main/roundsMax`] = roundsMax;
   database.ref().update(updates);
 }
