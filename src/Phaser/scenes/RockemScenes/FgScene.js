@@ -2,10 +2,10 @@ import {
   teamsRef,
   getTeamPlayers,
   updateTeamPoints,
-} from '../Firebase/index';
+} from '../../../Firebase/index';
 
 import Player from '../../entities/RockemEntities/Player';
-import Opponent from '.../../entities/RockemEntities/Opponent';
+import Opponent from '../../entities/RockemEntities/Opponent';
 import Ground from '../../entities/RockemEntities/Ground';
 
 
@@ -65,7 +65,7 @@ export default class FgScene extends Phaser.Scene {
     this.myId = Number(window.localStorage.getItem('idKey'));
   
     // Preload Sounds
-    this.load.audio('punch', 'aassets/rockemGame/audio/jump.wav');
+    this.load.audio('punch', 'assets/rockemGame/audio/jump.wav');
     this.load.audio('hit', 'assets/rockemGame/audio/laser.wav');
     this.load.audio('defeat', 'assets/rockemGame/audio/scream.wav');
   }
