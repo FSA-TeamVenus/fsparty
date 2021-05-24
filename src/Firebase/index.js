@@ -71,7 +71,6 @@ export function getMaxRounds(gameId, cb) {
   const rounds = database.ref(ref + '/roundsMax');
   rounds.once('value').then((snapshot) => {
     const rounds = snapshot.val();
-    console.log('rounds', rounds);
     cb(rounds, 'maxRounds');
   });
 }
