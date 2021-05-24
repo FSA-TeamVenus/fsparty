@@ -4,9 +4,9 @@ import RacingGame from './scenes/RacingGame';
 import PlatformGame from './scenes/PlatformScenes/PlatformGame';
 import StartScreen from './scenes/StartScreen';
 import ShootingGame from './scenes/ShootingScenes/ShootingGame';
-import BgScene from './scenes/RockemScenes/BgScene';
-import FgScene from './scenes/RockemScenes/FgScene';
-import MainScene from './scenes/RockemScenes/MainScene';
+import RockemGame from './scenes/RockemScenes/RockemGame';
+import BgScene from "./scenes/RockemScenes/BgScene";
+import FgScene from "./scenes/RockemScenes/FgScene";
 
 export class Game extends Phaser.Game {
   constructor(config, scene, instructions) {
@@ -21,9 +21,9 @@ export class Game extends Phaser.Game {
     this.scene.add('shootingGame', ShootingGame);
     this.scene.add('startScreen', StartScreen);
     this.scene.add('endScreen', EndScreen);
-    this.scene.add('BgScene', BgScene);
+    this.scene.add('rockemGame', RockemGame);
     this.scene.add('FgScene', FgScene);
-    this.scene.add('MainScene', MainScene);
+    this.scene.add('BgScene', BgScene);
 
     this.scene.start('startScreen', {
       nextScene: this.nextScene,

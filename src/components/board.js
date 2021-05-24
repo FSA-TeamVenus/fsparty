@@ -35,16 +35,16 @@ export class Board extends React.Component {
       rolled: false,
       gameIndex: 0,
       gamesList: {
-        0: 'platformGame',
-        1: 'racingGame',
+        0: 'shootingGame',
+        1: 'shootingGame',
         2: 'shootingGame',
-        3: 'MainScene',
+        // 3: 'rockemGame',
       },
       instructions: {
         0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
         2: 'Click to shoot as many targets as you can',
-        3: 'Hit space to punch and get points \nfirst to 100 points win',
+        // 3: 'Hit space to punch and get points \nfirst to 100 points win',
       },
     };
     this.stateCb = this.stateCb.bind(this);
@@ -131,7 +131,7 @@ export class Board extends React.Component {
     const { gameIndex, gamesList, instructions } = this.state;
 
     const scene = gamesList[gameIndex % 3];
-    const gameInstructions = instructions[gameIndex % 3];
+    const gameInstructions = instructions[2];
 
     updateMiniGame(gameId, scene, gameInstructions);
 

@@ -4,6 +4,7 @@ import {
   updateShootingScore,
   getTargets,
   updateTarget,
+  resetTarget,
 } from "../../../Firebase/index";
 
 const colors = {
@@ -105,11 +106,13 @@ export default class ShootingGame extends Phaser.Scene {
           if(targGameObj){
             let hex = colors[`${targStatus.shooter}`]
             targGameObj.setTint(hex);
-            this.explosion.play();
-            setTimeout(()=> {
+            if(targStatus.destroyed == true) {
+              resetTarget(this.gameId, target, true)
+              setTimeout(()=> {
               targGameObj.setVisible(false);
-              // this.explosion.play();
-            }, 300)
+              this.explosion.play();
+            }, 250)
+            }
           }
         }
         else {
@@ -144,7 +147,7 @@ export default class ShootingGame extends Phaser.Scene {
   resetTarget(target, direction) {
     if (direction > 0) target.x = 0;
     else if (direction < 0) target.x = 800;
-    if (this.myId == 0) updateTarget(this.gameId, target.index);
+    if (this.myId == 0) resetTarget(this.gameId, target.index);
   }
 
   update() {

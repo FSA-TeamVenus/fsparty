@@ -41,7 +41,7 @@ export default class StartScreen extends Phaser.Scene {
     this.time.addEvent({
       delay: 10000,
       callback: () => {
-        this.scene.start(`shootingGame`);
+        this.scene.start(`${this.nextScene}`);
       },
       callbackScope: this,
       loop: false,

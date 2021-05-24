@@ -210,16 +210,24 @@ export function updateReticlePos(gameId, playerId, data) {
 //update targets/targetIdx/hit to true
 export function updateTarget(gameId, targetIdx, shooter) {
   let updates = {};
-  if (shooter) {
+  // if (shooter) {
     updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
     updates[`${gameId}/shootingGame/targets/${targetIdx}/shooter`] = shooter;
 
-    // updates[`${gameId}/shootingGame/targets/${targetIdx}/destroyed`] = true;
-  }
-  else {
-    updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
+    updates[`${gameId}/shootingGame/targets/${targetIdx}/destroyed`] = true;
+  // }
+  // else {
+  //   updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
 
-    }
+  //   }
+  return firebase.database().ref().update(updates);
+}
+//reset target
+export function resetTarget(gameId, targetIdx, destroyed) {
+  let updates = {};
+  if (destroyed) {
+    updates[`${gameId}/shootingGame/targets/${targetIdx}/destroyed`] = false;
+  } else updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
   return firebase.database().ref().update(updates);
 }
 //update shooting game score
@@ -371,8 +379,6 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     playerId,
     name: playerData.name,
     color: playerData.color,
-    x: 400,
-    y: 300,
   };
   database.ref().update(updates);
 }
