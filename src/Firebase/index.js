@@ -24,6 +24,36 @@ export const playersRef = (gameId, game) => {
   return database.ref(`${gameId}/${game}/players`);
 };
 
+export const teamPlayersRef = (gameId, game, teamId) => {
+  return database.ref(`${gameId}/${game}/teams/${teamId}/players`);
+};
+
+export const teamsRef = (gameId, game) => {
+  return database.ref(`${gameId}/${game}/teams`);
+};
+
+export const getTeamPlayers = (gameId, gameName, teamId, spawned, cb) => {
+  const players = teamPlayersRef(gameId, gameName, teamId);
+  players.once('value').then((snapshot) => {
+    const list = snapshot.val();
+    if (!spawned) {
+      cb(list, teamId);
+      spawned = true;
+    }
+  });
+};
+
+export const updateTeamPoints = (gameId, gameName, teamId, cb) => {
+  const teams = teamsRef(gameId, gameName);
+  teams.on('child_changed', (snapshot) => {
+    const team = snapshot.val();
+    if (team.id === teamId) {
+      cb(team);
+    }
+  });
+  return () => teams.off();
+};
+
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
   const players = playersRef(gameId, 'racingGame');
   players.once('value').then((snapshot) => {
