@@ -8,12 +8,12 @@ module.exports = {
   entry: './src/index.js',
 
   output: {
-    path: path.resolve(__dirname, 'docs'),
+    path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
     publicPath: '/',
   },
   devServer: {
-    contentBase: path.join(__dirname, 'docs'),
+    contentBase: path.join(__dirname, 'public'),
     historyApiFallback: true,
   },
   module: {
