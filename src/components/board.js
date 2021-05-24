@@ -11,10 +11,11 @@ import {
   updatePos,
   getPos,
   getRound,
-  updateRound,
   updateMiniGame,
+  getMaxRounds,
 } from '../Firebase/index';
 import Leaderboard from './Leaderboard';
+import GameEnd from './GameEnd';
 import { Link } from 'react-router-dom';
 
 let gameId = Number(window.localStorage.getItem('gameId'));
@@ -28,19 +29,30 @@ export class Board extends React.Component {
       turn: null,
       pos: 1,
       round: null,
+      maxRounds: 5,
       showModal: true,
+      gameOver: false,
+      rolled: false,
       gameIndex: 0,
-      gamesList: { 0: 'platformGame', 1: 'racingGame', 2: 'shootingGame'},
+      gamesList: {
+        0: 'platformGame',
+        1: 'racingGame',
+        2: 'shootingGame',
+        3: 'MainScene',
+      },
       instructions: {
         0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
-        2: 'Click to shoot as many targets as you can'
+        2: 'Click to shoot as many targets as you can',
+        3: 'Hit space to punch and get points \nfirst to 100 points win',
       },
     };
     this.stateCb = this.stateCb.bind(this);
     this.selectMiniGame = this.selectMiniGame.bind(this);
     this.rollDice = this.rollDice.bind(this);
+    this.displayDiceRoll = this.displayDiceRoll.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.endGame = this.endGame.bind(this);
   }
 
   componentDidMount() {
@@ -48,6 +60,11 @@ export class Board extends React.Component {
     this.turnOff = getTurn(gameId, this.stateCb);
     this.posOff = getPos(gameId, playerId, this.stateCb);
     this.roundOff = getRound(gameId, this.stateCb);
+    getMaxRounds(gameId, this.stateCb);
+    const music = document.getElementById('music');
+    music.play();
+    music.volume = 0.75;
+    music.loop = true;
   }
 
   componentWillUnmount() {
@@ -55,25 +72,47 @@ export class Board extends React.Component {
     this.turnOff();
     this.posOff();
     this.roundOff();
+    const music = document.getElementById('music');
+    music.pause();
   }
 
   rollDice() {
     const { pos, playerList } = this.state;
     const myPlayer = playerList[playerId];
-    const diceRoll = Phaser.Math.Between(0, 6);
-    const rollDisplay = document.getElementById('roll-display');
+    const diceRoll = Phaser.Math.Between(1, 6);
+    const diceAudio = document.getElementById('dice');
+    diceAudio.play();
+    diceAudio.play();
+    this.displayDiceRoll(diceRoll);
+    this.setState({
+      rolled: true,
+    });
 
+    setTimeout(() => this.movePlayer(pos, diceRoll, myPlayer), 2000);
+
+    setTimeout(
+      () =>
+        this.setState({
+          rolled: false,
+        }),
+      5000
+    );
+  }
+
+  displayDiceRoll(diceRoll) {
+    const rollDisplay = document.getElementById('roll-display');
     rollDisplay.innerHTML = '...';
     setTimeout(function () {
       rollDisplay.innerHTML = `${diceRoll}!`;
-    }, 1500);
+    }, 1000);
+  }
 
-    this.stateCb(pos + diceRoll, 'pos');
-    setTimeout(function () {
-      updatePos(gameId, playerId, diceRoll);
-      updateTurn(gameId);
-      pathDictionary[pos + diceRoll].action(gameId, playerId, myPlayer);
-    }, 4000);
+  movePlayer(pos, diceRoll, myPlayer) {
+    const audio = document.getElementById('wah');
+    audio.play();
+    updatePos(gameId, playerId, diceRoll);
+    updateTurn(gameId);
+    pathDictionary[pos + diceRoll].action(gameId, playerId, myPlayer);
   }
 
   stateCb(value, key) {
@@ -81,10 +120,14 @@ export class Board extends React.Component {
   }
 
   startGame() {
+    const audio = document.getElementById('start-sound');
+    audio.play();
     updateTurn(gameId);
   }
 
   selectMiniGame() {
+    const audio = document.getElementById('start-sound');
+    audio.play();
     const { gameIndex, gamesList, instructions } = this.state;
 
     const scene = gamesList[gameIndex % 3];
@@ -99,8 +142,16 @@ export class Board extends React.Component {
   }
 
   closeModal() {
+    const audio = document.getElementById('ok-sound');
+    audio.play();
     this.setState({
       showModal: false,
+    });
+  }
+
+  endGame() {
+    this.setState({
+      gameOver: true,
     });
   }
 
@@ -110,13 +161,37 @@ export class Board extends React.Component {
 
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
-    let nextPlayer = playerList[turn];
     return (
       <div>
-        {playerList.map((player) => (
-          <PlayerCard key={player.playerId} player={player} />
-        ))}
-        <Leaderboard players={playerList} round={round} />
+        <audio id="start-sound" src="assets/audio/beep2.wav" />
+        <audio id="ok-sound" src="assets/audio/beep.wav" />
+        <audio id="dice" src="assets/audio/dice_roll.mp3"></audio>
+        <audio id="wah" src="assets/audio/wah.wav"></audio>
+        <audio id="music" src="assets/audio/bootleg-party-theme.wav" />
+        <div id="central-div">
+          {turn >= 0 && turn < playerList.length ? (
+            <div id="current-turn">
+              <p className={`${currentPlayer.color}-text`}>Current Turn:</p>
+              <img src={currentPlayer.spriteUrl} alt="" />
+              <p className={`${currentPlayer.color}-text`}>
+                {currentPlayer.name}
+              </p>
+            </div>
+          ) : (
+            <div />
+          )}
+          <Leaderboard
+            players={playerList}
+            round={round}
+            startMiniGame={this.selectMiniGame}
+            turn={turn}
+            playerId={playerId}
+          />
+          <div className="current-round">
+            <div>ROUND</div>
+            <div>{round}</div>
+          </div>
+        </div>
         {turn === playerList.length + 1 ? (
           <div>
             <GameCanvas gameId={gameId} />
@@ -124,14 +199,56 @@ export class Board extends React.Component {
         ) : (
           <div />
         )}
-        {turn < 0 && round == 1 && playerId == 0 ? (
-          <button
-            id='start'
-            className='board-button'
-            onClick={() => this.startGame()}
-          >
-            Start Game
-          </button>
+        {turn < 0 && round == 1 ? (
+          <div className="start-info flex-cont-column">
+            <div>
+              <img
+                className="invader"
+                src="assets/board/images/invader-red.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-green.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-yellow.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-pink.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-blue.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-orange.png"
+              />
+            </div>
+            <div id="story">
+              Help! Attracted by satellite broadcasts of Earth media, a
+              nefarious group of aliens has landed on earth and stolen all
+              original videogames, leaving behind nothing but poorly made
+              bootleg versions and a challenge: beat the high score in their
+              Mario Party clone to get back the original versions of our
+              favorite games.
+            </div>
+            {playerId == 0 ? (
+              <div>
+                <button
+                  id="start"
+                  className="board-button"
+                  onClick={this.startGame}
+                >
+                  Start Game
+                </button>
+              </div>
+            ) : (
+              <div />
+            )}
+          </div>
         ) : (
           <div>
             <TileGrid
@@ -141,62 +258,45 @@ export class Board extends React.Component {
             />
           </div>
         )}
-        {turn === playerList.length && playerId === 0 ? (
-          <button className='board-button' onClick={this.selectMiniGame}>
-            start mini game
-          </button>
-        ) : (
-          <div />
-        )}
         {playerId == turn && playerList ? (
-          <div className='popup-container flex-cont-column'>
+          <div className="popup-container flex-cont-column">
             <div
               className={`${currentPlayer.color}-text`}
-              id='roll-display'
+              id="roll-display"
             ></div>
-            <button className='dice-roll' onClick={() => this.rollDice()}>
-              Roll Dice!
-            </button>
+            {!this.state.rolled ? (
+              <button className="dice-roll" onClick={this.rollDice}>
+                Roll Dice!
+              </button>
+            ) : (
+              <div />
+            )}
           </div>
         ) : (
           <div />
         )}
-        {turn >= 0 && turn < playerList.length ? (
-          <div id='current-turn'>
-            <p
-              className={`${currentPlayer.color}-text`}
-            >{`${currentPlayer.name}'s turn!`}</p>
-            <img src={currentPlayer.spriteUrl} alt='' />
-          </div>
-        ) : (
-          <div />
-        )}
-        {round === 2 && this.state.showModal ? (
-          <div className='popup-container flex-cont-column modal' id='popup'>
-            <div className='popup-style'>FINAL ROUND!</div>
-            <div className='div-button' id='ok' onClick={this.closeModal}>
+        {round === this.state.maxRounds && this.state.showModal ? (
+          <div className="popup-container flex-cont-column modal" id="popup">
+            <div className="popup-style">FINAL ROUND!</div>
+            <div className="div-button" id="ok" onClick={this.closeModal}>
               OK
             </div>
           </div>
         ) : (
           <div />
         )}
-        {round === 3 ? (
-          <div className=' popup-container flex-cont-column'>
-            <div className='popup-style'>Game Over</div>
-            <Link
-              to={{
-                pathname: "/end",
-                state: {
-                  players: playerList,
-                  gameId: gameId,
-                  playerId: playerId,
-                },
-              }}
-            >
-              <div id='view-result-button'>View Results</div>
-            </Link>
+        {round === this.state.maxRounds + 1 ? (
+          <div className=" popup-container flex-cont-column">
+            <div className="popup-style">Game Over</div>
+            <div id="view-result-button" onClick={this.endGame}>
+              View Results
+            </div>
           </div>
+        ) : (
+          <div />
+        )}
+        {this.state.gameOver ? (
+          <GameEnd players={playerList} playerId={playerId} gameId={gameId} />
         ) : (
           <div />
         )}

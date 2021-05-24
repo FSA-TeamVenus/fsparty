@@ -8,17 +8,24 @@ export default class GameEnd extends React.Component {
   }
 
   componentDidMount() {
-    const { playerId, gameId } = this.props.location.state;
+    const audio = document.getElementById('applause');
+    audio.play();
+  }
+
+  componentWillUnmount() {
+    const { playerId, gameId } = this.props;
     if (playerId === 0) {
       removeFromDatabase(gameId);
     }
   }
 
   render() {
-    const { players } = this.props.location.state;
+    const { players } = this.props;
+
     const sortedPlayers = players.sort((a, b) => a.score < b.score);
     return (
-      <div>
+      <div id="game-end-wrap">
+        <audio id="applause" src="assets/audio/applause.mp3"></audio>
         <div className="background-div flex-cont-column">
           <div className="image-div" id="game-over">
             RESULTS
