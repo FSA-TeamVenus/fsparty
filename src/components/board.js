@@ -34,11 +34,17 @@ export class Board extends React.Component {
       gameOver: false,
       rolled: false,
       gameIndex: 0,
-      gamesList: { 0: 'platformGame', 1: 'racingGame', 2: 'shootingGame' },
+      gamesList: {
+        0: 'platformGame',
+        1: 'racingGame',
+        2: 'shootingGame',
+        3: 'MainScene',
+      },
       instructions: {
         0: 'use arrows to collect coins',
         1: "Hit space bar to give 'er some gas",
         2: 'Click to shoot as many targets as you can',
+        3: 'Hit space to punch and get points \nfirst to 100 points win',
       },
     };
     this.stateCb = this.stateCb.bind(this);
