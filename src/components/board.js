@@ -57,6 +57,7 @@ export class Board extends React.Component {
     getMaxRounds(gameId, this.stateCb);
     const music = document.getElementById('music');
     music.play();
+    music.volume = 0.75;
     music.loop = true;
   }
 
@@ -65,6 +66,8 @@ export class Board extends React.Component {
     this.turnOff();
     this.posOff();
     this.roundOff();
+    const music = document.getElementById('music');
+    music.pause();
   }
 
   rollDice() {
