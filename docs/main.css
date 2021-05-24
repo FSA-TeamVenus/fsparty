@@ -10,6 +10,9 @@ body {
   height: 100vh;
   perspective: 1500px;
   background-color: rgb(36, 35, 35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 a {
@@ -23,28 +26,36 @@ a {
   display: grid;
   grid-template-columns: repeat(15, 80px);
   grid-gap: 5px;
-  position: absolute;
-  left: 50%;
-  margin-left: -633px;
-  top: 50%;
-  margin-top: -260px;
 }
 
 .tile {
   width: 80px;
   height: 70px;
   background-size: 100% 100%;
+  position: relative;
   border: 2px solid;
   border-left-color: rgb(255, 225, 0);
   border-top-color: rgb(255, 225, 0);
   border-right-color: rgb(255, 174, 0);
   border-bottom-color: #ffae00;
   color: rgb(255, 174, 0);
-  font-size: 40px;
+  font-size: 18px;
   border-radius: 50%;
   position: relative;
   /* box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffae00, 0 0 40px #ffae00,
     0 0 50px #ffae00; */
+}
+
+.tile-sprite {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  z-index: 5;
+}
+
+.tile-action {
+  position: absolute;
+  z-index: 0;
 }
 
 .background {
@@ -73,58 +84,61 @@ a {
   position: absolute;
   left: 50%;
   margin-left: -250px;
-  top: 30%;
+  top: 20%;
   z-index: 5;
-  background-color: rgb(189, 188, 188);
-  border-top: 4px solid rgb(222, 222, 222);
+  background-color: rgb(36, 35, 35);
+  border: 1px solid #4d901e;
+  color: #4d901e;
+  /* border-top: 4px solid rgb(222, 222, 222);
   border-left: 4px solid rgb(222, 222, 222);
   border-right: 4px solid rgb(69, 69, 69);
-  border-bottom: 4px solid rgb(69, 69, 69);
+  border-bottom: 4px solid rgb(69, 69, 69); */
+  opacity: 1;
 }
 
 .board-button {
   width: 100px;
   height: 100px;
-  position: absolute;
-  left: 50%;
-  margin-left: -50px;
-  top: 50%;
-  background-color: rgb(255, 218, 6);
-  border-top: 10px solid rgb(255, 206, 99);
+  background-color: rgb(36, 35, 35);
+  border: 1px solid #4d901e;
+  /* border-top: 10px solid rgb(255, 206, 99);
   border-left: 10px solid rgb(255, 206, 99);
   border-right: 10px solid rgb(255, 174, 0);
-  border-bottom: 10px solid rgb(255, 174, 0);
+  border-bottom: 10px solid rgb(255, 174, 0); */
   font-family: 'bd-geminis', sans-serif;
   font-style: normal;
   font-weight: 400;
   letter-spacing: 3px;
 }
 
-#current-turn {
-  width: 200px;
-  height: 200px;
+.start-info {
+  width: 700px;
+  height: 400px;
   position: absolute;
-  left: 15%;
-  top: 35%;
-  z-index: 3;
-  text-align: center;
-  font-family: 'bd-geminis', sans-serif;
-  font-size: 20px;
-  letter-spacing: 3px;
-}
-
-#current-turn img {
-  width: 100px;
-  height: 100px;
+  left: 50%;
+  margin-left: -350px;
+  top: 20%;
+  z-index: 5;
+  background-color: rgb(36, 35, 35);
+  border: 1px solid #4d901e;
+  color: #4d901e;
+  opacity: 1;
 }
 
 #start {
-  width: 100px;
+  width: 200px;
   height: 100px;
-  position: absolute;
-  left: 50%;
-  margin-left: -50px;
-  top: 50%;
+  color: #4d901e;
+}
+
+#story {
+  padding: 20px;
+}
+
+.invader {
+  height: 50px;
+  width: 50px;
+  margin: 10px;
 }
 
 #game-id {
@@ -139,44 +153,82 @@ a {
   padding: 2px;
 }
 
-.tile-sprite {
-  width: 30px;
-  height: 30px;
+#central-div {
+  width: 1200px;
+  height: 600px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -300px;
+  margin-left: -600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#current-turn {
+  width: 200px;
+  height: 300px;
+  box-sizing: border-box;
+  background-color: rgb(36, 35, 35);
+  border: 2px solid #4d901e;
+  z-index: 3;
+  text-align: center;
+  font-family: 'bd-geminis', sans-serif;
+  font-size: 30px;
+  letter-spacing: 3px;
+}
+
+.current-round {
+  width: 200px;
+  height: 300px;
+  color: #4d901e;
+  box-sizing: border-box;
+  background-color: rgb(36, 35, 35);
+  border: 2px solid #4d901e;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  font-family: 'bd-geminis', sans-serif;
+  font-size: 60px;
+  letter-spacing: 3px;
+}
+
+.current-round div {
+  margin: 15px;
+}
+
+#current-turn img {
+  width: 100px;
+  height: 100px;
 }
 
 /* ------------------ leaderboard styles -------------------*/
 
 #leaderboard {
   width: 340px;
-  height: 180px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -170px;
-  margin-top: -90px;
+  height: 300px;
+  padding: 10px 10px 5px 10px;
+  box-sizing: border-box;
+  margin: 10px;
   font-family: 'bd-geminis', sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 40px;
   letter-spacing: 3px;
   text-align: center;
-  color: rgb(255, 174, 0);
+  color: #4d901e;
   background-color: rgb(36, 35, 35);
-  border-bottom: 5px solid rgb(255, 174, 0);
-  border-right: 5px solid rgb(255, 153, 0);
-  border-left: 5px solid rgb(255, 204, 0);
-  border-radius: 5px;
+  border: 2px solid #4d901e;
   z-index: 3;
 }
 
 .leader-div {
   background-color: rgb(36, 35, 35);
   border-style: inset;
-  border-width: 2px;
-  border-left-color: rgb(255, 225, 0);
-  border-top-color: rgb(255, 225, 0);
-  border-right-color: rgb(255, 174, 0);
-  border-bottom-color: rgb(255, 174, 0);
+  border: 2px solid #4d901e;
   margin: 5px;
   padding: 10px;
 }
@@ -187,6 +239,24 @@ a {
   font-size: 15px;
 }
 
+.mini-game-button {
+  width: 200px;
+  height: 50px;
+  padding: 5px;
+  color: rgb(36, 35, 35);
+  background-color: #4d901e;
+  border: 2px solid #4d901e;
+  font-family: 'bd-geminis', sans-serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  box-shadow: 2px 2px rgb(36, 35, 35), 4px 4px #4d901e;
+}
+
+/* .mini-game-button:hover {
+  background-color: #e265ff;
+} */
 /* player card styles */
 
 .card {
@@ -243,20 +313,22 @@ a {
 .dice-roll {
   width: 300px;
   height: 100px;
-  background-color: rgb(255, 218, 6);
-  border-top: 7px solid rgb(255, 206, 99);
+  background-color: rgb(36, 35, 35);
+  border: 1px solid #4d901e;
+  color: #4d901e;
+  /* border-top: 7px solid rgb(255, 206, 99);
   border-left: 7px solid rgb(255, 206, 99);
   border-right: 7px solid rgb(255, 174, 0);
-  border-bottom: 7px solid rgb(255, 174, 0);
+  border-bottom: 7px solid rgb(255, 174, 0); */
   border-radius: 3px;
   font-family: 'bd-geminis', sans-serif;
   font-size: 30px;
   letter-spacing: 3px;
 }
 
-.dice-roll:hover {
-  background-color: rgb(36, 35, 35);
-}
+/* .dice-roll:hover {
+  background-color: #f9eb30;
+} */
 
 #roll-display {
   width: 100px;
@@ -320,7 +392,7 @@ a {
 
 #game-canvas {
   position: absolute;
-  z-index: 5;
+  z-index: 6;
   box-sizing: border-box;
   left: 50%;
   margin-left: -400px;
@@ -331,7 +403,7 @@ a {
 
 #game-background {
   position: absolute;
-  z-index: 3;
+  z-index: 6;
   width: 100vw;
   height: 100vh;
   background-color: rgb(36, 35, 35);
@@ -454,34 +526,35 @@ section {
   background-size: cover;
   background-position: center;
   border: 1px solid rgb(255, 174, 0);
-  opacity: 0.8;
+  background-color: rgb(36, 35, 35);
+  opacity: 1;
   height: 300px;
   width: 300px;
   border-radius: 40px;
 }
 
 .one {
-  /* background-image: url('assets/board/images/die_1.png'); */
+  background-image: url('assets/board/images/invader-pink.png');
   transform: translateZ(150px);
 }
 .two {
-  /* background-image: url('assets/board/images/die_2.png'); */
+  background-image: url('assets/board/images/mushroom-green.png');
   transform: rotateX(90deg) translateZ(150px);
 }
 .three {
-  /* background-image: url('assets/board/images/die_3.png'); */
+  background-image: url('assets/board/images/invader-yellow.png');
   transform: rotateX(-90deg) translateZ(150px);
 }
 .four {
-  /* background-image: url('assets/board/images/die_4.png'); */
+  background-image: url('assets/board/images/mushroom-blue.png');
   transform: rotateY(-90deg) translateZ(-150px);
 }
 .five {
-  /* background-image: url('assets/board/images/die_5.png'); */
+  background-image: url('assets/board/images/invader-orange.png');
   transform: rotateY(90deg) translateZ(-150px);
 }
 .six {
-  /* background-image: url('assets/board/images/die_6.png'); */
+  background-image: url('assets/board/images/mushroom-red.png');
   transform: translateZ(-150px);
 }
 /* --------- end screen ------------ */
