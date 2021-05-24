@@ -148,7 +148,7 @@ export function removeFromDatabase(gameId) {
 //get shootingGame players
 export function getShootingPlayers(gameId, cb) {
   let playerList = firebase.database().ref(`${gameId}/shootingGame/players`);
-  playerList.once('value', (snapshot) => {
+  playerList.on('value', (snapshot) => {
     const data = snapshot.val();
     cb(data);
   });
@@ -156,22 +156,31 @@ export function getShootingPlayers(gameId, cb) {
 //get other reticle positions (for shooting game)
 export function getOtherReticles(gameId, cb) {
   const playerList = database.ref(`${gameId}/shootingGame/players`);
-  playerList.on('child_changed', (snapshot) => {
+  playerList.on('value', (snapshot) => {
     const data = snapshot.val();
-    cb(data);
+    console.log(data);
   });
 }
 //update reticle position
 export function updateReticlePos(gameId, playerId, data) {
   const updates = {};
-  updates[`${gameId}/shootingGame/players/${playerId}`] = data;
+  updates[`${gameId}/shootingGame/players/${playerId}/x`] = data.x;
+  updates[`${gameId}/shootingGame/players/${playerId}/y`] = data.y;
   return database.ref().update(updates);
 }
 //update targets/targetIdx/hit to true
-export function updateTarget(gameId, targetIdx, hit) {
+export function updateTarget(gameId, targetIdx, shooter) {
   let updates = {};
-  if (hit) updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
-  else updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
+  if (shooter) {
+    updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
+    updates[`${gameId}/shootingGame/targets/${targetIdx}/shooter`] = shooter;
+
+    // updates[`${gameId}/shootingGame/targets/${targetIdx}/destroyed`] = true;
+  }
+  else {
+    updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
+
+    }
   return firebase.database().ref().update(updates);
 }
 //update shooting game score
@@ -323,6 +332,8 @@ export function addPlayerToGame(gameId, playerId, playerData) {
     playerId,
     name: playerData.name,
     color: playerData.color,
+    x: 400,
+    y: 300,
   };
   database.ref().update(updates);
 }

@@ -1,12 +1,17 @@
 import Phaser from "phaser";
 import {
   getShootingPlayers,
-  getOtherReticles,
-  updateReticlePos,
   updateShootingScore,
   getTargets,
   updateTarget,
 } from "../../../Firebase/index";
+
+const colors = {
+  red: 0xf92831,
+  blue: 0x4056ff,
+  green: 0x4d901e,
+  yellow: 0xf9eb30,
+};
 
 export default class ShootingGame extends Phaser.Scene {
   constructor() {
@@ -20,33 +25,41 @@ export default class ShootingGame extends Phaser.Scene {
     this.addPlayers = this.addPlayers.bind(this);
   }
 
-  // init() {
-  //   // this.initY = { 0: 400, 1: 300, 2: 200, 3: 100 };
-  //   // this.initX = 32;
-  // }
-
   preload() {
     this.gameId = Number(window.localStorage.getItem("gameId"));
     this.myId = Number(window.localStorage.getItem("idKey"));
-    this.load.image("ghost", "assets/images/ghost.png");
-    this.load.image("reticle", "assets/images/test-reticle.png");
-    this.load.audio("shot", "assets/images/sounds/gunshot.wav");
+
+    this.load.image("inv-0", "assets/images/invader-0.png");
+    this.load.image("inv-1", "assets/images/invader-1.png");
+    this.load.image("inv-2", "assets/images/invader-2.png");
+
+    this.load.audio("shot", "assets/images/sounds/laser.wav");
+    this.load.audio("boom", "assets/images/sounds/explosion.wav");
+
+    getShootingPlayers(this.gameId, this.addPlayers);
   }
 
   create() {
+    // getOtherReticles(this.gameId, console.log());
     this.gunshot = this.sound.add("shot");
-    getShootingPlayers(this.gameId, this.addPlayers);
-    this.input.setDefaultCursor("url(assets/images/crosshair.cur),pointer");
-    for (let i = 0; i < 5; i++) {
-      // const xx = Phaser.Math.Between(300)
-      const xx = 100 + i * 110
-      const yy = 100 + i * 110;
-      this[`ghost${i}`] = this.add.image(xx, yy, "ghost").setScale(0.1);
-      this[`ghost${i}`].index = i;
-      this[`ghost${i}`].setInteractive();
+    this.explosion = this.sound.add("boom");
+
+
+    // getOtherReticles(this.gameId, this.displayOtherPlayers)
+    this.input.setDefaultCursor(`url(assets/images/${this.myColor}-crosshair.cur),pointer`);
+
+    for (let i = 0; i < 6; i++) {
+      const xx = Phaser.Math.Between(1, 799)
+      const yy = Phaser.Math.Between(1, 599)
+      // const xx = 100 + i * 110
+      // const yy = 100 + i * 110;
+      this[`inv-${i}`] = this.add.image(xx, yy, `inv-${i % 2}`).setScale(0.1);
+      this[`inv-${i}`].index = i;
+      this[`inv-${i}`].setInteractive();
     }
     window.scene = this;
     this.input.on("gameobjectdown", this.shot.bind(this));
+    this.input.on("pointerdown", () => this.gunshot.play());
     getTargets(this.gameId, this.checkTargets);
 
     //TIMER
@@ -69,24 +82,40 @@ export default class ShootingGame extends Phaser.Scene {
       loop: false,
     });
   }
+
   //add players
   addPlayers(playersObj) {
       for (let player of playersObj) {
-        if (player.score) this.allPlayers[player.playerId] = { name: player.name, score:player.score }
-        else this.allPlayers[player.playerId] = { name: player.name, score: 0 }
+        if (player.score) this.allPlayers[player.playerId] = { ...player }
+        else if (!player.score) this.allPlayers[player.playerId] = { ...player, score: 0 }
+        if (player.playerId === this.myId) {
+          this.myColor = player.color
+        }
       }
     }
+
 //checking if each target gameId/shootingGame/targets/targetId/hit = true || false before target.setVisible(true || false)
   checkTargets(targObj) {
     for (let target in targObj) {
         let targStatus = targObj[target];
-        let targGameObj = this[`ghost${target}`];
+        let targGameObj = this[`inv-${target}`];
+
         if (targStatus.hit == true) {
-          if(targGameObj) targGameObj.setVisible(false);
+          //timeout to toggle shooters color before making invisible
+          if(targGameObj){
+            let hex = colors[`${targStatus.shooter}`]
+            targGameObj.setTint(hex);
+            this.explosion.play();
+            setTimeout(()=> {
+              targGameObj.setVisible(false);
+              // this.explosion.play();
+            }, 300)
+          }
         }
         else {
           if (targGameObj) {
             targGameObj.setVisible(true);
+            targGameObj.setTint(0xffffff);
           }
         }
       }
@@ -94,85 +123,38 @@ export default class ShootingGame extends Phaser.Scene {
 
   shot(pointer, target) {
     console.log(`hit - ${target.index}`)
-    this.gunshot.play()
+    console.log(this.myColor)
+    // const myColor = this.allPlayers[this.myId].color;
     //should set firebase gameId/shootingGame/targets/targetId/hit = true
-    updateTarget(this.gameId, target.index, true)
+    updateTarget(this.gameId, target.index, this.myColor)
     this.myScore++;
+    //update with shootier info
     updateShootingScore(
       this.gameId,
       this.myId,
       this.myScore
     );
-    //make hit sound
-
   }
 
   moveTarget(target, speed) {
     target.x += speed;
     if (target.x > 800 || target.x < 0) this.resetTarget(target, speed)
   }
-  moveReticle(x, y) {
 
-  }
   resetTarget(target, direction) {
     if (direction > 0) target.x = 0;
     else if (direction < 0) target.x = 800;
     if (this.myId == 0) updateTarget(this.gameId, target.index);
-    // target.setVisible(true)
-
-  }
-  displayTargets(targObj) {
-
   }
 
   update() {
-      this.moveTarget(this.ghost0, -5);
-      this.moveTarget(this.ghost1, -2);
-      this.moveTarget(this.ghost2, 2)
-      this.moveTarget(this.ghost3, -3)
-      this.moveTarget(this.ghost4, -4)
+      this.moveTarget(this['inv-0'], -5);
+      this.moveTarget(this['inv-1'], 3);
+      this.moveTarget(this['inv-2'], -2);
+      this.moveTarget(this['inv-3'], -3);
+      this.moveTarget(this['inv-4'], 3);
+      this.moveTarget(this['inv-5'], -5);
   }
 }
-
-//   preload() {
-//     // this.load.spritesheet(
-//     //   "reticle",
-//     //   "../../public/assets/images/test-reticle.png",
-//     //   {
-//     //     frameWidth: 190,
-//     //     frameHeight: 190,
-//     //   }
-//     // );
-//     this.load.image('reticle', '../../public/assets/images/test-reticle.png');
-//   }
-
-//   create() {
-//    getShootingPlayers(1, (playerList) => {
-//      //list of players
-//      console.log('player list --->', playerList);
-//      this.addPlayers(playerList);
-//    })
-//   }
-
-//   update() {
-//     updateReticlePos(1, myId, {
-//       x: this.input.mousePointer.worldX,
-//       y: this.input.mousePointer.worldY,
-//     });
-//     this.input.mousePointer.
-//   }
-
-//   addPlayers(playerList) {
-//     const myPlayer = playerList.splice(myId, 1)
-//     console.log(myPlayer)
-//     // for (let i = 0; i < playerList.length;i++) {
-//     // const otherPlayer = playerList[i];
-//     // const newPlayer = new Player(this, otherPlayer.x, otherPlayer.y, "reticle");
-//     // this.otherPlayers[i] = newPlayer;
-//     // }
-//     // this.myPlayer = new PlayerReticle(this, myPlayer.x, myPlayer.y, 'reticle');
-//   }
-// }
-
 
 

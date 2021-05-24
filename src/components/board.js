@@ -91,11 +91,12 @@ export class Board extends React.Component {
     const gameInstructions = instructions[gameIndex % 3];
 
     updateMiniGame(gameId, scene, gameInstructions);
-    updateTurn(gameId);
+
 
     this.setState({
-      gameIndex: this.state.gameIndex + 1,
+      gameIndex: gameIndex + 1,
     });
+    updateTurn(gameId);
   }
 
   closeModal() {
@@ -107,10 +108,9 @@ export class Board extends React.Component {
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
-
+    console.log(this.state.gameIndex)
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
-    let nextPlayer = playerList[turn];
     return (
       <div>
         {playerList.map((player) => (
