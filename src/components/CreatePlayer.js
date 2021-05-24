@@ -1,8 +1,6 @@
 import React from 'react';
-import { addPlayerToGame, updateRoundsMax } from '../Firebase/index';
+import { addPlayerToGame } from '../Firebase/index';
 import { Link } from 'react-router-dom';
-
-let playerId = Number(window.localStorage.getItem('idKey'));
 
 export default class CreatePlayer extends React.Component {
   constructor() {
@@ -18,6 +16,7 @@ export default class CreatePlayer extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleJoin = this.handleJoin.bind(this);
     this.handleColorSelect = this.handleColorSelect.bind(this);
+    this.playAudio = this.playAudio.bind(this);
   }
 
   handleChange(evt) {
@@ -27,12 +26,12 @@ export default class CreatePlayer extends React.Component {
   }
 
   handleJoin() {
+    this.playAudio();
     const playerId = Number(window.localStorage.getItem('idKey'));
     const gameId = window.localStorage.getItem('gameId');
     const { name, color, spriteUrl } = this.state;
     const playerObj = { name, color, spriteUrl };
     addPlayerToGame(gameId, playerId, playerObj);
-    updateRoundsMax(gameId, this.state.round);
   }
 
   handleColorSelect(evt) {
@@ -51,10 +50,16 @@ export default class CreatePlayer extends React.Component {
     });
   }
 
+  playAudio() {
+    const audio = document.getElementById('beep');
+    audio.play();
+  }
+
   render() {
     const gameId = window.localStorage.getItem('gameId');
     return (
       <div className="flex-cont-column background-div">
+        <audio id="beep" src="assets/audio/beep2.wav" />
         <div className="flex-cont-column">
           <div className="flex-cont-row">
             <div className="flex-cont-column">
@@ -87,18 +92,6 @@ export default class CreatePlayer extends React.Component {
                 value={this.state.name}
                 onChange={this.handleChange}
               ></input>
-              <label htmlFor="round">Number of Rounds</label>
-              <select
-                name="round"
-                value={this.state.round}
-                onChange={this.handleChange}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={15}>15</option>
-                <option value={20}>20</option>
-                <option value={25}>25</option>
-              </select>
               <div className="div-button image-div box-outline">
                 <Link to="/board">
                   <div onClick={this.handleJoin}>Join Game</div>

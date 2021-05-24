@@ -24,6 +24,10 @@ export default class GameCanvas extends React.Component {
   }
 
   render() {
-    return <div id="game-canvas"></div>;
+    return (
+      <div id="game-background">
+        <div id="game-canvas"></div>
+      </div>
+    );
   }
 }

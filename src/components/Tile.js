@@ -8,7 +8,7 @@ export default class Tile extends React.Component {
     const { id, actionType } = this.props.tileProps;
     const { players, dictionary } = this.props;
     return (
-      <div className={`tile ${actionType} flex-cont-row`}>
+      <div className={`tile ${actionType} flex-cont-row circle`}>
         {dictionary
           ? players.map((player) => {
               if (dictionary[player.position].id === id) {
@@ -24,6 +24,7 @@ export default class Tile extends React.Component {
               }
             })
           : ''}
+        <div className="tile-action">{`${actionType}`}</div>
       </div>
     );
   }
