@@ -24,7 +24,7 @@ export default class Tile extends React.Component {
               }
             })
           : ''}
-        <div>{`${actionType}`}</div>
+        <div className="tile-action">{`${actionType}`}</div>
       </div>
     );
   }

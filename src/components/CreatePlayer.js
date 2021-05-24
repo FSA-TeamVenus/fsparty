@@ -15,6 +15,7 @@ export default class CreatePlayer extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleJoin = this.handleJoin.bind(this);
     this.handleColorSelect = this.handleColorSelect.bind(this);
+    this.playAudio = this.playAudio.bind(this);
   }
 
   handleChange(evt) {
@@ -24,6 +25,7 @@ export default class CreatePlayer extends React.Component {
   }
 
   handleJoin() {
+    this.playAudio();
     const playerId = Number(window.localStorage.getItem('idKey'));
     const gameId = window.localStorage.getItem('gameId');
     const { name, color, spriteUrl } = this.state;
@@ -47,10 +49,16 @@ export default class CreatePlayer extends React.Component {
     });
   }
 
+  playAudio() {
+    const audio = document.getElementById('beep');
+    audio.play();
+  }
+
   render() {
     const gameId = window.localStorage.getItem('gameId');
     return (
       <div className="flex-cont-column background-div">
+        <audio id="beep" src="assets/audio/beep2.wav" />
         <div className="flex-cont-column">
           <div className="flex-cont-row">
             <div className="flex-cont-column">

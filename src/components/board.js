@@ -55,6 +55,9 @@ export class Board extends React.Component {
     this.posOff = getPos(gameId, playerId, this.stateCb);
     this.roundOff = getRound(gameId, this.stateCb);
     getMaxRounds(gameId, this.stateCb);
+    const music = document.getElementById('music');
+    music.play();
+    music.loop = true;
   }
 
   componentWillUnmount() {
@@ -67,13 +70,16 @@ export class Board extends React.Component {
   rollDice() {
     const { pos, playerList } = this.state;
     const myPlayer = playerList[playerId];
-    const diceRoll = Phaser.Math.Between(0, 6);
+    const diceRoll = Phaser.Math.Between(1, 6);
+    const diceAudio = document.getElementById('dice');
+    diceAudio.play();
+    diceAudio.play();
     this.displayDiceRoll(diceRoll);
     this.setState({
       rolled: true,
     });
 
-    setTimeout(() => this.movePlayer(pos, diceRoll, myPlayer), 4000);
+    setTimeout(() => this.movePlayer(pos, diceRoll, myPlayer), 2000);
 
     setTimeout(
       () =>
@@ -89,10 +95,12 @@ export class Board extends React.Component {
     rollDisplay.innerHTML = '...';
     setTimeout(function () {
       rollDisplay.innerHTML = `${diceRoll}!`;
-    }, 1500);
+    }, 1000);
   }
 
   movePlayer(pos, diceRoll, myPlayer) {
+    const audio = document.getElementById('wah');
+    audio.play();
     updatePos(gameId, playerId, diceRoll);
     updateTurn(gameId);
     pathDictionary[pos + diceRoll].action(gameId, playerId, myPlayer);
@@ -103,10 +111,14 @@ export class Board extends React.Component {
   }
 
   startGame() {
+    const audio = document.getElementById('start-sound');
+    audio.play();
     updateTurn(gameId);
   }
 
   selectMiniGame() {
+    const audio = document.getElementById('start-sound');
+    audio.play();
     const { gameIndex, gamesList, instructions } = this.state;
 
     const scene = gamesList[gameIndex % 3];
@@ -121,6 +133,8 @@ export class Board extends React.Component {
   }
 
   closeModal() {
+    const audio = document.getElementById('ok-sound');
+    audio.play();
     this.setState({
       showModal: false,
     });
@@ -140,10 +154,35 @@ export class Board extends React.Component {
     const currentPlayer = playerList[turn] || { name: '' };
     return (
       <div>
-        {/* {playerList.map((player) => (
-          <PlayerCard key={player.playerId} player={player} />
-        ))} */}
-        <Leaderboard players={playerList} round={round} />
+        <audio id="start-sound" src="assets/audio/beep2.wav" />
+        <audio id="ok-sound" src="assets/audio/beep.wav" />
+        <audio id="dice" src="assets/audio/dice_roll.mp3"></audio>
+        <audio id="wah" src="assets/audio/wah.wav"></audio>
+        <audio id="music" src="assets/audio/bootleg-party-theme.wav" />
+        <div id="central-div">
+          {turn >= 0 && turn < playerList.length ? (
+            <div id="current-turn">
+              <p className={`${currentPlayer.color}-text`}>Current Turn:</p>
+              <img src={currentPlayer.spriteUrl} alt="" />
+              <p className={`${currentPlayer.color}-text`}>
+                {currentPlayer.name}
+              </p>
+            </div>
+          ) : (
+            <div />
+          )}
+          <Leaderboard
+            players={playerList}
+            round={round}
+            startMiniGame={this.selectMiniGame}
+            turn={turn}
+            playerId={playerId}
+          />
+          <div className="current-round">
+            <div>ROUND</div>
+            <div>{round}</div>
+          </div>
+        </div>
         {turn === playerList.length + 1 ? (
           <div>
             <GameCanvas gameId={gameId} />
@@ -152,15 +191,51 @@ export class Board extends React.Component {
           <div />
         )}
         {turn < 0 && round == 1 ? (
-          <div className="popup-container">
+          <div className="start-info flex-cont-column">
+            <div>
+              <img
+                className="invader"
+                src="assets/board/images/invader-red.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-green.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-yellow.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-pink.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-blue.png"
+              />
+              <img
+                className="invader"
+                src="assets/board/images/invader-orange.png"
+              />
+            </div>
+            <div id="story">
+              Help! Attracted by satellite broadcasts of Earth media, a
+              nefarious group of aliens has landed on earth and stolen all
+              original videogames, leaving behind nothing but poorly made
+              bootleg versions and a challenge: beat the high score in their
+              Mario Party clone to get back the original versions of our
+              favorite games.
+            </div>
             {playerId == 0 ? (
-              <button
-                id="start"
-                className="board-button"
-                onClick={this.startGame}
-              >
-                Start Game
-              </button>
+              <div>
+                <button
+                  id="start"
+                  className="board-button"
+                  onClick={this.startGame}
+                >
+                  Start Game
+                </button>
+              </div>
             ) : (
               <div />
             )}
@@ -173,13 +248,6 @@ export class Board extends React.Component {
               dictionary={pathDictionary}
             />
           </div>
-        )}
-        {turn === playerList.length && playerId === 0 ? (
-          <button className="board-button" onClick={this.selectMiniGame}>
-            start mini game
-          </button>
-        ) : (
-          <div />
         )}
         {playerId == turn && playerList ? (
           <div className="popup-container flex-cont-column">
@@ -194,16 +262,6 @@ export class Board extends React.Component {
             ) : (
               <div />
             )}
-          </div>
-        ) : (
-          <div />
-        )}
-        {turn >= 0 && turn < playerList.length ? (
-          <div id="current-turn">
-            <p
-              className={`${currentPlayer.color}-text`}
-            >{`${currentPlayer.name}'s turn!`}</p>
-            <img src={currentPlayer.spriteUrl} alt="" />
           </div>
         ) : (
           <div />

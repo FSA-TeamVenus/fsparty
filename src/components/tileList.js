@@ -13,8 +13,8 @@ const map = [
 const actionTypes = {
   0: 'background',
   1: 'start',
-  2: '5',
-  3: '-5',
+  2: 'plus',
+  3: 'minus',
   4: 'chance',
   5: 'store',
 };

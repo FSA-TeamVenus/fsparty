@@ -13,6 +13,7 @@ export default class WelcomeScreen extends React.Component {
     this.handleJoinGame = this.handleJoinGame.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.rotateCube = this.rotateCube.bind(this);
+    this.playAudio = this.playAudio.bind(this);
   }
 
   componentDidMount() {
@@ -23,6 +24,7 @@ export default class WelcomeScreen extends React.Component {
   }
 
   handleNewGame() {
+    this.playAudio();
     createNewGame();
     window.localStorage.setItem('idKey', '0');
   }
@@ -34,6 +36,7 @@ export default class WelcomeScreen extends React.Component {
   }
 
   handleJoinGame() {
+    this.playAudio();
     const gameId = this.state.gameId;
     window.localStorage.setItem('gameId', gameId);
     getNewPlayerId(gameId);
@@ -47,10 +50,16 @@ export default class WelcomeScreen extends React.Component {
     cube.style.transform = `rotateY(${x * 0.2}deg) rotateX(${y * 0.2}deg)`;
   }
 
+  playAudio() {
+    const audio = document.getElementById('beep');
+    audio.play();
+  }
+
   render() {
     return (
       <div className="background-div flex-cont-column">
         <div className="flex-cont-column welcome">
+          <audio id="beep" src="assets/audio/beep2.wav" />
           <div id="box-container">
             <section id="box">
               <div className="face one"></div>
