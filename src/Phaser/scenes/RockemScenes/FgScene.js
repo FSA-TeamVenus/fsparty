@@ -61,8 +61,8 @@ export default class FgScene extends Phaser.Scene {
     // Preload Sprites
     this.load.multiatlas('boxingsprites', 'assets/rockemGame/spriteSheets/boxingsprites.json', 'assets/rockemGame/spriteSheets');
     this.load.image('ground', 'assets/rockemGame/sprites/transparentground.png');
-    this.gameId = 16 //Number(window.localStorage.getItem('gameId'));
-    this.myId = 1 //Number(window.localStorage.getItem('idKey'));
+    this.gameId = Number(window.localStorage.getItem('gameId'));
+    this.myId = Number(window.localStorage.getItem('idKey'));
   
     // Preload Sounds
     this.load.audio('punch', 'aassets/rockemGame/audio/jump.wav');
