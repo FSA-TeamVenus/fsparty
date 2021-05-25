@@ -2,6 +2,8 @@ import {
   teamsRef,
   getTeamPlayers,
   updateTeamPoints,
+  addTeamPoints,
+  getTeamPlayers
 } from '../../../Firebase/index';
 
 import Player from '../../entities/RockemEntities/Player';
@@ -317,8 +319,9 @@ export default class FgScene extends Phaser.Scene {
       else {
         points++;
         console.log(`Team ${this.myTeamId} Points: `, points);
-        this.updateTeam(this.myTeamId, points); // update teams points
+        this.updateTeam(this.myTeamId, points); // update teams points locally and in Firebase
         const key = points % 2 === 0 ? 'punchleft' : 'punchright';
+        // TODO: does the updateMovement need to go through Firebase?
         myTeam.sprite.updateMovement(key, myTeam.spriteKey);
        }
     });
@@ -336,8 +339,6 @@ export default class FgScene extends Phaser.Scene {
   }
 
   addPlayersToGame(data, teamId) {
-    const myTeam = this.Teams[teamId];
-    console.log(data);
     data.forEach((player) => {
       const team = this.Teams[teamId];
 
@@ -355,7 +356,7 @@ export default class FgScene extends Phaser.Scene {
 
   manageTeams() {
     this.Teams.forEach( team => {
-      getTeamPlayers(this.gameId, 'rockemGame', team.id, this.spawned, this.addPlayersToGame);
+      getTeamPlayers(this.gameId, 'rockemGame', team.id, this.addPlayersToGame);
       this.listenerOff = updateTeamPoints(
         this.gameId,
         team.id,
@@ -368,5 +369,6 @@ export default class FgScene extends Phaser.Scene {
     const teamToUpdate = this.Teams[teamId];
     teamToUpdate.points = currentPoints;
     teamToUpdate.scoreText.setText('Points: ' + currentPoints);
+    addTeamPoints(gameId, 'rockemGame', teamId, currentPoints);
   }
 }

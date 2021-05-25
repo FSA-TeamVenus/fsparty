@@ -24,36 +24,6 @@ export const playersRef = (gameId, game) => {
   return database.ref(`${gameId}/${game}/players`);
 };
 
-export const teamPlayersRef = (gameId, game, teamId) => {
-  return database.ref(`${gameId}/${game}/teams/${teamId}/players`);
-};
-
-export const teamsRef = (gameId, game) => {
-  return database.ref(`${gameId}/${game}/teams`);
-};
-
-export const getTeamPlayers = (gameId, gameName, teamId, spawned, cb) => {
-  const players = teamPlayersRef(gameId, gameName, teamId);
-  players.once('value').then((snapshot) => {
-    const list = snapshot.val();
-    if (!spawned) {
-      cb(list, teamId);
-      spawned = true;
-    }
-  });
-};
-
-export const updateTeamPoints = (gameId, gameName, teamId, cb) => {
-  const teams = teamsRef(gameId, gameName);
-  teams.on('child_changed', (snapshot) => {
-    const team = snapshot.val();
-    if (team.id === teamId) {
-      cb(team);
-    }
-  });
-  return () => teams.off();
-};
-
 export const getRacingGamePlayers = (gameId, spawned, cb) => {
   const players = playersRef(gameId, 'racingGame');
   players.once('value').then((snapshot) => {
@@ -253,6 +223,57 @@ export function updateScore(gameId, playerId, newScore) {
   return database.ref().update(updates);
 }
 
+// ----------------------------- rockemGame ----------------------------------
+export const teamPlayersRef = (gameId, game, teamId) => {
+  return database.ref(`${gameId}/${game}/teams/${teamId}/players`);
+};
+
+export const teamsRef = (gameId, game, teamId) => {
+  return database.ref(`${gameId}/${game}/teams/${teamId}`);
+};
+
+export const getTeamPlayers = (gameId, gameName, teamId, cb) => {
+  const players = teamPlayersRef(gameId, gameName, teamId);
+  players.once('value').then((snapshot) => {
+    const list = snapshot.val();
+    cb(list, teamId);
+  });
+};
+
+export const addTeamPoints = (gameId, gameName, teamId, newPoints) => {
+  const team = teamsRef(gameId, gameName, teamId);
+  team.once('value').then((snapshot) => {
+    const score = snapshot.val().score;
+    const newScore = score + newPoints;
+    team.update({ score: newScore });
+  });
+};
+
+export const updateTeamPoints = (gameId, gameName, teamId, cb) => { 
+  const teams = teamsRef(gameId, gameName);
+  teams.on('child_changed', (snapshot) => {
+    const team = snapshot.val();
+    // need to refresh UI for other team's change in points
+    // so when team.id <> current team's id (teamId)
+    if (team.id !== teamId) {
+      cb(team);
+    }
+  });
+  return () => teams.off();
+};
+
+export function getNextAvailableTeam(gameId, gameName, cb) {
+  const teams = teamsRef(gameId, gameName);
+  team.once('value').then((snapshot) => {
+    const team = snapshot.value();
+    Object.keys(team).forEach( id => {
+      const players = snapshot.value().players;
+      if (players.length < 2)
+        cb(id);
+    })
+  })
+}
+
 // ---------- update mini-game -------
 
 export function updateMiniGame(gameId, game, instructions) {
@@ -324,6 +345,26 @@ const gameObj = {
       },
     },
   },
+  rockemGame: {
+    teams: {
+      0: {
+        players: {
+          0: {
+            playerId: 0,
+          },
+        },
+        score: 0
+      },
+      1: {
+        players: {
+          0: {
+            playerId: 0,
+          },
+        },
+        score: 0
+      }
+    }
+  }
 };
 
 export function createNewGame() {
@@ -362,6 +403,14 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   let racingGameRef = `${gameId}/racingGame/players/${playerId}`;
   let platformGameRef = `${gameId}/platformGame/players/${playerId}`;
   let shootingGameRef = `${gameId}/shootingGame/players/${playerId}`;
+
+  let teamId;
+  getNextAvailableTeam(gameId, 'rockemGame', function(id) {
+    teamId = id;
+  })
+
+  let rockemGameTeamRef = `${gameId}/rockemGame/teams/${teamId}/players/${playerId}`;
+
   let updates = {};
   updates[mainGameRef] = {
     ...playerData,
@@ -376,6 +425,11 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   };
   updates[platformGameRef] = { playerId, name: playerData.name };
   updates[shootingGameRef] = {
+    playerId,
+    name: playerData.name,
+    color: playerData.color,
+  };
+  updates[rockemGameRef] = {
     playerId,
     name: playerData.name,
     color: playerData.color,
