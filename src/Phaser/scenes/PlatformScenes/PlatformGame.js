@@ -252,7 +252,7 @@ export default class PlatformGame extends Phaser.Scene {
     data.forEach((player) => {
       if (player.playerId === this.myId) {
         this.spawnMyCharacter(player);
-      } else this.spawnOtherCharacters(player);
+      } else this.spawnOtherCharacter(player);
     });
   }
 
