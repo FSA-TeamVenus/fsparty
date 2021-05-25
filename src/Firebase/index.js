@@ -211,10 +211,10 @@ export function updateReticlePos(gameId, playerId, data) {
 export function updateTarget(gameId, targetIdx, shooter) {
   let updates = {};
   // if (shooter) {
-    updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
-    updates[`${gameId}/shootingGame/targets/${targetIdx}/shooter`] = shooter;
+  updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = true;
+  updates[`${gameId}/shootingGame/targets/${targetIdx}/shooter`] = shooter;
 
-    updates[`${gameId}/shootingGame/targets/${targetIdx}/destroyed`] = true;
+  updates[`${gameId}/shootingGame/targets/${targetIdx}/destroyed`] = true;
   // }
   // else {
   //   updates[`${gameId}/shootingGame/targets/${targetIdx}/hit`] = false;
