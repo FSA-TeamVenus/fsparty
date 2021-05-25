@@ -35,15 +35,15 @@ export class Board extends React.Component {
       rolled: false,
       gameIndex: 0,
       gamesList: {
-        0: 'shootingGame',
-        1: 'platformGame',
-        2: 'racingingGame',
+        0: 'platformGame',
+        1: 'racingGame',
+        2: 'shootingGame',
         // 3: 'rockemGame',
       },
       instructions: {
-        0: 'Click to shoot as many targets as you can',
-        1: 'use arrows to collect coins',
-        2: "Hit space bar to give 'er some gas",
+        0: 'use arrows to collect coins',
+        1: "Hit space bar to give 'er some gas",
+        2: 'Click to shoot as many targets as you can',
         // 3: 'Hit space to punch and get points \nfirst to 100 points win',
       },
     };
