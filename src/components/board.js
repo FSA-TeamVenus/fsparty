@@ -36,14 +36,14 @@ export class Board extends React.Component {
       gameIndex: 0,
       gamesList: {
         0: 'shootingGame',
-        1: 'shootingGame',
-        2: 'shootingGame',
+        1: 'platformGame',
+        2: 'racingingGame',
         // 3: 'rockemGame',
       },
       instructions: {
-        0: 'use arrows to collect coins',
-        1: "Hit space bar to give 'er some gas",
-        2: 'Click to shoot as many targets as you can',
+        0: 'Click to shoot as many targets as you can',
+        1: 'use arrows to collect coins',
+        2: "Hit space bar to give 'er some gas",
         // 3: 'Hit space to punch and get points \nfirst to 100 points win',
       },
     };
@@ -135,7 +135,6 @@ export class Board extends React.Component {
 
     updateMiniGame(gameId, scene, gameInstructions);
 
-
     this.setState({
       gameIndex: gameIndex + 1,
     });
@@ -159,7 +158,6 @@ export class Board extends React.Component {
   render() {
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
-    console.log(this.state.gameIndex)
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
     return (
