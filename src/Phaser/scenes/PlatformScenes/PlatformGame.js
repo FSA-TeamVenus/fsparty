@@ -68,7 +68,7 @@ export default class PlatformGame extends Phaser.Scene {
       }
     });
     //PLATFORMS
-    this.platformGroup = this.physics.add.staticGroup({
+    this.platformGroup = this.physics.add.group({
       class: Platform,
     });
     //GAME OBJECTS

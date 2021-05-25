@@ -6,7 +6,7 @@ export default class Coin extends Phaser.Physics.Arcade.Sprite {
     this.scene = scene;
     this.scene.add.existing(this);
     this.scene.physics.world.enable(this);
-    this.body.allowGravity = false;
+    this.body.allowGravity = true;
   }
 
   update(time, player) {
