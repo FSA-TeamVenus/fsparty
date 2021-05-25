@@ -35,8 +35,8 @@ export class Board extends React.Component {
       rolled: false,
       gameIndex: 0,
       gamesList: {
-        0: 'shootingGame',
-        1: 'shootingGame',
+        0: 'platformGame',
+        1: 'racingGame',
         2: 'shootingGame',
         // 3: 'rockemGame',
       },
