@@ -12,21 +12,18 @@ export default class StartScreen extends Phaser.Scene {
 
   create() {
     this.seconds = 10;
-    this.add.text(250, 150, 'INSTRUCTIONS', {
-      fontSize: '30px',
-      fontFamily: "'lores-12', 'sans-serif'",
-      fontStyle: 'bold',
-    });
-    this.add.text(250, 250, `${this.instructions}`, {
-      fontSize: '20px',
-      fontFamily: "'lores-12', 'sans-serif'",
-    });
 
-    this.timer = this.add.text(
-      250,
-      300,
-      `Game Starting in ${this.seconds} seconds`
-    );
+    this.addText();
+
+    this.time.addEvent({
+      delay: 500,
+      callback: () => {
+        this.header.setText('INSTRUCTIONS');
+        this.instructionText.setText(`${this.instructions}`);
+      },
+      callbackScope: this,
+      loop: false,
+    });
 
     this.time.addEvent({
       delay: 1000,
@@ -39,12 +36,38 @@ export default class StartScreen extends Phaser.Scene {
     });
 
     this.time.addEvent({
-      delay: 10000,
+      delay: 10500,
       callback: () => {
         this.scene.start(`${this.nextScene}`);
       },
       callbackScope: this,
       loop: false,
     });
+  }
+
+  addText() {
+    const screenCenterX =
+      this.cameras.main.worldView.x + this.cameras.main.width / 2;
+    this.header = this.add
+      .text(screenCenterX, 150, '', {
+        fontSize: '30px',
+        fontFamily: "'lores-12', 'sans-serif'",
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    this.instructionText = this.add
+      .text(screenCenterX, 250, ``, {
+        fontSize: '20px',
+        fontFamily: "'lores-12', 'sans-serif'",
+      })
+      .setOrigin(0.5);
+
+    this.timer = this.add
+      .text(screenCenterX, 350, ``, {
+        fontSize: '20px',
+        fontFamily: "'lores-12', 'sans-serif'",
+      })
+      .setOrigin(0.5);
   }
 }

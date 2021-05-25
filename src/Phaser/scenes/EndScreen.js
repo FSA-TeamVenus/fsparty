@@ -15,37 +15,47 @@ export default class EndScreen extends Phaser.Scene {
 
   create() {
     this.seconds = 5;
+    const screenCenterX =
+      this.cameras.main.worldView.x + this.cameras.main.width / 2;
 
-    this.add.text(300, 150, 'RESULTS', {
-      fontSize: '30px',
-      fontFamily: "'lores-12', 'sans-serif'",
-      fontStyle: 'bold',
-    });
+    this.add
+      .text(screenCenterX, 150, 'RESULTS', {
+        fontSize: '30px',
+        fontFamily: "'lores-12', 'sans-serif'",
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
     let yPosition = 200;
+
     for (let i = 0; i < this.finishersList.length; i++) {
       const currentId = this.finishersList[i];
       const currentPlayer = this.allPlayers[currentId];
       const place = i + 1;
       const earnedPoints = this.calculatePoints(place);
 
-      this.add.text(
-        300,
-        yPosition,
-        `${place}: ${currentPlayer.name} ------- +${earnedPoints} points`,
-        {
-          fontSize: '30px',
-          fontFamily: "'lores-12', 'sans-serif'",
-        }
-      );
+      this.add
+        .text(
+          screenCenterX,
+          yPosition,
+          `${place}: ${currentPlayer.name} ------- +${earnedPoints} points`,
+          {
+            fontSize: '30px',
+            fontFamily: "'lores-12', 'sans-serif'",
+          }
+        )
+        .setOrigin(0.5);
+
       yPosition += 50;
       addPoints(this.gameId, currentId, earnedPoints);
     }
 
-    this.timer = this.add.text(
-      250,
-      300,
-      `Back to main in ${this.seconds} seconds`
-    );
+    this.timer = this.add
+      .text(screenCenterX, 300, `Back to main in ${this.seconds} seconds`, {
+        fontSize: '20px',
+        fontFamily: "'lores-12', 'sans-serif'",
+      })
+      .setOrigin(0.5);
 
     this.time.addEvent({
       delay: 1000,
