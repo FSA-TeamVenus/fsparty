@@ -35,6 +35,7 @@ export default class RacingGame extends Phaser.Scene {
     });
     this.load.image('finish_line', 'assets/images/finish_line_600.png');
     this.load.image('racingMap', 'assets/images/racing_tileset_grey.png');
+    this.load.audio('engine', 'assets/audio/car-engine.wav');
     this.gameId = Number(window.localStorage.getItem('gameId'));
     this.myId = Number(window.localStorage.getItem('idKey'));
   }
@@ -62,11 +63,12 @@ export default class RacingGame extends Phaser.Scene {
     const tiles = map.addTilesetImage('racingMap');
     map.createLayer(0, tiles, 0, 0);
 
-    this.finishLine = this.physics.add.image(1450, 400, 'finish_line');
+    this.finishLine = this.physics.add.image(1450, 300, 'finish_line');
     this.blocker = this.physics.add.image(1620, 400, 'finish_line');
     this.finishLine.body.allowGravity = false;
     this.blocker.body.allowGravity = false;
     this.blocker.setImmovable(true);
+    this.engine = this.sound.add('engine');
 
     this.spaceBar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
@@ -85,6 +87,7 @@ export default class RacingGame extends Phaser.Scene {
 
     this.spaceBar.on('down', () => {
       this.myCharacter.setVelocityX(300);
+      this.engine.play();
     });
 
     this.physics.add.overlap(

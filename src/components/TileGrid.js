@@ -10,23 +10,14 @@ export default class TileGrid extends React.Component {
 
     return (
       <div className="tile-grid">
-        {tileList.map((tile) =>
-          dictionary[tile.id] ? (
-            <Tile
-              tileProps={tile}
-              players={playerList}
-              key={tile.id}
-              dictionary={dictionary}
-            />
-          ) : (
-            <Tile
-              tileProps={tile}
-              players={playerList}
-              key={tile.id}
-              dictionary={null}
-            />
-          )
-        )}
+        {tileList.map((tile) => (
+          <Tile
+            tileProps={tile}
+            players={playerList}
+            key={tile.id}
+            dictionary={dictionary}
+          />
+        ))}
       </div>
     );
   }

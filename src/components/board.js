@@ -72,8 +72,6 @@ export class Board extends React.Component {
     this.turnOff();
     this.posOff();
     this.roundOff();
-    const music = document.getElementById('music');
-    music.pause();
   }
 
   rollDice() {
@@ -131,10 +129,9 @@ export class Board extends React.Component {
     const { gameIndex, gamesList, instructions } = this.state;
 
     const scene = gamesList[gameIndex % 3];
-    const gameInstructions = instructions[2];
+    const gameInstructions = instructions[gameIndex % 3];
 
     updateMiniGame(gameId, scene, gameInstructions);
-
 
     this.setState({
       gameIndex: gameIndex + 1,
@@ -151,15 +148,17 @@ export class Board extends React.Component {
   }
 
   endGame() {
+    const music = document.getElementById('music');
+    music.pause();
     this.setState({
       gameOver: true,
     });
   }
 
   render() {
+    console.log(pathDictionary);
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
-    console.log(this.state.gameIndex)
     const { turn, playerList, round } = this.state;
     const currentPlayer = playerList[turn] || { name: '' };
     return (

@@ -7,7 +7,7 @@ export default class RockemGame extends Phaser.Scene {
 
   create() {
     // << LOAD BACKGROUND AND FOREGROUND SCENES IN PARALLEL HERE >>
-    this.scene.launch('BgScene');
     this.scene.launch('FgScene')
+    this.scene.launch('BgScene');
   }
 }
