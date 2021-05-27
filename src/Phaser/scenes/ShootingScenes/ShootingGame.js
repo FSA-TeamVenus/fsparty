@@ -56,6 +56,7 @@ export default class ShootingGame extends Phaser.Scene {
 
     this.scoreText = this.add.text(18, 18, 'Ships Destroyed: 0', {
       fontSize: '25px',
+      fontFamily: "'lores-12', 'sans-serif'",
       fill: `${this.myColor}`,
     });
 
@@ -132,7 +133,6 @@ export default class ShootingGame extends Phaser.Scene {
   }
 
   shot(pointer, target) {
-    console.log(`hit - ${target.index}`);
     //should set firebase gameId/shootingGame/targets/targetId/hit = true
     updateTarget(this.gameId, target.index, this.myColor);
     this.myScore++;
