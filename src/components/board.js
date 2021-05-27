@@ -127,9 +127,10 @@ export class Board extends React.Component {
     const audio = document.getElementById('start-sound');
     audio.play();
     const { gameIndex, gamesList, instructions } = this.state;
+    const listLength = Object.keys(gamesList).length;
 
-    const scene = gamesList[gameIndex % 3];
-    const gameInstructions = instructions[gameIndex % 3];
+    const scene = gamesList[gameIndex % listLength];
+    const gameInstructions = instructions[gameIndex % listLength];
 
     updateMiniGame(gameId, scene, gameInstructions);
 
