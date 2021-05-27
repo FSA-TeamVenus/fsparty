@@ -156,7 +156,6 @@ export class Board extends React.Component {
   }
 
   render() {
-    console.log(pathDictionary);
     gameId = Number(window.localStorage.getItem('gameId'));
     playerId = Number(window.localStorage.getItem('idKey'));
     const { turn, playerList, round } = this.state;
