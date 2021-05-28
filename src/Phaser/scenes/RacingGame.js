@@ -18,7 +18,7 @@ export default class RacingGame extends Phaser.Scene {
 
     this.addPlayers = this.addPlayers.bind(this);
     this.spawnMyCharacter = this.spawnMyCharacter.bind(this);
-    this.spawnOtherCharacters = this.spawnOtherCharacters.bind(this);
+    this.spawnOtherCharacter = this.spawnOtherCharacter.bind(this);
     this.managePlayers = this.managePlayers.bind(this);
     this.updateOtherPlayers = this.updateOtherPlayers.bind(this);
   }
@@ -35,7 +35,8 @@ export default class RacingGame extends Phaser.Scene {
     });
     this.load.image('finish_line', 'assets/images/finish_line_600.png');
     this.load.image('racingMap', 'assets/images/racing_tileset_grey.png');
-    this.load.audio('engine', 'assets/audio/car-engine.wav');
+    this.load.audio('beep', 'assets/audio/beep.wav');
+    this.load.audio('go', 'assets/audio/go.wav');
     this.gameId = Number(window.localStorage.getItem('gameId'));
     this.myId = Number(window.localStorage.getItem('idKey'));
   }
@@ -68,11 +69,49 @@ export default class RacingGame extends Phaser.Scene {
     this.finishLine.body.allowGravity = false;
     this.blocker.body.allowGravity = false;
     this.blocker.setImmovable(true);
-    this.engine = this.sound.add('engine');
+    this.beep = this.sound.add('beep');
+    this.go = this.sound.add('go');
 
     this.spaceBar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
+
+    this.spaceBar.on('down', () => {
+      if (this.myCharacter.ignition) {
+        this.myCharacter.setVelocityX(300);
+      }
+    });
+
+    this.texts = { 4: '3', 3: '2', 2: '1', 1: 'GO!', 0: '' };
+    this.fills = { 4: 'red', 3: 'red', 2: 'yellow', 1: 'green', 0: '' };
+    this.startTime = 5;
+
+    this.addText();
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.startTime -= 1;
+        this.countdown.setText(`${this.texts[this.startTime]}`);
+        this.countdown.setColor(`${this.fills[this.startTime]}`);
+        if (this.startTime > 1) {
+          this.beep.play();
+        } else if (this.startTime === 1) {
+          this.go.play();
+        }
+      },
+      callbackScope: this,
+      repeat: 4,
+    });
+
+    this.time.addEvent({
+      delay: 4000,
+      callback: () => {
+        this.myCharacter.ignition = true;
+      },
+      callbackScope: this,
+      loop: false,
+    });
 
     this.time.addEvent({
       delay: 1000,
@@ -83,11 +122,6 @@ export default class RacingGame extends Phaser.Scene {
       },
       callbackScope: this,
       loop: false,
-    });
-
-    this.spaceBar.on('down', () => {
-      this.myCharacter.setVelocityX(300);
-      this.engine.play();
     });
 
     this.physics.add.overlap(
@@ -121,11 +155,11 @@ export default class RacingGame extends Phaser.Scene {
     data.forEach((player) => {
       if (player.playerId === this.myId) {
         this.spawnMyCharacter(player);
-      } else this.spawnOtherCharacters(player);
+      } else this.spawnOtherCharacter(player);
     });
   }
 
-  spawnOtherCharacters(player) {
+  spawnOtherCharacter(player) {
     const newPlayer = new RaceCar(
       this,
       this.initX,
@@ -175,6 +209,21 @@ export default class RacingGame extends Phaser.Scene {
     if (!this.finishers.includes(player.playerId)) {
       this.finishers.push(player.playerId);
     }
+  }
+
+  addText() {
+    const screenCenterX =
+      this.cameras.main.worldView.x + this.cameras.main.width / 2;
+    const screenCenterY =
+      this.cameras.main.worldView.y + this.cameras.main.height / 2;
+    this.countdown = this.add
+      .text(screenCenterX, screenCenterY, '', {
+        fontSize: '130px',
+        fontFamily: "'lores-12', 'sans-serif'",
+        fontStyle: 'bold',
+        fill: 'red',
+      })
+      .setOrigin(0.5);
   }
 
   createSprites() {

@@ -11,6 +11,7 @@ export default class RaceCar extends Phaser.Physics.Arcade.Sprite {
     // this.setCollideWorldBounds(true);
     this.setDamping(true);
     this.setDragX(0.4);
+    this.ignition = false;
     this.playerId;
     this.oldPosition = {};
   }

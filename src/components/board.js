@@ -2,7 +2,6 @@ import React from 'react';
 import GameCanvas from './GameCanvas';
 import TileGrid from './TileGrid';
 import { tileList, pathDictionary } from './tileList';
-import PlayerCard from './PlayerCard';
 import Phaser from 'phaser';
 import {
   getPlayersfromGame,
@@ -231,9 +230,8 @@ export class Board extends React.Component {
               Help! Attracted by satellite broadcasts of Earth media, a
               nefarious group of aliens has landed on earth and stolen all
               original videogames, leaving behind nothing but poorly made
-              bootleg versions and a challenge: beat the high score in their
-              Mario Party clone to get back the original versions of our
-              favorite games.
+              imitations and a challenge: beat the high score in their bootleg
+              versions and win back the originals.
             </div>
             {playerId == 0 ? (
               <div>
