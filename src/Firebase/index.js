@@ -197,7 +197,6 @@ export function getOtherReticles(gameId, cb) {
   const playerList = database.ref(`${gameId}/shootingGame/players`);
   playerList.on('value', (snapshot) => {
     const data = snapshot.val();
-    console.log(data);
   });
 }
 //update reticle position
@@ -232,7 +231,6 @@ export function resetTarget(gameId, targetIdx, destroyed) {
 }
 //update shooting game score
 export function updateShootingScore(gameId, playerId, score) {
-  console.log(score);
   let updates = {};
   updates[`${gameId}/shootingGame/players/${playerId}/score`] = score + 1;
   return firebase.database().ref().update(updates);
@@ -333,8 +331,7 @@ export function createNewGame() {
     .once('value')
     .then((snapshot) => {
       const games = snapshot.val();
-      let gameId = findNextNumber(Object.keys(games));
-      // let gameId = Object.keys(games).length + 1;
+      let gameId = getNextId(Object.keys(games));
       updates[gameId] = gameObj;
       database.ref().update(updates);
       window.localStorage.setItem('gameId', gameId);
@@ -383,23 +380,21 @@ export function addPlayerToGame(gameId, playerId, playerData) {
   database.ref().update(updates);
 }
 
-function findNextNumber(sequence) {
+function getNextId(sequence) {
   const length = sequence.length;
-  for (let i = 0; i < length; i++) {
-    let x = i + 1;
-    if (Number(sequence[i]) !== x) {
-      sequence.splice(i, 0, x); // insert x here
-      sequence.length = length; // chop off the rest
-      return x;
+  for (let i = 1; i < length; i++) {
+    const nextIndex = i + 1;
+    const nextValue = Number(sequence[nextIndex]);
+    if (nextValue !== nextIndex) {
+      return nextIndex;
     }
   }
-  // else
-  return length + 1; //array length + 1 as next number
+  return length;
 }
 
 export function updateRoundsMax(gameId, roundsMax) {
   let updates = {};
-  console.log('roundsMax', roundsMax);
+
   updates[`${gameId}/main/roundsMax`] = roundsMax;
   database.ref().update(updates);
 }

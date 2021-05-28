@@ -121,7 +121,7 @@ export default class PlatformGame extends Phaser.Scene {
     this.scoreText;
     this.scoreText = this.add.text(18, 18, 'Coins: 0', {
       fontSize: '25px',
-      fill: 'white',
+      fontFamily: "'lores-12', 'sans-serif'",
     });
     this.scoreText.setScrollFactor(0, 0);
 
@@ -132,7 +132,7 @@ export default class PlatformGame extends Phaser.Scene {
       `Time Remaining: ${this.initialTime}`,
       {
         fontSize: '25px',
-        fill: 'white',
+        fontFamily: "'lores-12', 'sans-serif'",
       }
     );
     this.countdown.setScrollFactor(0, 0);

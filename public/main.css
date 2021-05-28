@@ -69,9 +69,13 @@ a {
 }
 
 #ok {
-  background-color: rgb(109, 92, 92);
-  color: rgb(255, 174, 0);
-  font-size: 30px;
+  background-color: #4d901e;
+  color: black;
+  padding: 15px;
+  margin: 25px;
+  border-radius: 10px;
+  font-size: 20px;
+  text-align: center;
 }
 
 #view-result-button {
@@ -254,9 +258,6 @@ a {
   box-shadow: 2px 2px rgb(36, 35, 35), 4px 4px #4d901e;
 }
 
-/* .mini-game-button:hover {
-  background-color: #e265ff;
-} */
 /* player card styles */
 
 .card {
@@ -316,19 +317,12 @@ a {
   background-color: rgb(36, 35, 35);
   border: 1px solid #4d901e;
   color: #4d901e;
-  /* border-top: 7px solid rgb(255, 206, 99);
-  border-left: 7px solid rgb(255, 206, 99);
-  border-right: 7px solid rgb(255, 174, 0);
-  border-bottom: 7px solid rgb(255, 174, 0); */
+
   border-radius: 3px;
   font-family: 'bd-geminis', sans-serif;
   font-size: 30px;
   letter-spacing: 3px;
 }
-
-/* .dice-roll:hover {
-  background-color: #f9eb30;
-} */
 
 #roll-display {
   width: 100px;

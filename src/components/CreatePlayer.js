@@ -39,7 +39,8 @@ export default class CreatePlayer extends React.Component {
     const { colorIndex } = this.state;
     const value = evt.target.value === 'next' ? 1 : -1;
 
-    const newIndex = colorIndex + value;
+    const newValue = colorIndex + value;
+    const newIndex = newValue === -1 ? 5 : newValue;
     const newColor = colorArray[newIndex % colorArray.length];
     const newUrl = `assets/board/images/mushroom-${newColor}.png`;
 
