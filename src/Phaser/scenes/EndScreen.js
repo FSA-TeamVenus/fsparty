@@ -51,7 +51,7 @@ export default class EndScreen extends Phaser.Scene {
     }
 
     this.timer = this.add
-      .text(screenCenterX, 300, `Back to main in ${this.seconds} seconds`, {
+      .text(screenCenterX, 400, `Back to main in ${this.seconds} seconds`, {
         fontSize: '20px',
         fontFamily: "'lores-12', 'sans-serif'",
       })

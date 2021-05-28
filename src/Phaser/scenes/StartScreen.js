@@ -32,7 +32,7 @@ export default class StartScreen extends Phaser.Scene {
         this.timer.setText(`Game Starting in ${this.seconds} seconds`);
       },
       callbackScope: this,
-      loop: 10,
+      repeat: 10,
     });
 
     this.time.addEvent({
